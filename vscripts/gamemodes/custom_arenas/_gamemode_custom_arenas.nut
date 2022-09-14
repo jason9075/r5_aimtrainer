@@ -13,10 +13,7 @@
 //everyone else -- advice
 
 global function _RegisterLocationARENAS
-// global function PROPHUNT_GiveAndManageRandomProp
-// global function returnPropBool
 global function RunARENAS
-// global function ClientCommand_NextRoundPROPHUNT
 
 enum eTDMState
 {
@@ -47,11 +44,6 @@ struct {
 
 	array<string> mAdmins
 	array<string> mChatBanned
-
-	int randomprimary
-    int randomsecondary
-    int randomult
-    int randomtac
 
     entity supercooldropship
 	bool isshipalive = false
@@ -100,9 +92,12 @@ void function RunARENAS()
 }
 
 void function SimpleChampionUI(){
-/////////////Retículo Endoplasmático#5955 CaféDeColombiaFPS///////////////////
 {
 	printt("Flowstate DEBUG - Game is starting.")
+	print(">>>>>>>>>>>>>>Flowstate <<<<<<")
+	printl(">>>>>>>>>>>>>>printl <<<<<<")
+
+
 
 	foreach(player in GetPlayerArray())
 		if(IsValid(player)) ScreenFade( player, 0, 0, 0, 255, 1.5, 1.5, FFADE_IN | FFADE_PURGE ) //let's do this before destroy player props so it looks good in custom maps
@@ -143,19 +138,6 @@ void function SimpleChampionUI(){
 	if(GetMapName() == "mp_rr_desertlands_64k_x_64k" || GetMapName() == "mp_rr_desertlands_64k_x_64k_nx" || GetMapName() == "mp_rr_canyonlands_mu1" || GetMapName() == "mp_rr_canyonlands_mu1_night" || GetMapName() == "mp_rr_canyonlands_64k_x_64k")
 	{
 		thread CreateShipRoomFallTriggers()
-	}
-	if (FlowState_RandomGuns() )
-    {
-        arenas.randomprimary = RandomIntRangeInclusive( 0, 15 )
-        arenas.randomsecondary = RandomIntRangeInclusive( 0, 6 )
-    } else if (FlowState_RandomGunsMetagame())
-	{
-		arenas.randomprimary = RandomIntRangeInclusive( 0, 2 )
-        arenas.randomsecondary = RandomIntRangeInclusive( 0, 4 )
-	} else if (FlowState_RandomGunsEverydie())
-	{
-		arenas.randomprimary = RandomIntRangeInclusive( 0, 23 )
-        arenas.randomsecondary = RandomIntRangeInclusive( 0, 18 )
 	}
 
 	if(arenas.selectedLocation.name == "TTV Building" && FlowState_ExtrashieldsEnabled()){
@@ -405,18 +387,16 @@ void function _HandleRespawnARENAS(entity player)
 {
 	if(!IsValid(player)) return
 	printt("Flowstate DEBUG - Tping arenas player to Lobby.", player)
-	
+
 	if(IsValid( player ))
 			{
 				if(FlowState_ForceCharacter()){CharSelect(player)}
 				if(!IsAlive(player)) {DoRespawnPlayer( player, null )}
 				
-				player.SetThirdPersonShoulderModeOn()
 				Survival_SetInventoryEnabled( player, true )
-				player.SetPlayerNetInt( "respawnStatus", eRespawnStatus.NONE )
 				player.SetPlayerNetBool( "pingEnabled", true )
 				player.SetHealth( 100 )
-				TakeAllWeapons(player)
+				Inventory_SetPlayerEquipment(player, "armor_pickup_lv2", "armor")
 			}
 	
 }
@@ -462,101 +442,6 @@ void function ResetPlayerStats(entity player)
     player.SetPlayerGameStat( PGS_ELIMINATED, 0)
 }
 
-void function GiveTeamToProphuntPlayer(entity player)
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-{
-	array<entity> IMCplayers = GetPlayerArrayOfTeam(TEAM_IMC)
-	array<entity> MILITIAplayers = GetPlayerArrayOfTeam(TEAM_MILITIA)
-	
-
-	
-	if(IMCplayers.len() > MILITIAplayers.len())
-	{
-	SetTeam(player, TEAM_MILITIA )
-	} else if (MILITIAplayers.len() > IMCplayers.len())
-	{
-	SetTeam(player, TEAM_IMC )
-	} else {
-		switch(RandomIntRangeInclusive(0,1))
-		{
-			case 0:
-				SetTeam(player, TEAM_IMC )
-				break;
-			case 1:
-				SetTeam(player, TEAM_MILITIA )
-				break;
-		}
-	}
-	printt("Flowstate DEBUG - Giving team to player.", player, player.GetTeam())
-}
-
-
-void function EmitSoundOnSprintingProp()
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-{
-		while(arenas.tdmState==eTDMState.IN_PROGRESS)
-		{
-		array<entity> MILITIAplayers = GetPlayerArrayOfTeam(TEAM_MILITIA)
-			foreach(player in MILITIAplayers)
-			{
-				if(player.IsSprinting() && IsValid(player))
-				{
-				EmitSoundOnEntity( player, "husaria_sprint_default_3p" )
-				} 
-			}
-		wait 0.2
-		}
-}
-
-
-void function EmitWhistleOnProp()
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-{
-		while(arenas.tdmState==eTDMState.IN_PROGRESS)
-		{
-		wait 30 //40 s COD original value: 20.
-		array<entity> MILITIAplayers = GetPlayerArrayOfTeam(TEAM_MILITIA)
-			foreach(player in MILITIAplayers)
-			{
-				if(IsValid(player))
-				{
-				EmitSoundOnEntity( player, "husaria_sprint_default_3p" )
-				EmitSoundOnEntity( player, "concrete_bulletimpact_1p_vs_3p" )
-				EmitSoundOnEntity( player, "husaria_sprint_default_3p" )
-				} 
-			}
-		}
-}
-
-void function CheckForPlayersPlaying()
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-{
-	
-	while(arenas.tdmState==eTDMState.IN_PROGRESS)
-	{
-			if(GetPlayerArray().len() == 1)
-			{
-				SetTdmStateToNextRound()
-				foreach(player in GetPlayerArray()){
-					Message(player, "ATTENTION", "Not enough players. Round is ending.", 5)
-				}
-			}
-	WaitFrame()	
-	}
-	printt("Flowstate DEBUG - Ending round cuz not enough players midround")
-}
-
-void function PropWatcher(entity prop, entity player)
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-{
-	while(arenas.tdmState==eTDMState.IN_PROGRESS && !player.p.PROPHUNT_DestroyProp) 
-	{
-	WaitFrame()}
-	
-	if(IsValid(prop))
-		prop.Destroy()
-}
-
 void function DestroyPlayerPropsARENAS()
 //By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
 {
@@ -567,154 +452,6 @@ void function DestroyPlayerPropsARENAS()
     }
     arenas.playerSpawnedProps.clear()
 	WaitFrame()
-}
-
-
-// void function PROPHUNT_GiveAndManageRandomProp(entity player, bool anglesornah = false)
-// //By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-// {
-// 			// Using gamestat as boolean Destroy prop y otras cosas más
-// 			//  player.SetPlayerGameStat( PGS_DEFENSE_SCORE, 20)    true 
-// 			//  player.SetPlayerGameStat( PGS_DEFENSE_SCORE, 10)    false
-// 			player.p.PROPHUNT_DestroyProp = true
-// 			if(!anglesornah && IsValid(player)){
-// 					WaitFrame()
-// 					asset selectedModel = prophuntAssetsWE[RandomIntRangeInclusive(0,(prophuntAssetsWE.len()-1))]
-// 					player.p.PROPHUNT_LastModel = selectedModel
-// 					player.kv.solid = 6
-// 					player.kv.CollisionGroup = TRACE_COLLISION_GROUP_PLAYER
-// 					entity prop = CreatePropDynamic(selectedModel, player.GetOrigin(), player.GetAngles(), 6, -1)
-// 					prop.kv.CollisionGroup = TRACE_COLLISION_GROUP_PLAYER
-// 					prop.kv.solid = 6
-// 					prop.SetDamageNotifications( true )
-// 					prop.SetTakeDamageType( DAMAGE_YES )
-// 					prop.AllowMantle()
-// 					prop.SetCanBeMeleed( true )
-// 					prop.SetBoundingBox( < -150, -75, 0 >, <150, 75, 100 >  )
-// 					prop.SetMaxHealth( 100 )
-// 					prop.SetHealth( 100 )
-// 					prop.SetParent(player)
-// 					AddEntityCallback_OnDamaged(prop, NotifyDamageOnProp)
-// 					player.p.PROPHUNT_DestroyProp = false
-// 					WaitFrame()
-// 					thread PropWatcher(prop, player) 
-// 			} else if(anglesornah && IsValid(player)){
-// 					player.p.PROPHUNT_DestroyProp = true
-// 					player.Show()
-// 					player.SetBodyModelOverride( player.p.PROPHUNT_LastModel )
-// 					player.SetArmsModelOverride( player.p.PROPHUNT_LastModel )
-// 					Message(player, "prophunt", "Angles locked.", 1)
-// 					player.kv.solid = SOLID_BBOX
-// 					player.kv.CollisionGroup = TRACE_COLLISION_GROUP_PLAYER
-// 					player.AllowMantle()
-// 					player.SetDamageNotifications( true )
-// 					player.SetTakeDamageType( DAMAGE_YES )
-// 			}
-// }
-
-
-void function PlayerwithLockedAngles_OnDamaged(entity ent, var damageInfo)
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-{
-	entity attacker = DamageInfo_GetAttacker(damageInfo)
-	float damage = DamageInfo_GetDamage( damageInfo )
-	attacker.NotifyDidDamage
-	(
-		ent,
-		DamageInfo_GetHitBox( damageInfo ),
-		DamageInfo_GetDamagePosition( damageInfo ), 
-		DamageInfo_GetCustomDamageType( damageInfo ),
-		DamageInfo_GetDamage( damageInfo ),
-		DamageInfo_GetDamageFlags( damageInfo ), 
-		DamageInfo_GetHitGroup( damageInfo ),
-		DamageInfo_GetWeapon( damageInfo ), 
-		DamageInfo_GetDistFromAttackOrigin( damageInfo )
-	)
-	float NextHealth = ent.GetHealth() - DamageInfo_GetDamage( damageInfo )
-	if (NextHealth > 0 && IsValid(ent)){
-		ent.SetHealth(NextHealth)
-	} else if (IsValid(ent)){
-	ent.SetTakeDamageType( DAMAGE_NO )
-	ent.SetHealth(0)
-	ent.kv.solid = 0
-	// ent.SetOwner( attacker )
-	// ent.kv.teamnumber = attacker.GetTeam()
-	}
-}
-
-void function NotifyDamageOnProp(entity ent, var damageInfo)
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-{
-//props health bleedthrough
-	entity attacker = DamageInfo_GetAttacker(damageInfo)
-	entity victim = ent.GetParent()
-	float damage = DamageInfo_GetDamage( damageInfo )
-	
-	attacker.NotifyDidDamage
-	(
-		ent,
-		DamageInfo_GetHitBox( damageInfo ),
-		DamageInfo_GetDamagePosition( damageInfo ), 
-		DamageInfo_GetCustomDamageType( damageInfo ),
-		DamageInfo_GetDamage( damageInfo ),
-		DamageInfo_GetDamageFlags( damageInfo ), 
-		DamageInfo_GetHitGroup( damageInfo ),
-		DamageInfo_GetWeapon( damageInfo ), 
-		DamageInfo_GetDistFromAttackOrigin( damageInfo )
-	)
-	
-	float playerNextHealth = ent.GetHealth() - DamageInfo_GetDamage( damageInfo )
-	
-	if (playerNextHealth > 0 && IsValid(victim) && IsAlive(victim)){
-	victim.SetHealth(playerNextHealth)} else {
-	ent.ClearParent()
-	victim.SetHealth(0)
-	ent.Destroy()}
-}
-
-entity function CreateBubbleBoundaryPROPHUNT(LocationSettings location)
-{
-    array<LocPair> spawns = location.spawns
-    vector bubbleCenter
-    foreach(spawn in spawns)
-    {
-        bubbleCenter += spawn.origin
-    }
-    bubbleCenter /= spawns.len()
-    float bubbleRadius = 0
-    foreach(LocPair spawn in spawns)
-    {
-        if(Distance(spawn.origin, bubbleCenter) > bubbleRadius)
-        bubbleRadius = Distance(spawn.origin, bubbleCenter)
-    }
-    bubbleRadius += 200
-    entity bubbleShield = CreateEntity( "prop_dynamic" )
-	bubbleShield.SetValueForModelKey( BUBBLE_BUNKER_SHIELD_COLLISION_MODEL )
-    bubbleShield.SetOrigin(bubbleCenter)
-    bubbleShield.SetModelScale(bubbleRadius / 235)
-    bubbleShield.kv.CollisionGroup = 0
-    bubbleShield.kv.rendercolor = FlowState_BubbleColor()
-    DispatchSpawn( bubbleShield )
-    thread MonitorBubbleBoundaryPROPHUNT(bubbleShield, bubbleCenter, bubbleRadius)
-    return bubbleShield
-}
-
-void function MonitorBubbleBoundaryPROPHUNT(entity bubbleShield, vector bubbleCenter, float bubbleRadius)
-{
-	wait 31
-    while(IsValid(bubbleShield))
-    {
-        foreach(player in GetPlayerArray_Alive())
-        {
-            if(!IsValid(player)) continue
-            if(Distance(player.GetOrigin(), bubbleCenter) > bubbleRadius)
-            {
-				Remote_CallFunction_Replay( player, "ServerCallback_PlayerTookDamage", 0, 0, 0, 0, DF_BYPASS_SHIELD | DF_DOOMED_HEALTH_LOSS, eDamageSourceId.deathField, null )
-                player.TakeDamage( int( Deathmatch_GetOOBDamagePercent() / 100 * float( player.GetMaxHealth() ) ), null, null, { scriptType = DF_BYPASS_SHIELD | DF_DOOMED_HEALTH_LOSS, damageSourceId = eDamageSourceId.deathField } )
-            }
-        }
-        wait 1
-    }
 }
 
 //       ██ ██████  ██ ███    ██  ██████  ██
@@ -868,37 +605,3 @@ void function PlayerRestoreHP(entity player, float health, float shields)
 		Inventory_SetPlayerEquipment(player, "armor_pickup_lv3", "armor")
 	player.SetShieldHealth( shields )
 }
-
-// bool function ClientCommand_NextRoundPROPHUNT(entity player, array<string> args)
-// {
-// 	if(player.GetPlayerName() == FlowState_Hoster() || player.GetPlayerName() == FlowState_Admin1() || player.GetPlayerName() == FlowState_Admin2() || player.GetPlayerName() == FlowState_Admin3() || player.GetPlayerName() == FlowState_Admin4()) {
-		
-// 		if (args.len()) {
-// 				int mapIndex = int(args[0])
-// 				arenas.nextMapIndex = (((mapIndex >= 0 ) && (mapIndex < arenas.locationSettings.len())) ? mapIndex : RandomIntRangeInclusive(0, arenas.locationSettings.len() - 1))
-// 				arenas.mapIndexChanged = true
-
-// 				string now = args[0]
-// 				if (now == "now")
-// 				{
-// 				   SetTdmStateToNextRound()
-// 				   arenas.mapIndexChanged = false
-// 				   arenas.InProgress = false
-// 				   SetGameState(eGameState.MapVoting)
-// 				}
-				
-// 				if(args.len() > 1){
-// 					now = args[1]
-// 					if (now == "now")
-// 					{
-// 					   SetTdmStateToNextRound()
-// 					   arenas.InProgress = false
-// 					}
-// 				}
-// 		}
-// 	}
-// 	else {
-// 	return false
-// 	}
-// 	return true
-// }
