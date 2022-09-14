@@ -918,6 +918,7 @@ Scripts:
 	gamemodes/custom_tdm/_gamemode_flowstate.nut
 	gamemodes/custom_ctf/_gamemode_custom_ctf.nut
 	gamemodes/custom_prophunt/_gamemode_prophunt.nut
+	gamemodes/custom_arenas/_gamemode_custom_arenas.nut
 	gamemodes/custom_surf/_gamemode_surf.nut
 	gamemodes/custom_surf/_gamemode_surf2.nut
 	gamemodes/custom_aimtrainer/_aimtrainer.nut
@@ -932,7 +933,6 @@ Scripts:
 [
 	gamemodes/custom_tdm/cl_gamemode_custom_tdm.nut
 	gamemodes/custom_ctf/cl_gamemode_custom_ctf.nut
-    gamemodes/custom_arenas/cl_gamemode_custom_arenas.nut
 	gamemodes/custom_aimtrainer/cl_aimtrainer.nut
 ]
 
