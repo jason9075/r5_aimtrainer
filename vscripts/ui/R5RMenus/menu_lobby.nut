@@ -68,6 +68,7 @@ global table<string, string> playlisttoname = {
 	[ "wead" ] = "wead",
 	[ "custom_aimtrainer" ] = "Flowstate Aim Trainer",
 	[ "custom_tdm" ] = "Team Deathmatch",
+	[ "custom_arenas"] = "Arenas",
 	[ "custom_tdm_fiesta" ] = "Team Deathmatch Fiesta",
 	[ "custom_tdm_gungame" ] = "Team Deathmatch Gungame",
 	[ "custom_prophunt" ] = "Hide&Seek Prophunt",

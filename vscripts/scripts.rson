@@ -908,6 +908,7 @@ Scripts:
 	gamemodes/custom_tdm/custom_tdm_settings.nut
 	gamemodes/custom_ctf/sh_gamemode_custom_ctf.nut
 	gamemodes/custom_ctf/custom_ctf_settings.nut
+	gamemodes/custom_arenas/sh_gamemode_custom_arenas.nut
 	gamemodes/custom_aimtrainer/sh_aimtrainer.nut
 ]
 

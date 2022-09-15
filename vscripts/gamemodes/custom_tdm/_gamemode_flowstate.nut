@@ -181,8 +181,6 @@ void function _CustomTDM_Init()
 		thread RunPROPHUNT()
 	} else if(FlowState_SURF()){
 		thread RunSURF()
-	} else if(FlowState_ARENAS()){
-		thread RunARENAS()
 	}else {
 		thread RunTDM()}
 }
