@@ -934,6 +934,7 @@ Scripts:
 [
 	gamemodes/custom_tdm/cl_gamemode_custom_tdm.nut
 	gamemodes/custom_ctf/cl_gamemode_custom_ctf.nut
+	gamemodes/custom_arenas/cl_gamemode_custom_arenas.nut
 	gamemodes/custom_aimtrainer/cl_aimtrainer.nut
 ]
 

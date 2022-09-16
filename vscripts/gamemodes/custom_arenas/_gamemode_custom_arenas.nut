@@ -33,8 +33,8 @@ struct {
 	float lastKillTimer
 	entity lastKiller
 	int SameKillerStoredKills=0
-	array<LocationSettings> locationSettings
-    LocationSettings& selectedLocation
+	array<ArenasLocSettings> locationSettings
+    ArenasLocSettings& selectedLocation
 	array<vector> thisroundDroppodSpawns
     entity ringBoundary
 	entity previousChampion
@@ -48,8 +48,8 @@ struct {
 
     entity supercooldropship
 	bool isshipalive = false
-	array<LocationSettings> droplocationSettings
-    LocationSettings& dropselectedLocation
+	array<ArenasLocSettings> droplocationSettings
+    ArenasLocSettings& dropselectedLocation
 
 	bool FallTriggersEnabled = false
 	bool mapSkyToggle = false
@@ -81,12 +81,14 @@ void function _CustomARENAS_Init()
 	AddClientCommandCallback("ungod", ClientCommand_UnGod)
 	AddClientCommandCallback("next_round", ClientCommand_NextRound)
 	AddClientCommandCallback("tgive", ClientCommand_GiveWeapon)
+	AddClientCommandCallback("switch_team", ClientCommand_SwitchTeam)
+
 
 	thread RunARENAS()
 
 }
 
-void function _RegisterLocationARENAS(LocationSettings locationSettings)
+void function _RegisterLocationARENAS(ArenasLocSettings locationSettings)
 {
     arenas.locationSettings.append(locationSettings)
 	arenas.droplocationSettings.append(locationSettings)
@@ -123,16 +125,14 @@ void function RunARENAS()
     WaitForever()
 }
 
-void function SimpleChampionUI(){
+void function SimpleChampionUI()
 {
 	printt("Flowstate DEBUG - Game is starting.")
-	printt("!!!!!!!!!!!Flowstate DEBUG - Game is starting.")
-
 
 	foreach(player in GetPlayerArray())
 		if(IsValid(player)) ScreenFade( player, 0, 0, 0, 255, 1.5, 1.5, FFADE_IN | FFADE_PURGE ) //let's do this before destroy player props so it looks good in custom maps
 
-    DestroyPlayerPropsARENAS()
+	DestroyPlayerPropsARENAS()
 	isBrightWaterByZer0 = false
 
 	SetGameState(eGameState.Playing)
@@ -151,9 +151,9 @@ void function SimpleChampionUI(){
 	}
 
 	if (!arenas.mapIndexChanged)
-		{
-			arenas.nextMapIndex = (arenas.nextMapIndex + 1 ) % arenas.locationSettings.len()
-		}
+	{
+		arenas.nextMapIndex = (arenas.nextMapIndex + 1 ) % arenas.locationSettings.len()
+	}
 
 	if (FlowState_LockPOI()) {
 		arenas.nextMapIndex = FlowState_LockedPOI()
@@ -212,16 +212,16 @@ void function SimpleChampionUI(){
 		thread LoadMapByBiscutz1()
 		thread LoadMapByBiscutz2()
 	}
-    foreach(player in GetPlayerArray())
-    {
-        try {
-            if(IsValid(player))
-            {
-		        RemoveCinematicFlag(player, CE_FLAG_HIDE_MAIN_HUD | CE_FLAG_EXECUTION)
-		        player.SetThirdPersonShoulderModeOff()
-		        _HandleRespawnARENAS(player)
+	foreach(player in GetPlayerArray())
+	{
+		try {
+			if(IsValid(player))
+			{
+				RemoveCinematicFlag(player, CE_FLAG_HIDE_MAIN_HUD | CE_FLAG_EXECUTION)
+				player.SetThirdPersonShoulderModeOff()
+				_HandleRespawnARENAS(player)
 				ClearInvincible(player)
-		        DeployAndEnableWeapons(player)
+				DeployAndEnableWeapons(player)
 				EnableOffhandWeapons( player )
 
 				entity primary = player.GetNormalWeapon( WEAPON_INVENTORY_SLOT_PRIMARY_0 )
@@ -238,174 +238,173 @@ void function SimpleChampionUI(){
 				if(IsValid(ultimate) && ultimate.UsesClipsForAmmo())
 					ultimate.SetWeaponPrimaryClipCount( ultimate.GetWeaponPrimaryClipCountMax() )
 			}
-	    } catch(e3){}
-    }
-}
+		} catch(e3){}
+	}
 
-printt("Flowstate DEBUG - Clearing last round stats.")
-foreach(player in GetPlayerArray())
-    {
-        if(IsValidPlayer(player))
-        {
-			player.p.playerDamageDealt = 0.0
-			if (FlowState_ResetKillsEachRound() && IsValidPlayer(player))
+	printt("Flowstate DEBUG - Clearing last round stats.")
+	foreach(player in GetPlayerArray())
+		{
+			if(IsValidPlayer(player))
 			{
-				player.SetPlayerNetInt("kills", 0) //Reset for kills
-	    		player.SetPlayerNetInt("assists", 0) //Reset for deaths
+				player.p.playerDamageDealt = 0.0
+				if (FlowState_ResetKillsEachRound() && IsValidPlayer(player))
+				{
+					player.SetPlayerNetInt("kills", 0) //Reset for kills
+					player.SetPlayerNetInt("assists", 0) //Reset for deaths
+				}
 			}
 		}
-	}
-ResetAllPlayerStats()
-arenas.ringBoundary = CreateRingBoundary(arenas.selectedLocation)
-printt("Flowstate DEBUG - Bubble created, executing SimpleChampionUI.")
+	ResetAllPlayerStats()
+	arenas.ringBoundary = CreateRingBoundary(arenas.selectedLocation)
+	printt("Flowstate DEBUG - Bubble created, executing SimpleChampionUI.")
 
-float endTime = Time() + FlowState_RoundTime()
-printt("Flowstate DEBUG - Arenas gameloop Round started.")
+	float endTime = Time() + FlowState_RoundTime()
+	printt("Flowstate DEBUG - Arenas gameloop Round started.")
 
-foreach(player in GetPlayerArray())
-    {
-	thread WpnPulloutOnRespawn(player)
-	}
-
-if(GetCurrentPlaylistVarBool("flowstateEndlessFFAorTDM", false ))
-{
-	while(true)
-	{
-		WaitFrame()
-	}
-} else if(Flowstate_EnableAutoChangeLevel())
-	thread AutoChangeLevelThread(endTime)
-
-if (FlowState_Timer()){
-while( Time() <= endTime )
-	{
-		if(Time() == endTime-900)
+	foreach(player in GetPlayerArray())
 		{
-				foreach(player in GetPlayerArray())
-				{
-					if(IsValid(player))
-					{
-						Message(player,"15 MINUTES REMAINING!","", 5)
-					}
-				}
-			}
-			if(Time() == endTime-600)
-			{
-				foreach(player in GetPlayerArray())
-				{
-					if(IsValid(player))
-					{
-						Message(player,"10 MINUTES REMAINING!","", 5)
-					}
-				}
-			}
-			if(Time() == endTime-300)
-			{
-				foreach(player in GetPlayerArray())
-				{
-					if(IsValid(player))
-					{
-						Message(player,"5 MINUTES REMAINING!","", 5)
-					}
-				}
-			}
-			if(Time() == endTime-120)
-			{
-				foreach(player in GetPlayerArray())
-				{
-					if(IsValid(player))
-					{
-						Message(player,"2 MINUTES REMAINING!","", 5)
-					}
-				}
-			}
-			if(Time() == endTime-60)
-			{
-				foreach(player in GetPlayerArray())
-				{
-					if(IsValid(player))
-					{
-						Message(player,"1 MINUTE REMAINING!","", 5, "diag_ap_aiNotify_circleMoves60sec")
-					}
-				}
-			}
-			if(Time() == endTime-30)
-			{
-				foreach(player in GetPlayerArray())
-				{
-					if(IsValid(player))
-					{
-						Message(player,"30 SECONDS REMAINING!","", 5, "diag_ap_aiNotify_circleMoves30sec")
-					}
-				}
-			}
-			if(Time() == endTime-10)
-			{
-				foreach(player in GetPlayerArray())
-				{
-					if(IsValid(player))
-					{
-						Message(player,"10 SECONDS REMAINING!", "\n The battle is over.", 8, "diag_ap_aiNotify_circleMoves10sec")
-					}
-				}
-			}
-			if(arenas.tdmState == eTDMState.NEXT_ROUND_NOW){
-				printt("Flowstate DEBUG - tdmState is eTDMState.NEXT_ROUND_NOW Loop ended.")
-				break}
+		thread WpnPulloutOnRespawn(player)
+		}
+
+	if(GetCurrentPlaylistVarBool("flowstateEndlessFFAorTDM", false ))
+	{
+		while(true)
+		{
 			WaitFrame()
 		}
-}
-else if (!FlowState_Timer() ){
+	} else if(Flowstate_EnableAutoChangeLevel())
+		thread AutoChangeLevelThread(endTime)
+
+	if (FlowState_Timer()){
 	while( Time() <= endTime )
 		{
-		if(arenas.tdmState == eTDMState.NEXT_ROUND_NOW) {
-			printt("Flowstate DEBUG - tdmState is eTDMState.NEXT_ROUND_NOW Loop ended.")
-			break}
-			WaitFrame()
-		}
-}
-
-foreach(player in GetPlayerArray())
-    {
-		if(IsValid(player) && !IsAlive(player)){
-				_HandleRespawnARENAS(player)
-				ClearInvincible(player)
-				player.SetThirdPersonShoulderModeOn()
-				HolsterAndDisableWeapons( player )
-		}else if(IsValid(player) && IsAlive(player))
+			if(Time() == endTime-900)
 			{
-				PlayerRestoreHP(player, 100, Equipment_GetDefaultShieldHP())
-				player.SetThirdPersonShoulderModeOn()
-				HolsterAndDisableWeapons( player )
+					foreach(player in GetPlayerArray())
+					{
+						if(IsValid(player))
+						{
+							Message(player,"15 MINUTES REMAINING!","", 5)
+						}
+					}
+				}
+				if(Time() == endTime-600)
+				{
+					foreach(player in GetPlayerArray())
+					{
+						if(IsValid(player))
+						{
+							Message(player,"10 MINUTES REMAINING!","", 5)
+						}
+					}
+				}
+				if(Time() == endTime-300)
+				{
+					foreach(player in GetPlayerArray())
+					{
+						if(IsValid(player))
+						{
+							Message(player,"5 MINUTES REMAINING!","", 5)
+						}
+					}
+				}
+				if(Time() == endTime-120)
+				{
+					foreach(player in GetPlayerArray())
+					{
+						if(IsValid(player))
+						{
+							Message(player,"2 MINUTES REMAINING!","", 5)
+						}
+					}
+				}
+				if(Time() == endTime-60)
+				{
+					foreach(player in GetPlayerArray())
+					{
+						if(IsValid(player))
+						{
+							Message(player,"1 MINUTE REMAINING!","", 5, "diag_ap_aiNotify_circleMoves60sec")
+						}
+					}
+				}
+				if(Time() == endTime-30)
+				{
+					foreach(player in GetPlayerArray())
+					{
+						if(IsValid(player))
+						{
+							Message(player,"30 SECONDS REMAINING!","", 5, "diag_ap_aiNotify_circleMoves30sec")
+						}
+					}
+				}
+				if(Time() == endTime-10)
+				{
+					foreach(player in GetPlayerArray())
+					{
+						if(IsValid(player))
+						{
+							Message(player,"10 SECONDS REMAINING!", "\n The battle is over.", 8, "diag_ap_aiNotify_circleMoves10sec")
+						}
+					}
+				}
+				if(arenas.tdmState == eTDMState.NEXT_ROUND_NOW){
+					printt("Flowstate DEBUG - tdmState is eTDMState.NEXT_ROUND_NOW Loop ended.")
+					break}
+				WaitFrame()
+			}
+	}
+	else if (!FlowState_Timer() ){
+		while( Time() <= endTime )
+			{
+			if(arenas.tdmState == eTDMState.NEXT_ROUND_NOW) {
+				printt("Flowstate DEBUG - tdmState is eTDMState.NEXT_ROUND_NOW Loop ended.")
+				break}
+				WaitFrame()
+			}
+	}
+
+	foreach(player in GetPlayerArray())
+		{
+			if(IsValid(player) && !IsAlive(player)){
+					_HandleRespawnARENAS(player)
+					ClearInvincible(player)
+					player.SetThirdPersonShoulderModeOn()
+					HolsterAndDisableWeapons( player )
+			}else if(IsValid(player) && IsAlive(player))
+				{
+					PlayerRestoreHP(player, 100, Equipment_GetDefaultShieldHP())
+					player.SetThirdPersonShoulderModeOn()
+					HolsterAndDisableWeapons( player )
+			}
 		}
-	}
 
-wait 1
-foreach(entity champion in GetPlayerArray())
-    {
-		array<ItemFlavor> characterSkinsA = GetValidItemFlavorsForLoadoutSlot( ToEHI( champion ), Loadout_CharacterSkin( LoadoutSlot_GetItemFlavor( ToEHI( champion ), Loadout_CharacterClass() ) ) )
-		CharacterSkin_Apply( champion, characterSkinsA[0])
-	}
-foreach(player in GetPlayerArray())
-    {
+	wait 1
+	foreach(entity champion in GetPlayerArray())
+		{
+			array<ItemFlavor> characterSkinsA = GetValidItemFlavorsForLoadoutSlot( ToEHI( champion ), Loadout_CharacterSkin( LoadoutSlot_GetItemFlavor( ToEHI( champion ), Loadout_CharacterClass() ) ) )
+			CharacterSkin_Apply( champion, characterSkinsA[0])
+		}
+	foreach(player in GetPlayerArray())
+		{
 
-	 if(IsValid(player)){
-	 AddCinematicFlag(player, CE_FLAG_HIDE_MAIN_HUD | CE_FLAG_EXECUTION)
-	 }
-	wait 0.1
-	}
-
-wait 7
-
-foreach(player in GetPlayerArray())
-    {
 		if(IsValid(player)){
-		ClearInvincible(player)
-		RemoveCinematicFlag(player, CE_FLAG_HIDE_MAIN_HUD | CE_FLAG_EXECUTION)
-		player.SetThirdPersonShoulderModeOff()
+		AddCinematicFlag(player, CE_FLAG_HIDE_MAIN_HUD | CE_FLAG_EXECUTION)
 		}
-	}
-arenas.ringBoundary.Destroy()
+		wait 0.1
+		}
+
+	wait 7
+
+	foreach(player in GetPlayerArray())
+		{
+			if(IsValid(player)){
+			ClearInvincible(player)
+			RemoveCinematicFlag(player, CE_FLAG_HIDE_MAIN_HUD | CE_FLAG_EXECUTION)
+			player.SetThirdPersonShoulderModeOff()
+			}
+		}
+	arenas.ringBoundary.Destroy()
 }
 
 void function _HandleRespawnARENAS(entity player)
@@ -421,20 +420,27 @@ void function _HandleRespawnARENAS(entity player)
 
 	printt("Flowstate DEBUG - Tping arenas player to Lobby.", player)
 
-	if(IsValid( player ))
-	{
+	// CharSelect(player)todo???
+	arenas.characters = clone GetAllCharacters()
+	ItemFlavor character = arenas.characters[0]
+	CharacterSelect_AssignCharacter( ToEHI( player ), character )
+    ItemFlavor ultiamteAbility = CharacterClass_GetUltimateAbility( character )
+    ItemFlavor tacticalAbility = CharacterClass_GetTacticalAbility( character )
+    player.GiveOffhandWeapon(CharacterAbility_GetWeaponClassname(tacticalAbility), OFFHAND_TACTICAL, [] )
+    player.GiveOffhandWeapon( CharacterAbility_GetWeaponClassname(ultiamteAbility), OFFHAND_ULTIMATE, [] )
 
-		if(FlowState_ForceCharacter()){CharSelect(player)}
-		if(!IsAlive(player)) {DoRespawnPlayer( player, null )}
-		
-		Survival_SetInventoryEnabled( player, true )
-		player.SetPlayerNetBool( "pingEnabled", true )
-		player.SetHealth(100)
-		Inventory_SetPlayerEquipment(player, "armor_pickup_lv2", "armor")
-		player.SetShieldHealth(75)
-		TpPlayerToSpawnPoint(player)
-	}
-	
+
+	if(!IsAlive(player)) {DoRespawnPlayer( player, null )}
+
+	Survival_SetInventoryEnabled( player, true )
+	player.SetPlayerNetBool( "pingEnabled", true )
+	player.SetHealth(100)
+	Inventory_SetPlayerEquipment(player, "armor_pickup_lv2", "armor")
+	player.SetShieldHealth(75)
+	TpPlayerToSpawnPoint(player)
+	player.UnforceStand()
+	player.UnfreezeControlsOnServer()
+	HolsterAndDisableWeapons( player )
 }
 
 void function WpnPulloutOnRespawn(entity player)
@@ -451,11 +457,6 @@ void function WpnPulloutOnRespawn(entity player)
 	// 	player.GetNormalWeapon( WEAPON_INVENTORY_SLOT_PRIMARY_0 ).SetWeaponCharm( $"mdl/props/charm/charm_nessy.rmdl", "CHARM")
 	// }
 }
-
-// bool function returnPropBool(){
-// //By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-// 	return arenas.cantUseChangeProp
-// }
 
 void function ResetAllPlayerStats()
 {
@@ -496,42 +497,22 @@ void function DestroyPlayerPropsARENAS()
 //      ██  ██   ██ ██ ██  ██ ██ ██    ██  ██
 //       ██ ██   ██ ██ ██   ████  ██████  ██
 // Purpose: Create The RingBoundary
-entity function CreateRingBoundary(LocationSettings location)
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
+entity function CreateRingBoundary(ArenasLocSettings location)
 {
-    array<LocPair> spawns = location.spawns
-
-    vector ringCenter
-    foreach( spawn in spawns )
-    {
-        ringCenter += spawn.origin
-    }
-
-    ringCenter /= spawns.len()
-
-    float ringRadius = 0
-
-    foreach( LocPair spawn in spawns )
-    {
-        if( Distance( spawn.origin, ringCenter ) > ringRadius )
-            ringRadius = Distance(spawn.origin, ringCenter)
-    }
-
-    ringRadius += GetCurrentPlaylistVarFloat("ring_radius_padding", 800)
 	//We watch the ring fx with this entity in the threads
 	entity circle = CreateEntity( "prop_script" )
 	circle.SetValueForModelKey( $"mdl/fx/ar_survival_radius_1x100.rmdl" )
 	circle.kv.fadedist = -1
-	circle.kv.modelscale = ringRadius
+	circle.kv.modelscale = location.radius
 	circle.kv.renderamt = 255
 	circle.kv.rendercolor = FlowState_RingColor()
 	circle.kv.solid = 0
 	circle.kv.VisibilityFlags = ENTITY_VISIBLE_TO_EVERYONE
-	circle.SetOrigin( ringCenter )
+	circle.SetOrigin( location.center )
 	circle.SetAngles( <0, 0, 0> )
 	circle.NotSolid()
 	circle.DisableHibernation()
-    circle.Minimap_SetObjectScale( ringRadius / SURVIVAL_MINIMAP_RING_SCALE )
+    circle.Minimap_SetObjectScale( location.radius / SURVIVAL_MINIMAP_RING_SCALE )
     circle.Minimap_SetAlignUpright( true )
     circle.Minimap_SetZOrder( 2 )
     circle.Minimap_SetClampToEdge( true )
@@ -544,14 +525,14 @@ entity function CreateRingBoundary(LocationSettings location)
         circle.Minimap_AlwaysShow( 0, player )
     }
 
-	SetDeathFieldParams( ringCenter, ringRadius, ringRadius, 90000, 99999 ) // This function from the API allows client to read ringRadius from server so we can use visual effects in shared function. Colombia
+	SetDeathFieldParams( location.center, location.radius, location.radius, 90000, 99999 ) // This function from the API allows client to read ringRadius from server so we can use visual effects in shared function. Colombia
 
 	//Audio thread for ring
 	foreach(sPlayer in GetPlayerArray())
-		thread AudioThread(circle, sPlayer, ringRadius)
+		thread AudioThread(circle, sPlayer, location.radius)
 
 	//Damage thread for ring
-	thread RingDamage(circle, ringRadius)
+	thread RingDamage(circle, location.radius)
 
     return circle
 }
@@ -645,10 +626,13 @@ void function PlayerRestoreHP(entity player, float health, float shields)
 void function _OnPlayerConnected(entity player){
     if(!IsValid(player)) return
 
-	if(FlowState_ForceCharacter()){
-		player.SetPlayerNetBool( "hasLockedInCharacter", true)
-		CharSelect(player)
-	}
+	arenas.characters = clone GetAllCharacters()
+	ItemFlavor character = arenas.characters[0]
+	CharacterSelect_AssignCharacter( ToEHI( player ), character )
+    ItemFlavor ultiamteAbility = CharacterClass_GetUltimateAbility( character )
+    ItemFlavor tacticalAbility = CharacterClass_GetTacticalAbility( character )
+    player.GiveOffhandWeapon(CharacterAbility_GetWeaponClassname(tacticalAbility), OFFHAND_TACTICAL, [] )
+    player.GiveOffhandWeapon( CharacterAbility_GetWeaponClassname(ultiamteAbility), OFFHAND_ULTIMATE, [] )
 
 	if(GetMapName() == "mp_rr_aqueduct")
 	    if(IsValid(player)) {
@@ -989,6 +973,17 @@ bool function ClientCommand_NextRound(entity player, array<string> args)
 	return true
 }
 
+bool function ClientCommand_SwitchTeam(entity player, array<string> args)
+{
+	int team = player.GetTeam()
+	if(team==TEAM_MILITIA){
+		SetTeam(player, TEAM_IMC)	
+	}else{
+		SetTeam(player, TEAM_MILITIA)	
+	}
+	return true
+}
+
 void function CreateFlowStateDeathBoxForPlayer( entity victim, entity attacker, var damageInfo )
 {
 	entity deathBox = FlowState_CreateDeathBox( victim, true )
@@ -1159,27 +1154,37 @@ array<ConsumableInventoryItem> function FlowStateGetAllDroppableItems( entity pl
 
 void function TpPlayerToSpawnPoint(entity player)
 {
-	LocPair loc = _GetAppropriateSpawnLocation(player)
-    player.SetOrigin(loc.origin) ; player.SetAngles(loc.angles)
-}
-
-LocPair function _GetAppropriateSpawnLocation(entity player)
-{
-    bool needSelectRespawn = true
-    if(!IsValid(player))
-        needSelectRespawn = false
-
-    LocPair selectedSpawn = _GetVotingLocation()
+    LocPair loc;
 
 	switch(GetGameState())
     {
-        case eGameState.MapVoting: selectedSpawn = _GetVotingLocation(); break
+        case eGameState.MapVoting: 
+			loc = _GetVotingLocation()
+			break
         case eGameState.Playing:
-			if(arenas.selectedLocation.spawns.len() > 0)
-				selectedSpawn = arenas.selectedLocation.spawns.getrandom()
-        break
+			loc = _findLocIndex(player)
+        	break
     }
-    return selectedSpawn
+	player.SetOrigin(loc.origin) ; player.SetAngles(loc.angles)
+
+}
+
+LocPair function _findLocIndex(entity player)
+{
+	// workaround
+	if(arenas.selectedLocation.team_1_spawns.len() == 0){return _GetVotingLocation()}
+	int teamIndex = player.GetTeam()
+	array<entity> teamPlayers = GetPlayerArrayOfTeam(teamIndex)
+	for(int i = 0 ; i < teamPlayers.len() ; i++){
+		entity teamPlayer = teamPlayers[i]
+		if(teamPlayer != player){continue}
+		if(!IsAlive(player)) {DoRespawnPlayer(player, null)}
+		if(teamIndex==TEAM_IMC)
+			return arenas.selectedLocation.team_1_spawns[i]
+		else
+			return arenas.selectedLocation.team_2_spawns[i]
+	}
+	return _GetVotingLocation()
 }
 
 LocPair function _GetVotingLocation()
