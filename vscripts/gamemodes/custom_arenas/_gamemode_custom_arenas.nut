@@ -224,19 +224,7 @@ void function SimpleChampionUI()
 				DeployAndEnableWeapons(player)
 				EnableOffhandWeapons( player )
 
-				entity primary = player.GetNormalWeapon( WEAPON_INVENTORY_SLOT_PRIMARY_0 )
-				entity secondary = player.GetNormalWeapon( WEAPON_INVENTORY_SLOT_PRIMARY_1 )
-				entity tactical = player.GetOffhandWeapon( OFFHAND_INVENTORY )
-				entity ultimate = player.GetOffhandWeapon( OFFHAND_LEFT )
-
-				if(IsValid(primary) && primary.UsesClipsForAmmo())
-					primary.SetWeaponPrimaryClipCount(primary.GetWeaponPrimaryClipCountMax())
-				if(IsValid(secondary) && secondary.UsesClipsForAmmo())
-					secondary.SetWeaponPrimaryClipCount( secondary.GetWeaponPrimaryClipCountMax())
-				if(IsValid(tactical) && tactical.UsesClipsForAmmo())
-					tactical.SetWeaponPrimaryClipCount( tactical.GetWeaponPrimaryClipCountMax() )
-				if(IsValid(ultimate) && ultimate.UsesClipsForAmmo())
-					ultimate.SetWeaponPrimaryClipCount( ultimate.GetWeaponPrimaryClipCountMax() )
+				_fillPlayerAmmo(player)	
 			}
 		} catch(e3){}
 	}
@@ -276,135 +264,146 @@ void function SimpleChampionUI()
 		thread AutoChangeLevelThread(endTime)
 
 	if (FlowState_Timer()){
-	while( Time() <= endTime )
-		{
+		while( Time() <= endTime ){
 			if(Time() == endTime-900)
 			{
-					foreach(player in GetPlayerArray())
-					{
-						if(IsValid(player))
-						{
-							Message(player,"15 MINUTES REMAINING!","", 5)
-						}
-					}
-				}
-				if(Time() == endTime-600)
+				foreach(player in GetPlayerArray())
 				{
-					foreach(player in GetPlayerArray())
+					if(IsValid(player))
 					{
-						if(IsValid(player))
-						{
-							Message(player,"10 MINUTES REMAINING!","", 5)
-						}
+						Message(player,"15 MINUTES REMAINING!","", 5)
 					}
 				}
-				if(Time() == endTime-300)
-				{
-					foreach(player in GetPlayerArray())
-					{
-						if(IsValid(player))
-						{
-							Message(player,"5 MINUTES REMAINING!","", 5)
-						}
-					}
-				}
-				if(Time() == endTime-120)
-				{
-					foreach(player in GetPlayerArray())
-					{
-						if(IsValid(player))
-						{
-							Message(player,"2 MINUTES REMAINING!","", 5)
-						}
-					}
-				}
-				if(Time() == endTime-60)
-				{
-					foreach(player in GetPlayerArray())
-					{
-						if(IsValid(player))
-						{
-							Message(player,"1 MINUTE REMAINING!","", 5, "diag_ap_aiNotify_circleMoves60sec")
-						}
-					}
-				}
-				if(Time() == endTime-30)
-				{
-					foreach(player in GetPlayerArray())
-					{
-						if(IsValid(player))
-						{
-							Message(player,"30 SECONDS REMAINING!","", 5, "diag_ap_aiNotify_circleMoves30sec")
-						}
-					}
-				}
-				if(Time() == endTime-10)
-				{
-					foreach(player in GetPlayerArray())
-					{
-						if(IsValid(player))
-						{
-							Message(player,"10 SECONDS REMAINING!", "\n The battle is over.", 8, "diag_ap_aiNotify_circleMoves10sec")
-						}
-					}
-				}
-				if(arenas.tdmState == eTDMState.NEXT_ROUND_NOW){
-					printt("Flowstate DEBUG - tdmState is eTDMState.NEXT_ROUND_NOW Loop ended.")
-					break}
-				WaitFrame()
 			}
-	}
-	else if (!FlowState_Timer() ){
-		while( Time() <= endTime )
+			if(Time() == endTime-600)
 			{
+				foreach(player in GetPlayerArray())
+				{
+					if(IsValid(player))
+					{
+						Message(player,"10 MINUTES REMAINING!","", 5)
+					}
+				}
+			}
+			if(Time() == endTime-300)
+			{
+				foreach(player in GetPlayerArray())
+				{
+					if(IsValid(player))
+					{
+						Message(player,"5 MINUTES REMAINING!","", 5)
+					}
+				}
+			}
+			if(Time() == endTime-120)
+			{
+				foreach(player in GetPlayerArray())
+				{
+					if(IsValid(player))
+					{
+						Message(player,"2 MINUTES REMAINING!","", 5)
+					}
+				}
+			}
+			if(Time() == endTime-60)
+			{
+				foreach(player in GetPlayerArray())
+				{
+					if(IsValid(player))
+					{
+						Message(player,"1 MINUTE REMAINING!","", 5, "diag_ap_aiNotify_circleMoves60sec")
+					}
+				}
+			}
+			if(Time() == endTime-30)
+			{
+				foreach(player in GetPlayerArray())
+				{
+					if(IsValid(player))
+					{
+						Message(player,"30 SECONDS REMAINING!","", 5, "diag_ap_aiNotify_circleMoves30sec")
+					}
+				}
+			}
+			if(Time() == endTime-10)
+			{
+				foreach(player in GetPlayerArray())
+				{
+					if(IsValid(player))
+					{
+						Message(player,"10 SECONDS REMAINING!", "\n The battle is over.", 8, "diag_ap_aiNotify_circleMoves10sec")
+					}
+				}
+			}
+			if(arenas.tdmState == eTDMState.NEXT_ROUND_NOW){
+				printt("Flowstate DEBUG - tdmState is eTDMState.NEXT_ROUND_NOW Loop ended.")
+				break
+			}
+			WaitFrame()
+		}
+	} else if (!FlowState_Timer() ){
+		while( Time() <= endTime ){
 			if(arenas.tdmState == eTDMState.NEXT_ROUND_NOW) {
 				printt("Flowstate DEBUG - tdmState is eTDMState.NEXT_ROUND_NOW Loop ended.")
-				break}
-				WaitFrame()
+				break
 			}
+			WaitFrame()
+		}
 	}
 
-	foreach(player in GetPlayerArray())
-		{
-			if(IsValid(player) && !IsAlive(player)){
-					_HandleRespawnARENAS(player)
-					ClearInvincible(player)
-					player.SetThirdPersonShoulderModeOn()
-					HolsterAndDisableWeapons( player )
-			}else if(IsValid(player) && IsAlive(player))
-				{
-					PlayerRestoreHP(player, 100, Equipment_GetDefaultShieldHP())
-					player.SetThirdPersonShoulderModeOn()
-					HolsterAndDisableWeapons( player )
-			}
+	foreach(player in GetPlayerArray()){
+		if(IsValid(player) && !IsAlive(player)){
+				_HandleRespawnARENAS(player)
+				ClearInvincible(player)
+				player.SetThirdPersonShoulderModeOn()
+				HolsterAndDisableWeapons( player )
+		}else if(IsValid(player) && IsAlive(player))
+			{
+				PlayerRestoreHP(player, 100, Equipment_GetDefaultShieldHP())
+				player.SetThirdPersonShoulderModeOn()
+				HolsterAndDisableWeapons( player )
 		}
+	}
 
 	wait 1
-	foreach(entity champion in GetPlayerArray())
-		{
-			array<ItemFlavor> characterSkinsA = GetValidItemFlavorsForLoadoutSlot( ToEHI( champion ), Loadout_CharacterSkin( LoadoutSlot_GetItemFlavor( ToEHI( champion ), Loadout_CharacterClass() ) ) )
-			CharacterSkin_Apply( champion, characterSkinsA[0])
-		}
-	foreach(player in GetPlayerArray())
-		{
-
+	foreach(entity champion in GetPlayerArray()){
+		array<ItemFlavor> characterSkinsA = GetValidItemFlavorsForLoadoutSlot( ToEHI( champion ), Loadout_CharacterSkin( LoadoutSlot_GetItemFlavor( ToEHI( champion ), Loadout_CharacterClass() ) ) )
+		CharacterSkin_Apply( champion, characterSkinsA[0])
+	}
+	foreach(player in GetPlayerArray()){
 		if(IsValid(player)){
-		AddCinematicFlag(player, CE_FLAG_HIDE_MAIN_HUD | CE_FLAG_EXECUTION)
+			AddCinematicFlag(player, CE_FLAG_HIDE_MAIN_HUD | CE_FLAG_EXECUTION)
 		}
 		wait 0.1
-		}
+	}
 
-	wait 7
+	wait 10
 
-	foreach(player in GetPlayerArray())
-		{
-			if(IsValid(player)){
+	foreach(player in GetPlayerArray()){
+		if(IsValid(player)){
 			ClearInvincible(player)
 			RemoveCinematicFlag(player, CE_FLAG_HIDE_MAIN_HUD | CE_FLAG_EXECUTION)
 			player.SetThirdPersonShoulderModeOff()
-			}
 		}
+	}
 	arenas.ringBoundary.Destroy()
+}
+
+void function _fillPlayerAmmo(entity player){
+
+	entity primary = player.GetNormalWeapon(WEAPON_INVENTORY_SLOT_PRIMARY_0)
+	entity secondary = player.GetNormalWeapon(WEAPON_INVENTORY_SLOT_PRIMARY_1)
+	entity tactical = player.GetOffhandWeapon(OFFHAND_LEFT)
+	// entity ultimate = player.GetOffhandWeapon(OFFHAND_INVENTORY)
+
+	if(IsValid(primary) && primary.UsesClipsForAmmo())
+		primary.SetWeaponPrimaryClipCount(primary.GetWeaponPrimaryClipCountMax())
+	if(IsValid(secondary) && secondary.UsesClipsForAmmo())
+		secondary.SetWeaponPrimaryClipCount( secondary.GetWeaponPrimaryClipCountMax())
+	if(IsValid(tactical) && tactical.UsesClipsForAmmo())
+		tactical.SetWeaponPrimaryClipCount( tactical.GetWeaponPrimaryClipCountMax() )
+	// if(IsValid(ultimate) && ultimate.UsesClipsForAmmo())
+	// 	ultimate.SetWeaponPrimaryClipCount( ultimate.GetWeaponPrimaryClipCountMax() )
 }
 
 void function _HandleRespawnARENAS(entity player)
@@ -420,15 +419,13 @@ void function _HandleRespawnARENAS(entity player)
 
 	printt("Flowstate DEBUG - Tping arenas player to Lobby.", player)
 
-	// CharSelect(player)todo???
 	arenas.characters = clone GetAllCharacters()
 	ItemFlavor character = arenas.characters[0]
 	CharacterSelect_AssignCharacter( ToEHI( player ), character )
     ItemFlavor ultiamteAbility = CharacterClass_GetUltimateAbility( character )
     ItemFlavor tacticalAbility = CharacterClass_GetTacticalAbility( character )
     player.GiveOffhandWeapon(CharacterAbility_GetWeaponClassname(tacticalAbility), OFFHAND_TACTICAL, [] )
-    player.GiveOffhandWeapon( CharacterAbility_GetWeaponClassname(ultiamteAbility), OFFHAND_ULTIMATE, [] )
-
+    player.GiveOffhandWeapon(CharacterAbility_GetWeaponClassname(ultiamteAbility), OFFHAND_ULTIMATE, [] )
 
 	if(!IsAlive(player)) {DoRespawnPlayer( player, null )}
 
@@ -440,7 +437,9 @@ void function _HandleRespawnARENAS(entity player)
 	TpPlayerToSpawnPoint(player)
 	player.UnforceStand()
 	player.UnfreezeControlsOnServer()
-	HolsterAndDisableWeapons( player )
+	GiveWeaponsFromStoredArray(player, player.p.storedWeapons)
+	_fillPlayerAmmo(player)
+
 }
 
 void function WpnPulloutOnRespawn(entity player)
@@ -740,13 +739,15 @@ void function _OnPlayerDied(entity victim, entity attacker, var damageInfo)
 {
 	CreateFlowStateDeathBoxForPlayer(victim, attacker, damageInfo)
 
+	victim.p.storedWeapons = StoreWeapons(victim)
+
 	switch(GetGameState())
     {
         case eGameState.Playing:
-            // Víctim
             void functionref() victimHandleFunc = void function() : (victim, attacker, damageInfo) {
 	    		wait 1
 	    		if(!IsValid(victim)) return
+
 
 	    		if(arenas.tdmState != eTDMState.NEXT_ROUND_NOW && IsValid(victim) && IsValid(attacker) && Spectator_GetReplayIsEnabled() && ShouldSetObserverTarget( attacker )){
 	    			victim.SetObserverTarget( attacker )
@@ -769,6 +770,7 @@ void function _OnPlayerDied(entity victim, entity attacker, var damageInfo)
 
 				
 				if(IsValid(victim)) {
+					// for 測試 先不要進入觀察模式
 					// victim.SetObserverTarget( attacker )
 					// victim.SetSpecReplayDelay( 2 )
                 	// victim.StartObserverMode( OBS_MODE_IN_EYE )
@@ -1159,7 +1161,8 @@ void function TpPlayerToSpawnPoint(entity player)
 	switch(GetGameState())
     {
         case eGameState.MapVoting: 
-			loc = _GetVotingLocation()
+			// loc = _GetVotingLocation()
+			loc = _findLocIndex(player)
 			break
         case eGameState.Playing:
 			loc = _findLocIndex(player)
