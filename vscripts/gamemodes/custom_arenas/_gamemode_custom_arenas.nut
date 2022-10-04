@@ -16,15 +16,22 @@ global function _CustomARENAS_Init
 global function _RegisterLocationARENAS
 global function RunARENAS
 
-enum eTDMState
+enum eArenasState
 {
 	IN_PROGRESS = 0
-	NEXT_ROUND_NOW = 1
+	WINNER_DECIDED = 1
 }
 
 struct {
-	string scriptversion = "v0.1"
-    int tdmState = eTDMState.IN_PROGRESS
+	array<int> teamScore 
+	array<entity> votedPlayers // array of players that have already voted (bad var name idc)
+    bool votingtime = false
+    bool votestied = false
+    array<int> mapVotes
+    array<int> mapIds
+    int mappicked = 0
+
+    int state = eArenasState.IN_PROGRESS
     int nextMapIndex = 0
 	bool mapIndexChanged = true
 	array<entity> playerSpawnedProps
@@ -39,7 +46,6 @@ struct {
     entity ringBoundary
 	entity previousChampion
 	entity previousChallenger
-	int deathPlayersCounter=0
 	int maxPlayers
 	int maxTeams
 
@@ -136,19 +142,10 @@ void function SimpleChampionUI()
 	isBrightWaterByZer0 = false
 
 	SetGameState(eGameState.Playing)
-	arenas.tdmState = eTDMState.IN_PROGRESS
+	arenas.state = eArenasState.IN_PROGRESS
 	arenas.FallTriggersEnabled = true
 
-	foreach(player in GetPlayerArray())
-	{
-			if(IsValid(player))
-			{
-				_HandleRespawnARENAS(player)
-				player.UnforceStand()
-				player.UnfreezeControlsOnServer()
-				HolsterAndDisableWeapons( player )
-			}
-	}
+	_NewRound()	
 
 	if (!arenas.mapIndexChanged)
 	{
@@ -162,6 +159,7 @@ void function SimpleChampionUI()
 	int choice = arenas.nextMapIndex
 	arenas.mapIndexChanged = false
 	arenas.selectedLocation = arenas.locationSettings[choice]
+	printt(">>>>>>>>>>>choice"+choice)
 	arenas.thisroundDroppodSpawns = GetNewFFADropShipLocations(arenas.selectedLocation.name, GetMapName())
 	printt("Flowstate DEBUG - Next round location is: " + arenas.selectedLocation.name)
 
@@ -254,67 +252,11 @@ void function SimpleChampionUI()
 		thread WpnPulloutOnRespawn(player)
 		}
 
-	if(GetCurrentPlaylistVarBool("flowstateEndlessFFAorTDM", false ))
-	{
-		while(true)
-		{
-			WaitFrame()
-		}
-	} else if(Flowstate_EnableAutoChangeLevel())
+	if(Flowstate_EnableAutoChangeLevel())
 		thread AutoChangeLevelThread(endTime)
 
 	if (FlowState_Timer()){
 		while( Time() <= endTime ){
-			if(Time() == endTime-900)
-			{
-				foreach(player in GetPlayerArray())
-				{
-					if(IsValid(player))
-					{
-						Message(player,"15 MINUTES REMAINING!","", 5)
-					}
-				}
-			}
-			if(Time() == endTime-600)
-			{
-				foreach(player in GetPlayerArray())
-				{
-					if(IsValid(player))
-					{
-						Message(player,"10 MINUTES REMAINING!","", 5)
-					}
-				}
-			}
-			if(Time() == endTime-300)
-			{
-				foreach(player in GetPlayerArray())
-				{
-					if(IsValid(player))
-					{
-						Message(player,"5 MINUTES REMAINING!","", 5)
-					}
-				}
-			}
-			if(Time() == endTime-120)
-			{
-				foreach(player in GetPlayerArray())
-				{
-					if(IsValid(player))
-					{
-						Message(player,"2 MINUTES REMAINING!","", 5)
-					}
-				}
-			}
-			if(Time() == endTime-60)
-			{
-				foreach(player in GetPlayerArray())
-				{
-					if(IsValid(player))
-					{
-						Message(player,"1 MINUTE REMAINING!","", 5, "diag_ap_aiNotify_circleMoves60sec")
-					}
-				}
-			}
 			if(Time() == endTime-30)
 			{
 				foreach(player in GetPlayerArray())
@@ -335,16 +277,16 @@ void function SimpleChampionUI()
 					}
 				}
 			}
-			if(arenas.tdmState == eTDMState.NEXT_ROUND_NOW){
-				printt("Flowstate DEBUG - tdmState is eTDMState.NEXT_ROUND_NOW Loop ended.")
+			if(arenas.state == eArenasState.WINNER_DECIDED){
+				printt("Flowstate DEBUG - arenasState is eArenasState.WINNER_DECIDED Loop ended.")
 				break
 			}
 			WaitFrame()
 		}
 	} else if (!FlowState_Timer() ){
 		while( Time() <= endTime ){
-			if(arenas.tdmState == eTDMState.NEXT_ROUND_NOW) {
-				printt("Flowstate DEBUG - tdmState is eTDMState.NEXT_ROUND_NOW Loop ended.")
+			if(arenas.state == eArenasState.WINNER_DECIDED) {
+				printt("Flowstate DEBUG - arenasState is eArenasState.WINNER_DECIDED Loop ended.")
 				break
 			}
 			WaitFrame()
@@ -387,6 +329,14 @@ void function SimpleChampionUI()
 		}
 	}
 	arenas.ringBoundary.Destroy()
+}
+
+void function ResetMapVotes()
+{
+    arenas.mapVotes.clear()
+    arenas.mapVotes.resize( NUMBER_OF_MAP_SLOTS )
+	arenas.teamScore.clear()
+	arenas.teamScore.resize(arenas.maxTeams+1)
 }
 
 void function _fillPlayerAmmo(entity player){
@@ -684,7 +634,7 @@ void function _OnPlayerConnected(entity player){
 					bool DropPodOnSpawn = GetCurrentPlaylistVarBool("flowstateDroppodsOnPlayerConnected", false )
 					bool IsStaging = InValidMaps.find( GetMapName() ) != -1
 					bool IsMapValid = InValidMaps.find(arenas.selectedLocation.name) != -1
-					if(arenas.tdmState == eTDMState.NEXT_ROUND_NOW || !DropPodOnSpawn || IsStaging || IsMapValid )
+					if(arenas.state == eArenasState.WINNER_DECIDED || !DropPodOnSpawn || IsStaging || IsMapValid )
 						_HandleRespawnARENAS(player)
 					else
 					{
@@ -735,6 +685,15 @@ void function __HighPingCheck(entity player)
 	}
 }
 
+void function _NewRound(){
+	foreach(player in GetPlayerArray()){
+		if(IsValid(player)){
+			printt(">>>>> respawn")
+			_HandleRespawnARENAS(player)
+		}
+	}
+}
+
 void function _OnPlayerDied(entity victim, entity attacker, var damageInfo)
 {
 	CreateFlowStateDeathBoxForPlayer(victim, attacker, damageInfo)
@@ -744,41 +703,6 @@ void function _OnPlayerDied(entity victim, entity attacker, var damageInfo)
 	switch(GetGameState())
     {
         case eGameState.Playing:
-            void functionref() victimHandleFunc = void function() : (victim, attacker, damageInfo) {
-	    		wait 1
-	    		if(!IsValid(victim)) return
-
-
-	    		if(arenas.tdmState != eTDMState.NEXT_ROUND_NOW && IsValid(victim) && IsValid(attacker) && Spectator_GetReplayIsEnabled() && ShouldSetObserverTarget( attacker )){
-	    			victim.SetObserverTarget( attacker )
-	    			victim.SetSpecReplayDelay( 4 )
-	    			victim.StartObserverMode( OBS_MODE_IN_EYE )
-	    			Remote_CallFunction_NonReplay(victim, "ServerCallback_KillReplayHud_Activate")
-	    		}
-
-	    		int invscore = victim.GetPlayerGameStat( PGS_DEATHS )
-	    		invscore++
-	    		victim.SetPlayerGameStat( PGS_DEATHS, invscore)
-
-	    		//Add a death to the victim
-	    		int invscore2 = victim.GetPlayerNetInt( "assists" )
-	    		invscore2++
-	    		victim.SetPlayerNetInt( "assists", invscore2 )
-
-	    		if(arenas.tdmState != eTDMState.NEXT_ROUND_NOW)
-	    		    wait Deathmatch_GetRespawnDelay()
-
-				
-				if(IsValid(victim)) {
-					// for 測試 先不要進入觀察模式
-					// victim.SetObserverTarget( attacker )
-					// victim.SetSpecReplayDelay( 2 )
-                	// victim.StartObserverMode( OBS_MODE_IN_EYE )
-					// Remote_CallFunction_NonReplay(victim, "ServerCallback_KillReplayHud_Activate")
-					_HandleRespawnARENAS(victim)
-				}
-	    	}
-
             // Attacker
             void functionref() attackerHandleFunc = void function() : (victim, attacker, damageInfo)
 	    	{
@@ -790,28 +714,62 @@ void function _OnPlayerDied(entity victim, entity attacker, var damageInfo)
 	    			    thread EmitSoundOnEntityOnlyToPlayer( attacker, attacker, "flesh_bulletimpact_downedshot_1p_vs_3p" )
 	    			}
 
-	    			GameRules_SetTeamScore(attacker.GetTeam(), GameRules_GetTeamScore(attacker.GetTeam()) + 1)
 	    			if(attacker.IsPlayer()) attacker.p.lastKillTimer = Time()
 	    		}
             }
-	    	thread victimHandleFunc()
+
+			// Victim
+            void functionref() victimHandleFunc = void function() : (victim, attacker, damageInfo) {
+	    		wait 1
+	    		if(!IsValid(victim)) return
+
+
+	    		if(arenas.state != eArenasState.WINNER_DECIDED && IsValid(victim) && IsValid(attacker) && Spectator_GetReplayIsEnabled() && ShouldSetObserverTarget( attacker )){
+	    			victim.SetObserverTarget(attacker)
+	    			victim.SetSpecReplayDelay(2)
+	    			victim.StartObserverMode(OBS_MODE_IN_EYE)
+	    			Remote_CallFunction_NonReplay(victim, "ServerCallback_KillReplayHud_Activate")
+
+	    		}
+
+	    		if(arenas.state != eArenasState.WINNER_DECIDED)
+	    		    wait 5 // wait 5 sec
+				
+				_UpdateScore(attacker.GetTeam(), victim.GetTeam())
+	    	}
+
             thread attackerHandleFunc()
+	    	thread victimHandleFunc()
         break
         default:
 	    break
     }
 
-	arenas.deathPlayersCounter++
-	if(arenas.deathPlayersCounter == 1 )
-	{
-		foreach (player in GetPlayerArray())
-			if(IsValid(player))
-				thread EmitSoundOnEntityExceptToPlayer( player, player, "diag_ap_aiNotify_diedFirst" )
-	}
-
 	if(attacker.IsPlayer())
 	    arenas.lastKiller = attacker
 	UpdatePlayerCounts()
+}
+
+void function _UpdateScore(int attackerTeam, int victimTeam){
+
+	array<entity> teamPlayers = GetPlayerArrayOfTeam(victimTeam)
+	bool allDeath = true
+	for(int i = 0 ; i < teamPlayers.len() ; i++){
+		entity teamPlayer = teamPlayers[i]
+		if(IsAlive(teamPlayer)) {
+			allDeath = false 
+		}
+	}
+	if(!allDeath){
+		return
+	}
+
+	GameRules_SetTeamScore(attackerTeam, GameRules_GetTeamScore(attackerTeam) + 1)
+	foreach(player in GetPlayerArray()){
+		int enemyTeam = player.GetTeam == victimTeam ? attackerTeam : victimTeam 
+		Message(player, "Score: (Your) "+ GameRules_GetTeamScore(player.GetTeam())+" vs " + GameRules_GetTeamScore(enemyTeam)+" (enemy)")
+	}
+	_NewRound()
 }
 
 void function __InitAdmins()
@@ -957,7 +915,7 @@ bool function ClientCommand_NextRound(entity player, array<string> args)
     if(IsAdmin( player) && args.len()) {
         if (args[0] == "now")
         {
-           arenas.tdmState = eTDMState.NEXT_ROUND_NOW ; arenas.mapIndexChanged = false
+           arenas.state = eArenasState.WINNER_DECIDED ; arenas.mapIndexChanged = false
 	       return true
         }
 
@@ -967,7 +925,7 @@ bool function ClientCommand_NextRound(entity player, array<string> args)
 
 	    if(args.len() > 1){
 	    	if (args[1] == "now")
-	    	   arenas.tdmState = eTDMState.NEXT_ROUND_NOW
+	    	   arenas.state = eArenasState.WINNER_DECIDED
 	    }
 	} else 
 		return false
