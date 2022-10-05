@@ -16,7 +16,7 @@ struct ButtonData
 struct
 {
 	var                    menu
-	var						panel
+
 	table<var, array<var> >            buttons
 	table<var, array<ButtonData> > buttonDatas
 
@@ -31,6 +31,7 @@ struct
 	table<var, ButtonData > friendlyFireButtonData
 	table<var, ButtonData > thirdPersonButtonData
 	table<var, ButtonData > ExitChallengeButtonData
+	table<var, ButtonData > endmatchButtonData
 	InputDef& qaFooter
 } file
 
@@ -50,11 +51,10 @@ void function InitSystemPanelMain( var panel )
 	InitSystemPanel( panel )
 
 	AddPanelFooterOption( panel, LEFT, BUTTON_B, true, "#B_BUTTON_BACK", "#B_BUTTON_BACK" )
-	#if R5DEV
-		if ( Dev_CommandLineHasParm( "-showdevmenu" ) )
-			AddPanelFooterOption( panel, LEFT, BUTTON_Y, true, "#Y_BUTTON_DEV_MENU", "#DEV_MENU", OpenDevMenu )
-	#endif
-	file.qaFooter = AddPanelFooterOption( panel, LEFT, BUTTON_X, true, "#X_BUTTON_QA", "QA", ToggleOptIn, ShouldDisplayOptInOptions )
+	AddPanelFooterOption( panel, LEFT, BUTTON_Y, true, "#Y_BUTTON_DEV_MENU", "#DEV_MENU", OpenDevMenu, ShouldShowDevMenu )
+
+	if ( Dev_CommandLineHasParm( "-showoptinmenu" ) )
+		file.qaFooter = AddPanelFooterOption( panel, LEFT, BUTTON_X, true, "#X_BUTTON_QA", "QA", ToggleOptIn, ShouldDisplayOptInOptions )
 
 	#if CONSOLE_PROG
 		AddPanelFooterOption( panel, RIGHT, BUTTON_BACK, false, "#BUTTON_RETURN_TO_MAIN", "", ReturnToMain_OnActivate )
@@ -114,6 +114,7 @@ void function InitSystemPanel( var panel )
 	file.changeCharacterButtonData[ panel ] <- clone data
 	file.friendlyFireButtonData[ panel ] <- clone data
 	file.thirdPersonButtonData[ panel ] <- clone data
+	file.endmatchButtonData[ panel ] <- clone data
 	file.ExitChallengeButtonData[ panel ] <- clone data
 	
 	file.ExitChallengeButtonData[ panel ].label = "FINISH CHALLENGE"
@@ -127,6 +128,9 @@ void function InitSystemPanel( var panel )
 
 	file.exitButtonData[ panel ].label = "#EXIT_TO_DESKTOP"
 	file.exitButtonData[ panel ].activateFunc = OpenConfirmExitToDesktopDialog
+
+	file.lobbyReturnButtonData[ panel ].label = "#RETURN_TO_LOBBY"
+	file.lobbyReturnButtonData[ panel ].activateFunc = LeaveDialog
 
 	file.leavePartyData[ panel ].label = "#LEAVE_PARTY"
 	file.leavePartyData[ panel ].activateFunc = LeavePartyDialog
@@ -142,6 +146,9 @@ void function InitSystemPanel( var panel )
 	
 	file.thirdPersonButtonData[ panel ].label = "TOGGLE THIRD PERSON"
 	file.thirdPersonButtonData[ panel ].activateFunc = ToggleThirdPerson
+
+	file.endmatchButtonData[ panel ].label = "END GAME LOBBY"
+	file.endmatchButtonData[ panel ].activateFunc = HostEndMatch
 
 	AddPanelEventHandler( panel, eUIEvent.PANEL_SHOW, SystemPanelShow )
 }
@@ -194,11 +201,11 @@ void function UpdateSystemPanel( var panel )
 		}
 		if ( IsFiringRangeGameMode() && !GetCurrentPlaylistVarBool( "firingrange_aimtrainerbycolombia", false ))
 		{
-			SetButtonData( panel, buttonIndex++, file.changeCharacterButtonData[ panel ] )
-		//	SetButtonData( panel, buttonIndex++, file.thirdPersonButtonData[ panel ] )
+			//SetButtonData( panel, buttonIndex++, file.changeCharacterButtonData[ panel ] ) // !FIXME
+			//SetButtonData( panel, buttonIndex++, file.thirdPersonButtonData[ panel ] )
 
-			if ( (GetTeamSize( GetTeam() ) > 1) && FiringRangeHasFriendlyFire() )
-				SetButtonData( panel, buttonIndex++, file.friendlyFireButtonData[ panel ] )
+			//if ( (GetTeamSize( GetTeam() ) > 1) && FiringRangeHasFriendlyFire() )
+			//	SetButtonData( panel, buttonIndex++, file.friendlyFireButtonData[ panel ] )
 		}
 	}
 	else
@@ -229,7 +236,7 @@ void function UpdateSystemPanel( var panel )
 	if(GetCurrentPlaylistVarBool( "firingrange_aimtrainerbycolombia", false ))
 		Hud_SetText( dataCenterElem, "Flowstate Aim Trainer by @CafeFPS")
 	else
-		Hud_SetText( dataCenterElem, Localize( "#SYSTEM_DATACENTER", GetDatacenterName(), GetDatacenterPing() ) )
+		Hud_SetText( dataCenterElem, "R5Reloaded Server: " + MyPing() + " ms.")
 }
 
 void function SetButtonData( var panel, int buttonIndex, ButtonData buttonData )
@@ -288,6 +295,11 @@ void function OpenSettingsMenu()
 	AdvanceMenu( GetMenu( "MiscMenu" ) )
 }
 
+void function HostEndMatch()
+{
+	CreateServer( GetPlayerName() + " Lobby", "", "mp_lobby", "menufall", eServerVisibility.OFFLINE)
+}
+
 #if CONSOLE_PROG
 void function ReturnToMain_OnActivate( var button )
 {
@@ -344,6 +356,14 @@ void function UpdateOptInFooter()
 	}
 
 	UpdateFooterOptions()
+}
+
+bool function ShouldShowDevMenu()
+{
+	if(IsLobby())
+		return false
+	
+	return true
 }
 
 

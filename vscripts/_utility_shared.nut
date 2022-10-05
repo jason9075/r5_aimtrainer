@@ -126,7 +126,9 @@ void function InitWeaponScripts()
 	//		PrecacheProjectileEntity( "grenade_frag" )
 	//		PrecacheProjectileEntity( "crossbow_bolt" )
 	//	#endif
-
+	
+	//MpWeaponGrenadeGravity_Init()
+	MpSpaceElevatorAbility_Init()
 	MpAbilityShifter_Init()
 	MpWeaponDefender_Init()
 	MpWeaponDmr_Init()
@@ -148,7 +150,7 @@ void function InitWeaponScripts()
 	MpWeaponLifelineBatonPrimary_Init()
 	MpWeaponDeployableCover_Init()
 
-	#if R5DEV
+	#if DEVELOPER
 		MeleeShadowsquadHands_Init()
 		MpWeaponShadowsquadHandsPrimary_Init()
 		MDLSpawner_Init()
@@ -175,6 +177,8 @@ void function InitWeaponScripts()
 	MpWeaponTrophy_Init()
 
 	MpWeaponBasicBolt_Init()
+	if(GameRules_GetGameMode() == "map_editor")
+		MpWeaponEditor_Init()
 
 	#if SERVER
 		//BallLightning_Init()
@@ -4480,7 +4484,7 @@ vector function OffsetPointRelativeToVector( vector point, vector offset, vector
 #if SERVER
 float function GetRoundTimeLimit_ForGameMode()
 {
-#if R5DEV
+#if DEVELOPER
 	if ( level.devForcedTimeLimit )
 	{
 		//Make it needed to be called multiple times for RoundBasedGameModes

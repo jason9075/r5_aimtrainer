@@ -68,6 +68,34 @@ void function SetupHeirloom( bool allplayers = false)
 		Dev_PrintMessage( player, "R5RELOADED CUSTOM HEIRLOOM", "Ported by @KralRindo, Textured by @Aetheon_ & @KralRindo. Powered by REPAK", 4, "LootCeremony_LootHologram_Appear_Heirloom" )
 	}
 }
+
+void function UnEquipHeirloom( bool allplayers = false)
+{
+	if ( allplayers )
+	{
+		foreach( entity player in GetPlayerArray() )
+		{
+			if ( !IsValid( player ) )
+				return
+
+			player.TakeOffhandWeapon(OFFHAND_MELEE)
+			player.TakeNormalWeaponByIndexNow( WEAPON_INVENTORY_SLOT_PRIMARY_2 )
+			player.GiveWeapon( "mp_weapon_melee_survival", WEAPON_INVENTORY_SLOT_PRIMARY_2, [] )
+			player.GiveOffhandWeapon( "melee_pilot_emptyhanded", OFFHAND_MELEE, [] )
+		}
+	}
+	else
+	{
+		entity player = gp()[0]
+		if ( !IsValid( player ) )
+			return
+
+		player.TakeOffhandWeapon(OFFHAND_MELEE)
+		player.TakeNormalWeaponByIndexNow( WEAPON_INVENTORY_SLOT_PRIMARY_2 )
+		player.GiveWeapon( "mp_weapon_melee_survival", WEAPON_INVENTORY_SLOT_PRIMARY_2, [] )
+		player.GiveOffhandWeapon( "melee_pilot_emptyhanded", OFFHAND_MELEE, [] )
+	}
+}
 #endif
 
 #if SERVER || CLIENT || UI
@@ -446,9 +474,32 @@ bool ornull function DevRespawnGetPlayerEliminationOverride( entity player )
 
 void function DevRespawnPlayer( entity player, bool shouldForce, void functionref( entity, int ) devCallbackFunc = null, int devIndex = -1 )
 {
+	if ( GameRules_GetGameMode() != SURVIVAL || IsFiringRangeGameMode() )
+	{
+		if( IsAlive( player ) )
+		{
+			player.BecomeRagdoll( player.GetVelocity(), false )
+			WaitFrame()
+			player.Die( null, null, { damageSourceId = eDamageSourceId.damagedef_suicide } )
+		}
+		else
+		{
+			player.p.respawnPodLanded = true // pretend this is a valid survival respawn
+			thread _DelayUnsetRespawnPodLanded( player )
+			//player.p.hasMatchParticipationEnded = false // they're still going!
+			//player.p.lastDeathTime = -1.0
+			ClearPlayerEliminated( player )
+			DecideRespawnPlayer( player )
+		}
+		return
+	}
+	
 	if ( shouldForce && IsAlive( player ) )
 	{
-		player.SetHealth( 0 )
+		player.BecomeRagdoll( player.GetVelocity(), false )
+		WaitFrame()
+		player.Die( null, null, { damageSourceId = eDamageSourceId.damagedef_suicide } )
+
 		wait 1.0
 	}
 	if ( !IsAlive( player ) )

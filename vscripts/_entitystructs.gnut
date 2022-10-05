@@ -673,8 +673,20 @@ global struct ServerPlayerStruct
 		
 	//Flowstate 3.0
 	bool isPlayerSpawningInDroppod = false
-	float lastKillTimer
-	int downedEnemyAtOneTime = 0
+	// Amount of player downed enemy at one time
+	float lastDownedEnemyTime = -1
+	int downedEnemy = 0
+	float last3dashtime = 0
+	entity lastFrameObservedTarget
+	bool AmIController = false
+	float lastTimeSpectateUsed = 0
+	bool isSpectating = false
+	
+	//DeathRecap
+	DeathRecapDamageData DeathRecap_DataToSend
+	entity DeathRecap_PreviousShotWeapon = null
+	entity DeathRecap_PreviousShotEnemyPlayer = null
+	float DeathRecap_BlockTime = 0
 	
 	//Flyers Easteregg by Colombia
 	bool isParentedToFlyer = false
@@ -688,6 +700,7 @@ global struct ServerPlayerStruct
 	//By Endergreen
 	// This is for Octane's ability chatter
 	float lastStimChatterTime = -30
+	float lastJumpPadChatterTime = -30
 	
 	//Strafer dummy challenge
 	int challengeName = 0
@@ -704,6 +717,15 @@ global struct ServerPlayerStruct
 	bool isRestartingLevel = false
 	int dummieKilled = 0
 	bool touchingTopTrigger = false
+	bool ForceEject = false
+	
+	//Map editor
+	PropInfo& selectedProp
+	entity currentPropEntity
+
+	EditorMode& selectedEditorMode
+	EditorMode ornull lastEditorMode
+
 }
 
 global struct ChallengeScore

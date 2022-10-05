@@ -30,22 +30,17 @@ var function OnWeaponTossReleaseAnimEvent_weapon_jump_pad( entity weapon, Weapon
 	{
 		entity player = weapon.GetWeaponOwner()
 		PlayerUsedOffhand( player, weapon, true, deployable )
+		
+		#if SERVER
+		if( !IsValid( player ) || !player.IsPlayer() )
+			return
+		
+		ItemFlavor character = LoadoutSlot_GetItemFlavor( ToEHI( player ), Loadout_CharacterClass() )
+		string charRef = ItemFlavor_GetHumanReadableRef( character )
 
-		#if false
-
-
-
-
-
-
-
-
-#endif
-
-		#if false
-
-#endif
-
+		if( charRef == "character_octane")
+			PlayBattleChatterLineToSpeakerAndTeam( player, "bc_super" )
+		#endif
 	}
 
 	return ammoReq
@@ -121,7 +116,8 @@ void function OnJumpPadPlanted( entity projectile )
 	//Dispatch the spawn after our settings are done
 	DispatchSpawn( newProjectile )
 	newProjectile.EndSignal( "OnDestroy" )
-	
+	newProjectile.SetScriptName("jump_pad")
+
 	if(gameMode != "custom_tdm")
 		thread TrapDestroyOnRoundEnd( owner, newProjectile )
 
@@ -141,6 +137,8 @@ void function OnJumpPadPlanted( entity projectile )
 	jumpPadProxy.SetValueForModelKey( $"mdl/props/octane_jump_pad/octane_jump_pad.rmdl" )
 	jumpPadProxy.kv.SpawnAsPhysicsMover = 0
 	jumpPadProxy.e.isDoorBlocker = true
+
+	jumpPadProxy.SetScriptName("jump_pad_p")
 
 	jumpPadProxy.SetOrigin( newProjectile.GetOrigin() )
 	jumpPadProxy.SetAngles( newProjectile.GetAngles() )

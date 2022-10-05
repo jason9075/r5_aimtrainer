@@ -6,7 +6,7 @@ global function OnWeaponDeactivate_hunt_mode
 #if SERVER
 global function BurnMeter_HuntMode
 #endif //SERVER
-#if R5DEV && CLIENT 
+#if DEVELOPER && CLIENT 
 global function GetBloodhoundColorCorrectionID
 #endif //
 
@@ -47,10 +47,18 @@ void function MpAbilityHuntModeWeapon_Init()
 void function MpAbilityHuntModeWeapon_OnWeaponTossPrep( entity weapon, WeaponTossPrepParams prepParams )
 {
 	entity weaponOwner = weapon.GetWeaponOwner()
+	
+	if( !IsValid( weaponOwner ) || !weaponOwner.IsPlayer() )
+		return
+	
 	weapon.SetScriptTime0( 0.0 )
 
 	#if SERVER
-		thread PlayBattleChatterLineDelayedToSpeakerAndTeam( weaponOwner, "bc_super", 0.1 )
+		ItemFlavor character = LoadoutSlot_GetItemFlavor( ToEHI( weaponOwner ), Loadout_CharacterClass() )
+		string charRef = ItemFlavor_GetHumanReadableRef( character )
+
+		if( charRef == "character_bloodhound")		
+			thread PlayBattleChatterLineDelayedToSpeakerAndTeam( weaponOwner, "bc_super", 0.1 )
 
 		Embark_Disallow( weaponOwner )
 		DisableMantle( weaponOwner )
@@ -318,7 +326,7 @@ void function StopHuntMode()
 	#endif
 }
 
-#if R5DEV && CLIENT 
+#if DEVELOPER && CLIENT 
 int function GetBloodhoundColorCorrectionID()
 {
 	return file.colorCorrection

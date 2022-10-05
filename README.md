@@ -1,11 +1,25 @@
-# Welcome to Flowstate Aim Trainer
+# Original and updated repository for Flowstate mod
+
+Flowstate is a package of scripts for R5 Reloaded (Modded Apex Legends) that includes a large number of bugs fixes and new features. It also includes exclusive content made by the community like abilities, gamemodes or maps! 
+
+Gamemodes: 
+1. Flowstate Aim Trainer
+2. Flowstate FFA/TDM-Gungame-Fiesta
+3. Hide&Seek Prophunt (Beta)
+4. Battle royale (Beta)
+5. Csgo-like Apex Surf
+6. Capture The Flag
+7. Prop dynamic map editor
+
 Join r5 reloaded discord: https://discord.com/invite/r5reloaded
 
 # How to install
-Follow the steps in order.
-1. Get the last SDK version for your Apex S3 to run these scripts correctly (How to get Apex S3? Read instructions in https://discord.com/invite/r5reloaded) Min SDK version required is: v2.1.5 Release Candidate: https://github.com/Mauler125/r5sdk/releases. Download depot.zip and replace all the content into your Apex S3 main folder.
-2. Get the required files to run these scripts from this repo releases: https://github.com/ColombianGuy/r5_aimtrainer/releases. Drag and drop all the content.
-3. Get the content from this repo and place it in /platform/scripts/. Replace all the content.
+Follow the steps in order, or you will have issues!
+
+1. Get the last SDK version for your Apex S3 to run these scripts correctly (How to get Apex S3? Read instructions in https://discord.com/invite/r5reloaded) Min SDK version required is: v2.1.9 Release Candidate: https://github.com/Mauler125/r5sdk/releases. 
+Download depot.zip and replace all the content into your Apex S3 main folder.
+2. Get the flowstate required files .zip: https://github.com/ColombianGuy/r5_flowstate/releases/tag/Release2. Drag and drop all the content into r5r main folder, replace when asked.
+3. Get the content from this repo and place it in /platform/scripts/. Replace all the content. https://github.com/ColombianGuy/r5_flowstate/archive/refs/heads/r5_flowstate.zip
 
 # How to run
 You can use Lobby Create Server menu or F10 menu to start a Flowstate Aim Trainer session.
@@ -20,7 +34,7 @@ Please read trello before complaining
 
 Let me know if you find new issues, my discord is in the last section.
 
-# Features
+# Aim Trainer Features
 - Season 14 weapon data.
 - Laser sights.
 - Results UI, displays the results data at the end of the challenge.
@@ -41,7 +55,7 @@ Let me know if you find new issues, my discord is in the last section.
 	- Button to play as a dummy.
 - No controller support atm because I don't have one to test lol
 
-# Initial release Challenges
+# Aim Trainer Challenges
 1. Strafing Dummy
 2. Target Switching
 3. Floating Target
@@ -66,7 +80,7 @@ If you enjoy my mods and want to support me, please consider a donation:
 - LTC: ltc1qrxjkq0gfyraa94p3fc9mqx7j0d7qcwdtd9h23w
 - ETH: 0xe975b5D5fa624Da7E52A340071fC6689759b7639
 
-I know all the code can be masivelly improved and there are a lot of things that are working with tape and glue, I'm still learning so if you have any feedback about code, challenges improvements, or new ideas in general, I'll really appreciate it. Feel free to leave me a dm in discord.
+I know all the code can be massively improved and there are a lot of things that are working with tape and glue, I'm still learning so if you have any feedback about code, challenges improvements, or new ideas in general, I'll really appreciate it. Feel free to leave me a dm in discord.
 
 - Discord: Retículo Endoplasmático#5955
 - Twitter: https://twitter.com/CafeFps
@@ -74,6 +88,7 @@ I know all the code can be masivelly improved and there are a lot of things that
 More credits:
 - Amos#1368 & contributors -- sdk https://github.com/Mauler125/r5sdk/tree/indev
 - rexx#1287 & contributors -- repak tool https://github.com/r-ex/RePak
+- JustANormalUser#6809 -- custom weapons framework
 - Skeptation#4002 -- beta tester and coworker https://www.youtube.com/c/Skeptation
 - Zee#6969 -- weapons buy menu example, history ui pages logic
 - Darkes#8647 -- beta tester

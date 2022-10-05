@@ -84,6 +84,8 @@ void function _ChallengesByColombia_Init()
 	
 	//on weapon attack callback so we can calculate stats for live stats and results menu
 	AddCallback_OnWeaponAttack( OnWeaponAttackChallenges )
+
+	AddCallback_OnClientConnected( StartFRChallenges )
 		
 	//arc stars on damage callback for arc stars practice challenge
 	AddDamageCallbackSourceID( eDamageSourceId.damagedef_ticky_arc_blast, Arcstar_OnStick )
@@ -95,13 +97,14 @@ void function _ChallengesByColombia_Init()
 	PrecacheModel($"mdl/imc_interior/imc_int_fusebox_01.rmdl")
 	PrecacheModel($"mdl/barriers/shooting_range_target_02.rmdl")
 	PrecacheModel($"mdl/thunderdome/thunderdome_cage_wall_256x256_01.rmdl")
+	PrecacheModel($"mdl/thunderdome/thunderdome_cage_ceiling_256x256_06.rmdl")
 	PrecacheModel( $"mdl/pipes/slum_pipe_large_yellow_256_02.rmdl" )
 	
 	//death callback for player because some challenges can kill player
 	AddDeathCallback( "player", OnPlayerDeathCallback )
 	
 	//add basic aim trainer locations for maps //todo: move this to a datatable
-	if (GetMapName() == "mp_rr_desertlands_64k_x_64k" || GetMapName() == "mp_rr_desertlands_64k_x_64k_nx")
+	if (GetMapName() == "mp_rr_desertlands_64k_x_64k" || GetMapName() == "mp_rr_desertlands_64k_x_64k_nx" || GetMapName() == "mp_rr_desertlands_64k_x_64k_tt" )
 	{
 		floorLocation = <-10020.1543, -8643.02832, 5189.92578>
 		onGroundLocationPos = <12891.2783, -2391.77124, -3121.60132>
@@ -137,8 +140,8 @@ void function _ChallengesByColombia_Init()
 
 void function StartFRChallenges(entity player)
 {
-	wait 1
-	if(!IsValid(player)) return
+	while( !IsValid( player ) )
+		WaitFrame()
 
 	Remote_CallFunction_NonReplay(player, "ServerCallback_SetDefaultMenuSettings")
 	Survival_SetInventoryEnabled( player, false )
@@ -146,9 +149,7 @@ void function StartFRChallenges(entity player)
 	player.FreezeControlsOnServer()
 	TakeAllWeapons(player)
 	Inventory_SetPlayerEquipment(player, "armor_pickup_lv1", "armor")
-    player.GiveWeapon( "mp_weapon_bolo_sword_primary", WEAPON_INVENTORY_SLOT_PRIMARY_2, [] )
-    player.GiveOffhandWeapon( "melee_bolo_sword", OFFHAND_MELEE, [] )
-	
+
 	player.GiveWeapon( "mp_weapon_wingman", WEAPON_INVENTORY_SLOT_PRIMARY_0, ["optic_cq_hcog_classic"] )
 	player.SetActiveWeaponBySlot(eActiveInventorySlot.mainHand, WEAPON_INVENTORY_SLOT_PRIMARY_0)
 	
@@ -231,7 +232,7 @@ void function StartStraferDummyChallenge(entity player)
 		vector pos = dummy.GetOrigin()
 		vector angles = dummy.GetAngles()
 		StartParticleEffectInWorld( GetParticleSystemIndex( FIRINGRANGE_ITEM_RESPAWN_PARTICLE ), pos, angles )
-		SetSpawnOption_AISettings( dummy, "npc_dummie_combat" )
+		SetSpawnOption_AISettings( dummy, "npc_dummie_combat_trainer" )
 		DispatchSpawn( dummy )
 		dummy.SetOrigin(dummy.GetOrigin() + Vector(0,0,1))
 		
@@ -344,7 +345,7 @@ void function StartSwapFocusDummyChallenge(entity player)
 			vector pos = dummy.GetOrigin()
 			vector angles = dummy.GetAngles()
 			StartParticleEffectInWorld( GetParticleSystemIndex( FIRINGRANGE_ITEM_RESPAWN_PARTICLE ), pos, angles )
-			SetSpawnOption_AISettings( dummy, "npc_dummie_combat" )
+			SetSpawnOption_AISettings( dummy, "npc_dummie_combat_trainer" )
 			DispatchSpawn( dummy )	
 			dummy.SetOrigin(dummy.GetOrigin() + Vector(0,0,5))
 			
@@ -444,7 +445,7 @@ void function StartFloatingTargetChallenge(entity player)
 		vector pos = dummy.GetOrigin()
 		vector angles = dummy.GetAngles()
 		StartParticleEffectInWorld( GetParticleSystemIndex( FIRINGRANGE_ITEM_RESPAWN_PARTICLE ), pos, angles )
-		SetSpawnOption_AISettings( dummy, "npc_dummie_combat" )
+		SetSpawnOption_AISettings( dummy, "npc_dummie_combat_trainer" )
 		DispatchSpawn( dummy )	
 		dummy.SetShieldHealthMax( ReturnShieldAmountForDesiredLevel() )
 		dummy.SetShieldHealth( ReturnShieldAmountForDesiredLevel() )
@@ -506,7 +507,7 @@ void function CreateDummyPopcornChallenge(entity player)
 	EndSignal(dummy, "OnDeath")
 
 	StartParticleEffectInWorld( GetParticleSystemIndex( FIRINGRANGE_ITEM_RESPAWN_PARTICLE ), dummy.GetOrigin(), dummy.GetAngles() )
-	SetSpawnOption_AISettings( dummy, "npc_dummie_combat" )
+	SetSpawnOption_AISettings( dummy, "npc_dummie_combat_trainer" )
 	DispatchSpawn( dummy )	
 	dummy.SetShieldHealthMax( ReturnShieldAmountForDesiredLevel() )
 	dummy.SetShieldHealth( ReturnShieldAmountForDesiredLevel() )
@@ -607,7 +608,7 @@ void function CreateDummyStraightUpChallenge(entity player)
 	)
 	
 	StartParticleEffectInWorld( GetParticleSystemIndex( FIRINGRANGE_ITEM_RESPAWN_PARTICLE ), dummy.GetOrigin(), dummy.GetAngles())
-	SetSpawnOption_AISettings( dummy, "npc_dummie_combat" )
+	SetSpawnOption_AISettings( dummy, "npc_dummie_combat_trainer" )
 	DispatchSpawn( dummy )	
 	dummy.SetShieldHealthMax( ReturnShieldAmountForDesiredLevel() )
 	dummy.SetShieldHealth( ReturnShieldAmountForDesiredLevel() )
@@ -679,7 +680,7 @@ void function StartArcstarsChallenge(entity player)
 			vector circleoriginfordummy = circleLocations.getrandom()
 			entity dummy = CreateDummy( 99, AimTrainerOriginToGround( <circleoriginfordummy.x, circleoriginfordummy.y, 10000> ), onGroundLocationAngs*-1)
 			StartParticleEffectInWorld( GetParticleSystemIndex( FIRINGRANGE_ITEM_RESPAWN_PARTICLE ), dummy.GetOrigin(), dummy.GetAngles() )
-			SetSpawnOption_AISettings( dummy, "npc_dummie_combat" )
+			SetSpawnOption_AISettings( dummy, "npc_dummie_combat_trainer" )
 			DispatchSpawn( dummy )
 			
 			//PutEntityInSafeSpot( dummy, null, null, dummy.GetOrigin() + dummy.GetUpVector()*2048 + dummy.GetForwardVector()*2048 , dummy.GetOrigin() )
@@ -825,7 +826,7 @@ void function StartVerticalGrenadesChallenge(entity player)
 			vector circlelocation = circleLocations[i]	
 			entity dummy = CreateDummy( 99, circlelocation, onGroundLocationAngs*-1)
 			StartParticleEffectInWorld( GetParticleSystemIndex( FIRINGRANGE_ITEM_RESPAWN_PARTICLE ), dummy.GetOrigin(), dummy.GetAngles() )
-			SetSpawnOption_AISettings( dummy, "npc_dummie_combat" )
+			SetSpawnOption_AISettings( dummy, "npc_dummie_combat_trainer" )
 			DispatchSpawn( dummy )
 			dummy.SetOrigin(dummy.GetOrigin() - dummy.GetForwardVector()*RandomIntRange(400,700))
 			vector vec2 = player.GetOrigin() - dummy.GetOrigin()
@@ -893,7 +894,7 @@ void function StartLiftUpChallenge(entity player)
 			vector circleoriginfordummy = circleLocations.getrandom()
 			entity dummy = CreateDummy( 99, AimTrainerOriginToGround( <circleoriginfordummy.x, circleoriginfordummy.y, 10000> ), onGroundLocationAngs*-1 )
 			StartParticleEffectInWorld( GetParticleSystemIndex( FIRINGRANGE_ITEM_RESPAWN_PARTICLE ), dummy.GetOrigin(), dummy.GetAngles() )
-			SetSpawnOption_AISettings( dummy, "npc_dummie_combat" )
+			SetSpawnOption_AISettings( dummy, "npc_dummie_combat_trainer" )
 			DispatchSpawn( dummy )
 			dummy.UseSequenceBounds( false )
 			dummy.SetShieldHealthMax( ReturnShieldAmountForDesiredLevel() )
@@ -1005,7 +1006,7 @@ void function ForceToBeInLiftForChallenge( entity player )
 	while(IsValid(player) && !player.p.isRestartingLevel)
 	{
 		player.SetVelocity(Vector(0,0,0))
-		wait 5
+		wait 5.5
 		foreach(entity dummy in ChallengesEntities.dummies)
 			if(IsValid(dummy)) dummy.Destroy()
 		ChallengesEntities.dummies.clear()
@@ -1225,7 +1226,7 @@ void function StartCloseFastStrafesChallenge(entity player)
 		
 		entity dummy = CreateDummy( 99, onGroundDummyPos, onGroundLocationAngs*-1 )
 		StartParticleEffectInWorld( GetParticleSystemIndex( FIRINGRANGE_ITEM_RESPAWN_PARTICLE ), dummy.GetOrigin(), dummy.GetAngles() )
-		SetSpawnOption_AISettings( dummy, "npc_dummie_combat" )
+		SetSpawnOption_AISettings( dummy, "npc_dummie_combat_trainer" )
 		DispatchSpawn( dummy )	
 		dummy.SetBehaviorSelector( "behavior_dummy_empty" )
 		dummy.SetShieldHealthMax( ReturnShieldAmountForDesiredLevel() )
@@ -1315,7 +1316,7 @@ void function StartTapyDuckStrafesChallenge(entity player)
 		vector pos = dummy.GetOrigin()
 		vector angles = dummy.GetAngles()
 		StartParticleEffectInWorld( GetParticleSystemIndex( FIRINGRANGE_ITEM_RESPAWN_PARTICLE ), pos, angles )
-		SetSpawnOption_AISettings( dummy, "npc_dummie_combat" )
+		SetSpawnOption_AISettings( dummy, "npc_dummie_combat_trainer" )
 		DispatchSpawn( dummy )
 		dummy.SetBehaviorSelector( "behavior_dummy_empty" )
 		dummy.SetShieldHealthMax( ReturnShieldAmountForDesiredLevel() )
@@ -1501,7 +1502,7 @@ void function StartSmoothbotChallenge(entity player)
 		vector pos = dummy.GetOrigin()
 		vector angles = dummy.GetAngles()
 		StartParticleEffectInWorld( GetParticleSystemIndex( FIRINGRANGE_ITEM_RESPAWN_PARTICLE ), pos, angles )
-		SetSpawnOption_AISettings( dummy, "npc_dummie_combat" )
+		SetSpawnOption_AISettings( dummy, "npc_dummie_combat_trainer" )
 		DispatchSpawn( dummy )
 		dummy.SetBehaviorSelector( "behavior_dummy_empty" )
 		// dummy.SetShieldHealthMax( ReturnShieldAmountForDesiredLevel() )
@@ -1674,7 +1675,7 @@ void function StartSkyDiveChallenge(entity player)
 		
 		if(ChallengesEntities.dummies.len()<4){	
 			entity dummy = CreateDummy( 99, onGroundDummyPos, onGroundLocationAngs )
-			SetSpawnOption_AISettings( dummy, "npc_training_dummy" )
+			SetSpawnOption_AISettings( dummy, "npc_training_dummy_trainer" )
 			DispatchSpawn( dummy )	
 			dummy.SetShieldHealthMax( ReturnShieldAmountForDesiredLevel() )
 			dummy.SetShieldHealth( ReturnShieldAmountForDesiredLevel() )
@@ -1836,7 +1837,12 @@ void function StartRunningTargetsChallenge(entity player)
 
 	WaitFrame()
 	while(true){
-		circleLocations = NavMesh_RandomPositions( player.GetOrigin(), HULL_HUMAN, 40, 200*AimTrainer_SPAWN_DISTANCE, 300*AimTrainer_SPAWN_DISTANCE  )
+		array<vector> NewcircleLocations = NavMesh_RandomPositions( AimTrainerOriginToGround( <player.GetOrigin().x, player.GetOrigin().y, 10000> ), HULL_HUMAN, 40, 200*AimTrainer_SPAWN_DISTANCE, 300*AimTrainer_SPAWN_DISTANCE  )
+		if(NewcircleLocations.len() > 0 ) 
+		{
+			circleLocations.clear()
+			circleLocations = NewcircleLocations
+		}
 		if(!AimTrainer_INFINITE_CHALLENGE && Time() > endtime) break	
 		if(ChallengesEntities.dummies.len()<25){
 			vector org1 = player.GetOrigin()
@@ -1848,7 +1854,7 @@ void function StartRunningTargetsChallenge(entity player)
 			vector angles2 = AnglesToRight(VectorToAngles(vec2))*90*random
 			vector circleoriginfordummy = circleLocations[locationindex]
 			entity dummy = CreateDummy( 99, AimTrainerOriginToGround( <circleoriginfordummy.x, circleoriginfordummy.y, 10000> ), Vector(0,angles2.y,0) )
-			SetSpawnOption_AISettings( dummy, "npc_dummie_combat" )
+			SetSpawnOption_AISettings( dummy, "npc_dummie_combat_trainer" )
 			DispatchSpawn( dummy )
 			
 			// PutEntityInSafeSpot( dummy, null, null, dummy.GetOrigin() + dummy.GetUpVector()*2048 + dummy.GetForwardVector()*2048 , dummy.GetOrigin() )
@@ -2274,8 +2280,15 @@ thread OnPlayerDeathCallbackThread(player)
 void function OnPlayerDeathCallbackThread(entity player)
 {
 	entity weapon = player.GetNormalWeapon(WEAPON_INVENTORY_SLOT_PRIMARY_0)
-	array<string> mods = weapon.GetMods()
-	string weaponname = weapon.GetWeaponClassName()
+	array<string> mods
+	string weaponname
+	if( IsValid( weapon ) )
+	{
+		mods = weapon.GetMods()
+		weaponname = weapon.GetWeaponClassName()
+	} else {
+		weaponname = "mp_weapon_wingman"
+	}
 
 	wait 1
 
@@ -2718,6 +2731,13 @@ bool function CC_MenuGiveAimTrainerWeapon( entity player, array<string> args )
 						
 					weaponent = player.GiveWeapon( weapon, WEAPON_INVENTORY_SLOT_PRIMARY_0, finalargs)
 					break
+				case "marksman3":
+					if(args[1] != "none") finalargs.append(args[1])
+					if(args[3] != "none") finalargs.append(args[3])
+					if(args[6] != "none") finalargs.append(args[6])	
+					
+					weaponent = player.GiveWeapon( weapon, WEAPON_INVENTORY_SLOT_PRIMARY_0, finalargs)
+					break
 				case "sniper":
 					if(args[1] != "none") finalargs.append(args[1])
 					if(args[2] != "none") finalargs.append(args[2])
@@ -2750,9 +2770,6 @@ bool function CC_MenuGiveAimTrainerWeapon( entity player, array<string> args )
 	if(!IsValid(weaponent)) return false
 	
 	thread PlayAnimsOnGiveWeapon(weaponent, player)
-	
-	if(weapon == "mp_weapon_volt_smg")
-		thread WatchesVoltParticles(weaponent)
 	
 	if(!GetCurrentPlaylistVarBool( "aimtrainer_enableSkins", false )) return false
 
@@ -2790,19 +2807,6 @@ void function PlayAnimsOnGiveWeapon(entity weaponent, entity player)
 	if(IsValid(weaponent) && weaponent.Anim_HasActivity( "ACT_VM_WEAPON_INSPECT" ) && !player.p.isChallengeActivated )
 		weaponent.StartCustomActivity("ACT_VM_WEAPON_INSPECT", 0)
 }
-
-void function WatchesVoltParticles(entity weapon)
-{
-	array<entity> fxEnts
-	
-	while(IsValid(weapon))
-	{
-		fxEnts = GetEntArrayByClass_Expensive( "info_particle_system" )
-		printt("Volt-SMG DEBUG: " + fxEnts.len() + " particles. ")
-		WaitFrame()
-	}
-}
-
 
 bool function CC_Weapon_Selector_Open( entity player, array<string> args )
 {

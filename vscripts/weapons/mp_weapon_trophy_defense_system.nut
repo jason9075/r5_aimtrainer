@@ -247,6 +247,14 @@ var function OnWeaponPrimaryAttack_weapon_trophy_defense_system( entity weapon, 
 	#if SERVER
 		printl("[pylon] server thing")
 		thread WeaponMakesDefenseSystem(weapon, model, placementInfo)
+
+	if( !IsValid( ownerPlayer ) || !ownerPlayer.IsPlayer() )
+		return
+	
+	ItemFlavor character = LoadoutSlot_GetItemFlavor( ToEHI( ownerPlayer ), Loadout_CharacterClass() )
+	string charRef = ItemFlavor_GetHumanReadableRef( character )
+
+	if( charRef == "character_wattson")
 		PlayBattleChatterLineToSpeakerAndTeam( ownerPlayer, "bc_super" )
 	#endif
 	printl("[pylon] after placement")
@@ -575,6 +583,7 @@ void function WeaponMakesDefenseSystem( entity weapon, asset model, TrophyPlacem
 	pylon.SetOwner(owner)
 	pylon.e.pylonhealth = TROPHY_HEALTH_AMOUNT
 	pylon.EndSignal( "OnDestroy" )
+	pylon.SetScriptName("pylon")
 
 	// can be detected by sonar
 	pylon.Highlight_Enable()

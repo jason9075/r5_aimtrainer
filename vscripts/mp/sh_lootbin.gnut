@@ -258,7 +258,7 @@ void function InitLootBin( entity lootbin )
 	
 	if( GetCurrentPlaylistVarBool("lootbin_loot_enable", true) == true)
 	{
-		AddMultipleLootItemsToLootBin( lootbin, SURVIVAL_GetMultipleWeightedItemsFromGroup( LootZones_GetRefForOrigin(lootbin.GetOrigin()), RandomIntRange(2,4) ) )
+		AddMultipleLootItemsToLootBin( lootbin, SURVIVAL_GetMultipleWeightedItemsFromGroup( LootZones_GetRefForOrigin(lootbin.GetOrigin()), RandomIntRange(3,4) ) )
 	}
 }
 
@@ -387,7 +387,7 @@ void function AddMultipleLootItemsToLootBin( entity lootBin, array<string> refs 
     array<string> lootToSpawn = GetLootBinContents( lootBin )
     if(lootToSpawn.len() > 0)
     {
-        printt("Lootbin already has contents! Clear it first before adding multiple items.")
+        //printt("Lootbin already has contents! Clear it first before adding multiple items.")
         return
     }
 	int numRefs = refs.len()

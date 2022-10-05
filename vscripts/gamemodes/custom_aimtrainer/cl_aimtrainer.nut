@@ -109,9 +109,9 @@ void function Cl_ChallengesByColombia_Init()
 	SetConVarBool( "cl_showgpustats", false )
 	SetConVarBool( "cl_showsimstats", false )
 	SetConVarBool( "cl_showhoststats", false )
-	//SetConVarBool( "con_drawnotify", false )
+	SetConVarBool( "con_drawnotify", false )
 	SetConVarBool( "enable_debug_overlays", false )
-	SetConVarInt( "sq_showvmoutput", 3 )
+	SetConVarInt( "sq_showvmoutput", 1 )
 	SetConVarInt( "sq_showvmwarning", 2 )
 	
 	//main menu cameras thread end signal
@@ -119,10 +119,7 @@ void function Cl_ChallengesByColombia_Init()
 	
 	//laser sight particle
 	PrecacheParticleSystem($"P_wpn_lasercannon_aim_short_blue") 
-	
-	//for custom ui/textures
-	PakHandle AimTrainerRpak = RequestPakFile( "aimtrainer" )
-	
+
 	AddCallback_EntitiesDidLoad( AimTrainer_OnEntitiesDidLoad )
 }
 
@@ -299,6 +296,8 @@ void function ServerCallback_CloseFRChallengesResults()
 
 void function ServerCallback_HistoryUIAddNewChallenge(int NameInt, int Score, entity Weapon, float Accuracy, int dummiesKilled, int Damage, int totalshots, int criticalshots)
 {
+	if(!IsValid(Weapon)) 
+		return
 	RunUIScript( "HistoryUI_AddNewChallenge", ReturnChallengeName(NameInt), Score, Weapon.GetWeaponClassName(), Accuracy, dummiesKilled, Damage, totalshots, criticalshots, AimTrainer_CHALLENGE_DURATION)
 }
 
@@ -370,7 +369,7 @@ void function CoolCameraOnMenu()
 	
     if(!IsValid(player)) return
 	
-	if (GetMapName() == "mp_rr_desertlands_64k_x_64k" || GetMapName() == "mp_rr_desertlands_64k_x_64k_nx")
+	if (GetMapName() == "mp_rr_desertlands_64k_x_64k" || GetMapName() == "mp_rr_desertlands_64k_x_64k_nx" || GetMapName() == "mp_rr_desertlands_64k_x_64k_tt")
 	{
 		cutsceneSpawns.append(NewCameraPair(<10881.2295, 5903.09863, -3176.7959>, <0, -143.321213, 0>)) 
 		cutsceneSpawns.append(NewCameraPair(<9586.79199, 24404.5898, -2019.6366>, <0, -52.6216431, 0>)) 
@@ -587,7 +586,7 @@ void function RefreshHUD()
 	UpdateHudDataForMainWeapons( player, weapon )
 	
 	//refresh
-	InitSurvivalHealthBar()
+	thread InitSurvivalHealthBar()
 }
 
 void function ServerCallback_RestartChallenge(int challenge)

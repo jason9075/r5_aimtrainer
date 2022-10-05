@@ -94,6 +94,8 @@ global enum eDamageSourceId
 	mp_weapon_defender
 	mp_weapon_softball
 	mp_weapon_warmachine
+	//mp_weapon_car //WAITING NEW CHECKSUM CHANGE
+	//mp_weapon_dragon_lmg //WAITING NEW CHECKSUM CHANGE
 	//
 	melee_pilot_emptyhanded
 	melee_pilot_arena
@@ -409,7 +411,7 @@ void function DamageTypes_Init()
 
 	PrecacheWeapon( $"mp_weapon_rspn101" ) // used by npc_soldier ><
 
-#if R5DEV
+#if DEVELOPER
 
 	int numDamageDefs = DamageDef_GetCount()
 	table damageSourceIdEnum = expect table( getconsttable().eDamageSourceId )
@@ -552,6 +554,8 @@ void function DamageTypes_Init()
 		[ eDamageSourceId.melee_bolo_sword ] 						= "Bolo Sword Melee",
 		[ eDamageSourceId.mp_weapon_bolo_sword_primary ] 			= "Bolo Sword Melee",
 		[ eDamageSourceId.mp_weapon_volt_smg ] 						= "#WPN_VOLT_SMG",
+		//[ eDamageSourceId.mp_weapon_car ] 							= "Car SMG", //WAITING NEW CHECKSUM CHANGE
+		//[ eDamageSourceId.mp_weapon_dragon_lmg ] 					= "Rampage LMG", //WAITING NEW CHECKSUM CHANGE
 		[ eDamageSourceId.mp_ability_octane_stim ] 					= "#WPN_OCTANE_STIM_SHORT",
 
 		[ eDamageSourceId.mp_weapon_tesla_trap ] 					= "#DEATH_TESLA_TRAP"
@@ -568,7 +572,7 @@ void function DamageTypes_Init()
 		,[ eDamageSourceId.mp_weapon_shadow_squad_hands_primary ] 	= "#DEATH_MELEE_SHADOWSQUAD_HANDS"
 	}
 
-	#if R5DEV
+	#if DEVELOPER
 		//development, with retail versions incase a rare bug happens we dont want to show developer text
 		file.damageSourceIDToName[ eDamageSourceId.damagedef_unknownBugIt ] 			= "UNKNOWN! BUG IT!"
 		file.damageSourceIDToName[ eDamageSourceId.damagedef_unknown ] 				= "Unknown"

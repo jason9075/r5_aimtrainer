@@ -9,6 +9,10 @@ global function Bleedout_AddCallback_OnPlayerGotFirstAid // dump
 global function Bleedout_GetBleedoutAttacker
 global function Bleedout_GetBleedoutDamageInfo
 
+global function Bleedout_AreThereAlivingMates
+
+global table<string, string> EliminatedPlayers = {}
+
 //CONFIGS
 const bool LIFELINE_RGB_SHIELD = false
 
@@ -54,6 +58,8 @@ void function Bleedout_Init()
 	PrecacheParticleSystem( $"P_LL_med_drone_eye" )
 	PrecacheParticleSystem( $"P_LL_med_drone_jet_ctr_loop" )
 	PrecacheParticleSystem($"P_drone_shield_hit_enemy")
+
+	FlagInit( "BleedoutDebug", false )
 	
 }
 
@@ -105,6 +111,8 @@ void function Bleedout_AddCallback_OnPlayerGiveFirstAid( void functionref(entity
 
 void function Bleedout_StartPlayerBleedout( entity player, entity attacker )
 {
+	if(!IsValid(player) || !IsValid(attacker)) return
+	
 	//if the player is already bleeding don't restart bleeding logic.
 	if ( file.isBleeding[ player ] )
 		return
@@ -114,10 +122,17 @@ void function Bleedout_StartPlayerBleedout( entity player, entity attacker )
 
 	file.lastAttacker[ player ] = attacker
 
-	player.SetPlayerNetInt( "bleedoutType", EquipmentSlot_GetEquipmentTier( player, "incapshield" ) )
 	
 	thread Bleedout_DeathProtection( player )
+	SetPlayerEliminated( player )
+	player.SetPlayerNetInt( "bleedoutType", EquipmentSlot_GetEquipmentTier( player, "incapshield" ) )
+	player.SetHealth( 100 )
 	
+	if( IsValid( attacker ) && attacker.IsPlayer() )
+		EmitSoundOnEntityExceptToPlayer( player, attacker, "flesh_bulletimpact_downedshot_3p_vs_3p" )
+	else
+		EmitSoundOnEntity( player, "flesh_bulletimpact_downedshot_3p_vs_3p" )
+
 	PlayBattleChatterLineToSpeakerAndTeam( player, "bc_imDown" )
 
 	if ( IsValid( file.Callback_OnPlayerStartBleedout ) && !file.isBleeding[ player ] )
@@ -130,16 +145,19 @@ void function Bleedout_StartPlayerBleedout( entity player, entity attacker )
 	//Start selfhealing thread if enabled.
 	if ( Bleedout_GetSelfResEnabled( player ) )
 		thread EnablePlayerSelfRes( player )
-
+	
 	if ( Bleedout_GetDeathOnTeamBleedout( player ) )
-		CheckForTeamBleedout( player.GetTeam() )
+		thread CheckForTeamBleedout( player )
+
+	TrackingVision_CreatePOI( eTrackingVisionNetworkedPOITypes.PLAYER_STARTBLEEDOUT, player, player.GetOrigin(), player.GetTeam(), player )
 }
 
 void function Bleedout_DeathProtection( entity player )
 {
 	MakeInvincible(player)
 	wait 1.05
-	ClearInvincible(player)
+	if(IsValid(player))
+		ClearInvincible(player)
 }
 
 void function PlayerDying( entity player )
@@ -148,11 +166,10 @@ void function PlayerDying( entity player )
 	player.EndSignal( "OnDeath" )
 	player.EndSignal( "BleedOut_OnRevive" )
 	player.EndSignal( "BleedOut_OnStartDying" )
-
-	//float bleedoutTime = Bleedout_GetBleedoutTime( player )
-	float bleedoutTime = 99999999
+	
+	float bleedoutTime = Bleedout_GetBleedoutTime( player )
 	bool forceHolster = Bleedout_GetForceWeaponHolster( player )
-
+	
 	array<int> ids = []
 	ids.append( StatusEffect_AddEndless( player, eStatusEffect.move_slow, 0.25 ) )
 	ids.append( StatusEffect_AddEndless( player, eStatusEffect.turn_slow, 0.3 ) )
@@ -161,16 +178,17 @@ void function PlayerDying( entity player )
 	// 	ids.append( StatusEffect_AddEndless( player, eStatusEffect.bleedoutDOF, 1.0 ) )
 
 	file.isBleeding[ player ] = true
-	
+
 	player.SetUseDoomedAnims(true)
 	player.ForceCrouch()
 	player.SetOneHandedWeaponUsageOn()
+	float bleedoutEndTime = Time() + bleedoutTime
+	
 	WaitFrame() //This is needed so we can change killshot damage to remaining health (bleethrough perfection)
+	if(!IsValid(player)) return
+	
 	player.SetHealth( 100 )
 	BleedoutState_SetPlayerBleedoutState( player, BS_BLEEDING_OUT )
-
-	float bleedoutEndTime = Time() + bleedoutTime
-
 	entity bleedoutWp = CreateWaypoint_Bleedout( player, bleedoutEndTime )
 	player.SetPlayerNetTime( "bleedoutEndTime", bleedoutEndTime )
 
@@ -199,6 +217,8 @@ void function PlayerDying( entity player )
 		{
 			if ( IsValid( player ) )
 			{
+				BleedoutState_SetPlayerBleedoutState( player, BS_NOT_BLEEDING_OUT )
+				
 				foreach ( id in ids )
 					StatusEffect_Stop( player, id )
 
@@ -215,8 +235,6 @@ void function PlayerDying( entity player )
 				player.SetUseDoomedAnims(false)
 				player.SetOneHandedWeaponUsageOff()
 				//Remote_CallFunction_NonReplay( player, "ServerCallback_BLEEDOUT_PlayerRevivedDOF" )
-
-				BleedoutState_SetPlayerBleedoutState( player, BS_NOT_BLEEDING_OUT )
 
 				DeleteWaypoint_Safe( player, bleedoutWp )
 
@@ -266,11 +284,6 @@ void function EnablePlayerRes( entity player )
 	player.EndSignal( "BleedOut_OnStartDying" )
 	player.EndSignal( "BleedOut_OnRevive" )
 
-	//Highlight_SetFriendlyHighlight( player, "interact_object_los_line" )
-
-	if ( IsPilotEliminationBased() )
-		SetPlayerEliminated( player )
-
 	OnThreadEnd(
 	function() : ( player )
 		{
@@ -307,7 +320,9 @@ void function EnablePlayerRes( entity player )
 			{
 				player.e.markedForExecutionDeath = true
 				if ( TryStartSyncedMelee( playerUser, player ) )
+				{
 					playerUser.WaitSignal( "SyncedMeleeOver" )
+				}
 			}
 		}
 		else
@@ -548,7 +563,7 @@ void function PlayerAttemptRes( entity playerHealer, entity playerToRes )
 	reviverSequence.useAnimatedRefAttachment = false
 	reviverSequence.thirdPersonCameraAttachments = ["VDU"]
 	reviverSequence.thirdPersonCameraVisibilityChecks = true
-	reviverSequence.playerPushable = true
+	reviverSequence.playerPushable = false
 	reviverSequence.snapPlayerFeetToEyes = false
 	
 	FirstPersonSequenceStruct toResSequence
@@ -641,26 +656,34 @@ void function PlayerDiesFromBleedout( entity player, entity attacker )
 
 //This function checks to see if all players on a team are dead or bleeding out.
 //If all the players are dead/bleeding out, it kills the surviving team players.
-void function CheckForTeamBleedout( int team )
+void function CheckForTeamBleedout( entity player )
 {
-#if R5DEV
-	if ( !GetCurrentPlaylistVarBool( "match_ending_enabled", true ) )
+	if( Flag( "BleedoutDebug" ) )
 		return
-#endif
 
-	array<entity> teamPlayers = GetPlayerArrayOfTeam( team )
-	foreach ( entity teamPlayer in teamPlayers )
+	while( Bleedout_AreThereAlivingMates( player.GetTeam() ) )
 	{
-		if ( IsAlive( teamPlayer ) && !file.isBleeding[ teamPlayer ] || Bleedout_GetSelfResEnabled( teamPlayer ) )
+		if( !file.isBleeding[ player ] )
 			return
+		
+		WaitFrame()
 	}
 
-	//All players on team are bleeding out
-	foreach ( entity teamPlayer in teamPlayers )
+	PlayerDiesFromBleedout( player, file.lastAttacker[ player ] )
+}
+
+bool function Bleedout_AreThereAlivingMates( int team, entity player = null )
+{
+	if( Flag( "BleedoutDebug" ) )
+		return true
+
+	foreach ( entity teamPlayer in GetPlayerArrayOfTeam( team ) )
 	{
-		if ( IsAlive( teamPlayer ) )
-			PlayerDiesFromBleedout( teamPlayer, file.lastAttacker[ teamPlayer ] )
+		if ( !file.isBleeding[ teamPlayer ] && teamPlayer != player || Bleedout_GetSelfResEnabled( teamPlayer ) )
+			return true
 	}
+
+	return false
 }
 
 bool function Bleedout_ShouldAIMissBleedingPlayer( entity player )

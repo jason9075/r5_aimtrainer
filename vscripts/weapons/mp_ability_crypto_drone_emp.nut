@@ -84,8 +84,14 @@ void function DroneFireEMP( entity weapon )
 		weapon.SetWeaponPrimaryClipCount( weapon.GetWeaponPrimaryClipCountMax() )
 		return
 	}
+	if( !IsValid( owner ) || !owner.IsPlayer() )
+		return
+	
+	ItemFlavor character = LoadoutSlot_GetItemFlavor( ToEHI( owner ), Loadout_CharacterClass() )
+	string charRef = ItemFlavor_GetHumanReadableRef( character )
 
-	PlayBattleChatterLineToSpeakerAndTeam( owner, "bc_super" )
+	if( charRef == "character_crypto")
+		PlayBattleChatterLineToSpeakerAndTeam( owner, "bc_super" )
 
 	camera.Anim_Play( "drone_EMP" )
 
@@ -171,13 +177,37 @@ void function DroneFireEMP_Thread( entity weapon, entity camera, array<entity> t
 		})
 		StatusEffect_StopAllOfType( target, eStatusEffect.crypto_emp_warning )
 	}
-	
+
+	foreach(entity target in GetTargets(pos, EMP_RADIUS))
+	{
+		if(!IsValid(target)) continue
+		
+		if ( target.GetScriptName() == "domeOfProtection" )
+		{
+			DestroyBubbleShield( target )
+			StopSoundOnEntity( target, "Gibraltar_BubbleShield_Sustain" )
+			EmitSoundOnEntity( target, "Gibraltar_BubbleShield_Ending" )
+		}
+
+		if ( target.GetScriptName() == "deployable_medic" )
+			target.Signal( "DeployableMedic_HealDepleated" )
+
+		if ( target.GetScriptName() == "gas_trap")
+			target.Signal( "DirtyBomb_Disarmed" )
+
+		if (target.GetScriptName() == "jump_pad")
+			target.Signal("OnDestroy")
+
+		if (target.GetScriptName() == "pylon" || target.GetScriptName() == "fence_node")
+			target.TakeDamage( target.GetMaxHealth() + 1, owner, weapon, { damageSourceId=eDamageSourceId.mp_ability_crypto_drone_emp } )
+	}
+
 	camera.Anim_Play( "drone_active_twitch" )
 }
 array<entity> function GetPlayersNpcsInRadius(vector origin, float radius)
 {
 	array<entity> targets = GetNPCArray()
-	targets.extend(GetPlayerArray())
+	targets.extend(GetPlayerArray_Alive())
 
 	array<entity> validTargets = []
 	foreach(entity target in targets)
@@ -187,6 +217,24 @@ array<entity> function GetPlayersNpcsInRadius(vector origin, float radius)
 
 		if( Distance( target.GetOrigin(), origin ) < radius )
 			validTargets.append( target )
+	}
+	return validTargets
+}
+array<entity> function GetTargets(vector origin, float radius){
+	array<entity> targets = ArrayEntSphere(origin, radius)
+
+	array<entity> validTargets = []
+	foreach(entity target in targets)
+	{
+		if( target.IsPlayer() || target.IsNPC() || target.IsPlayerDecoy() || target.GetScriptName() == "crypto_camera")
+			continue
+
+		if (target.GetScriptName() == "pylon" || target.GetScriptName() == "fence_node" || target.GetScriptName() == "gas_trap")
+			validTargets.append( target )
+
+		if ( target.GetScriptName() == "jump_pad" || target.GetScriptName() == "jump_pad_p" || target.GetScriptName() == "domeOfProtection" || target.GetScriptName() == "deployable_medic" )
+			validTargets.append( target )
+
 	}
 	return validTargets
 }

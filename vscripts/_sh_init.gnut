@@ -87,8 +87,10 @@ void function SV_CL_Init()
 	ClientSidePickups_Init()
 	GrappleWeaponInit()
 	ShInfoCords_Init()
+	if(GameRules_GetGameMode() == "map_editor")
+		ShAssets_Init()
 
-	#if R5DEV
+	#if DEVELOPER
 		ShDevUtility_Init()
 		CaptureMode_Shared_Init()
 	#endif
@@ -187,15 +189,9 @@ void function SV_CL_Init()
 
 	ShTutorial_Init()
 	Sh_PassiveVoices_Init()
-	#if(false)
-
-	#endif
-	#if(false)
-
-	#endif
 
 	#if CLIENT
-		Cl_DeathScreen_Init() //
+		Cl_DeathScreen_Init()
 	#endif
 
 	Sh_PersistentDamageLayer_Init()
@@ -303,8 +299,7 @@ void function Server_Init()
 	Bombardment_Init()
 	ThreatDetection_Init()
 	Staging_Area_Init()
-	if(GameRules_GetGameMode() != "custom_tdm"){
-	SurvivalCommentary_Init()}
+	SurvivalCommentary_Init()
 
 	GameMode_RunServerInits()
 
@@ -320,9 +315,9 @@ void function Server_Init()
 	PilotsPassage_Init()
 	SneakPeek_Init()
 	JumpPad_Init()
-	#if R5DEV
+	#if DEVELOPER
 		SmokeTest_Init()
-	#endif // DEV
+	#endif // DEVELOPER
 }
 #endif // SERVER
 
@@ -488,12 +483,15 @@ void function Shared_Lobby_Init()
 		Client_Lobby_Init()
 	#endif
 
+	Sh_LobbyVM_Init()
+
 	RemoteFunctions_Init_Finish()
 }
 
 #if SERVER
 void function Server_Lobby_Init()
 {
+	_LobbyVM_Init()
 	UIVars_Init()
 	MenuCallbacks_Init()
 	Lobby_Init()
@@ -514,5 +512,6 @@ void function Client_Lobby_Init()
 	ShPassPanel_LevelInit()
 	ClLoadscreensInit()
 	ClImagePakLoadInit()
+	Cl_LobbyVM_Init()
 }
 #endif // CLIENT

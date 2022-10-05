@@ -1,7 +1,6 @@
 untyped
 
 global function InitDevMenu
-#if R5DEV
 global function DEV_InitLoadoutDevSubMenu
 global function SetupDevCommand // for dev
 global function SetupDevFunc // for dev
@@ -12,8 +11,7 @@ global function ServerCallback_OpenDevMenu
 global function RunCodeDevCommandByAlias
 global function DEV_ExecBoundDevMenuCommand
 global function DEV_InitCodeDevMenu
-#endif
-
+global function UpdateCheatsState
 global function AddLevelDevCommand
 
 const string DEV_MENU_NAME = "[LEVEL]"
@@ -62,6 +60,7 @@ struct
 	table<string, DevCommand> codeDevMenuCommands
 
 	array<DevCommand> levelSpecificCommands = []
+	bool cheatsState
 } file
 
 function Dummy_Untyped( param )
@@ -69,10 +68,19 @@ function Dummy_Untyped( param )
 
 }
 
+void function UpdateCheatsState(bool cheatsState)
+{
+	file.cheatsState = cheatsState
+}
+
+bool function GetCheatsState()
+{
+	return file.cheatsState
+}
+
 
 void function InitDevMenu( var newMenuArg )
 {
-	#if R5DEV
 		var menu = GetMenu( "DevMenu" )
 
 		AddMenuEventHandler( menu, eUIEvent.MENU_OPEN, OnOpenDevMenu )
@@ -99,13 +107,11 @@ void function InitDevMenu( var newMenuArg )
 		AddUICallback_LevelLoadingFinished( DEV_InitCodeDevMenu )
 		AddUICallback_LevelShutdown( ClearCodeDevMenu )
 		//OnOpenDevMenu()
-	#endif
 }
 
 
 void function AddLevelDevCommand( string label, string command )
 {
-	#if R5DEV
 		string codeDevMenuAlias = DEV_MENU_NAME + "/" + label
 		DevMenu_Alias_DEV( codeDevMenuAlias, command )
 
@@ -113,10 +119,8 @@ void function AddLevelDevCommand( string label, string command )
 		cmd.label = label
 		cmd.command = command
 		file.levelSpecificCommands.append( cmd )
-	#endif
 }
 
-#if R5DEV
 void function OnOpenDevMenu()
 {
 	file.pageHistory.clear()
@@ -182,9 +186,7 @@ void function ClearCodeDevMenu()
 void function UpdateDevMenuButtons()
 {
 	file.devCommands.clear()
-	if ( developer() == 0 )
-		return
-
+	
 	if ( file.initializingCodeDevMenu )
 		return
 
@@ -268,108 +270,138 @@ void function ChangeToThisMenu_WithOpParm( void functionref( var ) menuFuncWithO
 
 void function SetupDefaultDevCommandsMP()
 {
-	SetupDevMenu( "Abilities", SetDevMenu_Abilities )
-	SetupDevMenu( "Equip Weapon", SetDevMenu_Weapons )
-	SetupDevMenu( "TDM Weapon", SetDevMenu_TDMWeapons )
-	//SetupDevMenu( "MDLSpawner", SetDevMenu_ModelSpawner )
+	//Player is fully connected at this point, a check was made before
+	RunClientScript("DEV_SendCheatsStateToUI")
+	
+	if(GetCurrentPlaylistName() == "map_editor")
+		SetupDevMenu( "Editor", SetDevMenu_Editor )
+	
+	if(GetCurrentPlaylistName() == "custom_tdm")
+		SetupDevMenu( "TDM: Change Primary weapon", SetDevMenu_TDMPrimaryWeapons )
+	
+	if(GetCurrentPlaylistName() == "custom_tdm")
+		SetupDevMenu( "TDM: Change Secondary weapon", SetDevMenu_TDMSecondaryWeapons )
+	
+	if(GetCurrentPlaylistName() == "custom_tdm")
+		SetupDevCommand( "TDM: Saved Current Weapons", "saveguns" )
 
-	if ( IsSurvivalMenuEnabled() )
-	{
-		SetupDevMenu( "Change Character", SetDevMenu_SurvivalCharacter )
-		//SetupDevMenu( "Override Spawn Character", SetDevMenu_OverrideSpawnSurvivalCharacter )
-		SetupDevMenu( "Survival", SetDevMenu_Survival )
-		SetupDevMenu( "Survival Weapons", SetDevMenu_SurvivalLoot, "main_weapon" )
-		SetupDevMenu( "Survival Attachments", SetDevMenu_SurvivalLoot, "attachment" )
-		SetupDevMenu( "Survival Helmets", SetDevMenu_SurvivalLoot, "helmet" )
-		SetupDevMenu( "Survival Armor", SetDevMenu_SurvivalLoot, "armor" )
-		SetupDevMenu( "Survival Backpack", SetDevMenu_SurvivalLoot, "backpack" )
-		SetupDevMenu( "Survival Incap Shield", SetDevMenu_SurvivalLoot, "incapshield" )
-		//SetupDevMenu( "Survival Incap Shield Debugging", SetDevMenu_SurvivalIncapShieldBots )
+	if(GetCurrentPlaylistName() == "custom_tdm")
+		SetupDevCommand( "TDM: Reset Saved Weapons", "resetguns" )
 
-		string itemsString = "ordnance ammo health custom_pickup data_knife"
+	if(GetCheatsState()){
+		
+		SetupDevMenu( "Abilities", SetDevMenu_Abilities )
+		SetupDevMenu( "Equip Weapon", SetDevMenu_Weapons )
+		//SetupDevMenu( "MDLSpawner", SetDevMenu_ModelSpawner )
+		
+		if ( IsSurvivalMenuEnabled() )
+		{
+			SetupDevMenu( "Change Character", SetDevMenu_SurvivalCharacter )
+			//SetupDevMenu( "Override Spawn Character", SetDevMenu_OverrideSpawnSurvivalCharacter )
+			SetupDevMenu( "Survival", SetDevMenu_Survival )
+			SetupDevMenu( "Custom Attachments", SetDevMenu_SurvivalLoot, "attachment_custom" )
+			SetupDevMenu( "Survival Weapons", SetDevMenu_SurvivalLoot, "main_weapon" )
+			SetupDevMenu( "Survival Attachments", SetDevMenu_SurvivalLoot, "attachment" )
+			SetupDevMenu( "Survival Helmets", SetDevMenu_SurvivalLoot, "helmet" )
+			SetupDevMenu( "Survival Armor", SetDevMenu_SurvivalLoot, "armor" )
+			SetupDevMenu( "Survival Backpack", SetDevMenu_SurvivalLoot, "backpack" )
+			SetupDevMenu( "Survival Incap Shield", SetDevMenu_SurvivalLoot, "incapshield" )
+			//SetupDevMenu( "Survival Incap Shield Debugging", SetDevMenu_SurvivalIncapShieldBots )
 
-		SetupDevMenu( "Survival Items", SetDevMenu_SurvivalLoot, itemsString )
+			string itemsString = "ordnance ammo health custom_pickup data_knife"
 
-		//SetupDevCommand( "Survival Loot Zone Preprocess", "script_ui Dev_CommandLineAddParm( \"-survival_preprocess\", \"\" ); reload" )
+			SetupDevMenu( "Survival Items", SetDevMenu_SurvivalLoot, itemsString )
+
+			//SetupDevCommand( "Survival Loot Zone Preprocess", "script_ui Dev_CommandLineAddParm( \"-survival_preprocess\", \"\" ); reload" )
+		}
+
+
+		SetupDevMenu( "Respawn Player(s)", SetDevMenu_RespawnPlayers )
+		SetupDevMenu( "Set Respawn Behaviour Override", SetDevMenu_RespawnOverride )
+
+		//SetupDevMenu( "Spawn NPC [IMC]", SetDevMenu_AISpawn, TEAM_IMC )
+		//SetupDevMenu( "Spawn NPC [Militia]", SetDevMenu_AISpawn, TEAM_MILITIA )
+		//SetupDevMenu( "Spawn NPC [Team 4]", SetDevMenu_AISpawn, TEAM_NPC )
+
+
+		SetupDevCommand( "Toggle NoClip", "noclip" )
+
+		SetupDevCommand( "Recharge Abilities", "recharge" )
+		SetupDevCommand( "Infinite Ammo", "infinite_ammo" )
+
+		//SetupDevCommand( "Toggle Model Viewer", "script thread ToggleModelViewer()" )
+		SetupDevCommand( "Start Skydive", "script thread SkydiveTest()" )
+		SetupDevCommand( "Spawn Deathbox", "script thread SURVIVAL_CreateDeathBox(gp()[0], false)" )
+		//SetupDevCommand( "Toggle Weapon Preview", "ToggleWeaponSkinPreview" )
+		//SetupDevMenu( "Threat Tracker", SetDevMenu_ThreatTracker )
+		//SetupDevMenu( "High-Vis NPC Test", SetDevMenu_HighVisNPCTest )
+
+		//SetupDevCommand( "Disable NPCs", "script disable_npcs()" )
+		// SetupDevCommand( "Disable New NPCs", "script disable_new_npcs()" )
+
+		//SetupDevCommand( "Toggle Friendly Highlights", "script DEV_ToggleFriendlyHighlight()" )
+		//SetupDevCommand( "Export precache script", "script_ui Dev_CommandLineAddParm( \"-autoprecache\", \"\" ); script_ui Dev_CommandLineRemoveParm( \"" + STARTPOINT_DEV_STRING + "\" ); reload" )
+
+		//SetupDevCommand( "Doom my titan", "script_client GetLocalViewPlayer().ClientCommand( \"DoomTitan\" )" )
+		//SetupDevCommand( "DoF debug (ads)", "script_client ToggleDofDebug()" )
+
+		//SetupDevCommand( "ToggleTitanCallInEffects", "script FlagToggle( \"EnableIncomingTitanDropEffects\" )" )
+
+		//SetupDevCommand( "Spawn IMC grunt", "SpawnViewGrunt " + TEAM_IMC )
+		//SetupDevCommand( "Spawn Militia grunt", "SpawnViewGrunt " + TEAM_MILITIA )
+
+		//SetupDevCommand( "Enable titan-always-executes-titan", "script FlagSet( \"ForceSyncedMelee\" )" )
+
+		//SetupDevCommand( "Kill All Titans", "script killtitans()" )
+		//SetupDevCommand( "Kill All Minions", "script killminions()" )
+
+		// SetupDevCommand( "Export leveled_weapons.def / r2_weapons.fgd", "script thread LeveledWeaponDump()" )
+
+		SetupDevCommand( "Summon Players to player 0", "script summonplayers()" )
+		//SetupDevCommand( "Display Titanfall spots", "script thread ShowAllTitanFallSpots()" )
+		//SetupDevCommand( "Toggle check inside Titanfall Blocker", "script thread DevCheckInTitanfallBlocker()" )
+		//SetupDevCommand( "Test Dropship Intro Spawns with Bots", "script thread DebugTestDropshipStartSpawnsForAll()" )
+		//SetupDevCommand( "Preview Dropship Spawn at this location", "script SetCustomPlayerDropshipSpawn()" )
+		//SetupDevCommand( "Test Dropship Spawn at this location", "script thread DebugTestCustomDropshipSpawn()" )
+		//SetupDevCommand( "Max Activity (Pilots)", "script SetMaxActivityMode(1)" )
+		//SetupDevCommand( "Max Activity (Titans)", "script SetMaxActivityMode(2)" )
+		//SetupDevCommand( "Max Activity (Conger Mode)", "script SetMaxActivityMode(4)" )
+		//SetupDevCommand( "Max Activity (Disabled)", "script SetMaxActivityMode(0)" )
+
+		SetupDevCommand( "Toggle Skybox View", "script thread ToggleSkyboxView()" )
+		SetupDevCommand( "Toggle HUD", "ToggleHUD" )
+
+		SetupDevCommand( "Equip Custom Heirloom", "script thread SetupHeirloom()" )
+		SetupDevCommand( "Equip Custom Heirloom (All Players)", "script thread SetupHeirloom( true )" )
+		SetupDevCommand( "Unequip Custom Heirloom", "script thread UnEquipHeirloom()" )
+		SetupDevCommand( "Unequip Custom Heirloom (All Players)", "script thread UnEquipHeirloom( true )" )
+		
+		//SetupDevCommand( "Toggle Offhand Low Recharge", "ToggleOffhandLowRecharge" )
+		//SetupDevCommand( "Map Metrics Toggle", "script_client GetLocalClientPlayer().ClientCommand( \"toggle map_metrics 0 1 2 3\" )" )
+		//SetupDevCommand( "Toggle Pain Death sound debug", "script TogglePainDeathDebug()" )
+		//SetupDevCommand( "Jump Randomly Forever", "script_client thread JumpRandomlyForever()" )
+
+		//SetupDevCommand( "Toggle Zeroing Mode", "script ToggleZeroingMode()" )
+		SetupDevCommand( "Enable God Mode", "script MakeInvincible( gp()[0] )" )
+		SetupDevCommand( "Disable God Mode", "script ClearInvincible( gp()[0] )" )
+		//SetupDevCommand( "Toggle Screen Alignment Tool", "script_client DEV_ToggleScreenAlignmentTool()" )
+
+		SetupDevCommand( "Toggle Third Person Mode", "ToggleThirdPerson" )
+
+		SetupDevMenu( "Prototypes", SetDevMenu_Prototypes )
+
+		// This adds CAPTURE MODE every time you load a level.
+		// Capture mode doesn't work, so I am commenting this out.
+		// Coded in sh_capturemode.nut
+		// foreach ( DevCommand cmd in file.levelSpecificCommands )
+		// 	SetupDevCommand( cmd.label, cmd.command )
 	}
-
-
-	SetupDevMenu( "Respawn Player(s)", SetDevMenu_RespawnPlayers )
-	SetupDevMenu( "Set Respawn Behaviour Override", SetDevMenu_RespawnOverride )
-
-	//SetupDevMenu( "Spawn NPC [IMC]", SetDevMenu_AISpawn, TEAM_IMC )
-	//SetupDevMenu( "Spawn NPC [Militia]", SetDevMenu_AISpawn, TEAM_MILITIA )
-	//SetupDevMenu( "Spawn NPC [Team 4]", SetDevMenu_AISpawn, TEAM_NPC )
-
-
-	SetupDevCommand( "Toggle NoClip", "noclip" )
-
-	SetupDevCommand( "Recharge Abilities", "recharge" )
-	SetupDevCommand( "Infinite Ammo", "infinite_ammo" )
-
-	//SetupDevCommand( "Toggle Model Viewer", "script thread ToggleModelViewer()" )
-	SetupDevCommand( "Start Skydive", "script thread SkydiveTest()" )
-	SetupDevCommand( "Spawn Deathbox", "script thread SURVIVAL_CreateDeathBox(gp()[0], false)" )
-	//SetupDevCommand( "Toggle Weapon Preview", "ToggleWeaponSkinPreview" )
-	//SetupDevMenu( "Threat Tracker", SetDevMenu_ThreatTracker )
-	//SetupDevMenu( "High-Vis NPC Test", SetDevMenu_HighVisNPCTest )
-
-	//SetupDevCommand( "Disable NPCs", "script disable_npcs()" )
-	// SetupDevCommand( "Disable New NPCs", "script disable_new_npcs()" )
-
-	//SetupDevCommand( "Toggle Friendly Highlights", "script DEV_ToggleFriendlyHighlight()" )
-	//SetupDevCommand( "Export precache script", "script_ui Dev_CommandLineAddParm( \"-autoprecache\", \"\" ); script_ui Dev_CommandLineRemoveParm( \"" + STARTPOINT_DEV_STRING + "\" ); reload" )
-
-	//SetupDevCommand( "Doom my titan", "script_client GetLocalViewPlayer().ClientCommand( \"DoomTitan\" )" )
-	//SetupDevCommand( "DoF debug (ads)", "script_client ToggleDofDebug()" )
-
-	//SetupDevCommand( "ToggleTitanCallInEffects", "script FlagToggle( \"EnableIncomingTitanDropEffects\" )" )
-
-	//SetupDevCommand( "Spawn IMC grunt", "SpawnViewGrunt " + TEAM_IMC )
-	//SetupDevCommand( "Spawn Militia grunt", "SpawnViewGrunt " + TEAM_MILITIA )
-
-	//SetupDevCommand( "Enable titan-always-executes-titan", "script FlagSet( \"ForceSyncedMelee\" )" )
-
-	//SetupDevCommand( "Kill All Titans", "script killtitans()" )
-	//SetupDevCommand( "Kill All Minions", "script killminions()" )
-
-	// SetupDevCommand( "Export leveled_weapons.def / r2_weapons.fgd", "script thread LeveledWeaponDump()" )
-
-	SetupDevCommand( "Summon Players to player 0", "script summonplayers()" )
-	//SetupDevCommand( "Display Titanfall spots", "script thread ShowAllTitanFallSpots()" )
-	//SetupDevCommand( "Toggle check inside Titanfall Blocker", "script thread DevCheckInTitanfallBlocker()" )
-	//SetupDevCommand( "Test Dropship Intro Spawns with Bots", "script thread DebugTestDropshipStartSpawnsForAll()" )
-	//SetupDevCommand( "Preview Dropship Spawn at this location", "script SetCustomPlayerDropshipSpawn()" )
-	//SetupDevCommand( "Test Dropship Spawn at this location", "script thread DebugTestCustomDropshipSpawn()" )
-	//SetupDevCommand( "Max Activity (Pilots)", "script SetMaxActivityMode(1)" )
-	//SetupDevCommand( "Max Activity (Titans)", "script SetMaxActivityMode(2)" )
-	//SetupDevCommand( "Max Activity (Conger Mode)", "script SetMaxActivityMode(4)" )
-	//SetupDevCommand( "Max Activity (Disabled)", "script SetMaxActivityMode(0)" )
-
-	SetupDevCommand( "Toggle Skybox View", "script thread ToggleSkyboxView()" )
-	SetupDevCommand( "Toggle HUD", "ToggleHUD" )
-
-	SetupDevCommand( "Equip Custom Heirloom", "script thread SetupHeirloom()" )
-	SetupDevCommand( "Equip Custom Heirloom (All Players)", "script thread SetupHeirloom( true )" )
-	//SetupDevCommand( "Toggle Offhand Low Recharge", "ToggleOffhandLowRecharge" )
-	//SetupDevCommand( "Map Metrics Toggle", "script_client GetLocalClientPlayer().ClientCommand( \"toggle map_metrics 0 1 2 3\" )" )
-	//SetupDevCommand( "Toggle Pain Death sound debug", "script TogglePainDeathDebug()" )
-	//SetupDevCommand( "Jump Randomly Forever", "script_client thread JumpRandomlyForever()" )
-
-	//SetupDevCommand( "Toggle Zeroing Mode", "script ToggleZeroingMode()" )
-	SetupDevCommand( "Enable God Mode", "script EnableDemigod( gp()[0] )" )
-	SetupDevCommand( "Disable God Mode", "script DisableDemigod( gp()[0] )" )
-	//SetupDevCommand( "Toggle Screen Alignment Tool", "script_client DEV_ToggleScreenAlignmentTool()" )
-
-	SetupDevCommand( "Toggle Third Person Mode", "ToggleThirdPerson" )
-
-	SetupDevMenu( "Prototypes", SetDevMenu_Prototypes )
-
-	// This adds CAPTURE MODE every time you load a level.
-	// Capture mode doesn't work, so I am commenting this out.
-	// Coded in sh_capturemode.nut
-	// foreach ( DevCommand cmd in file.levelSpecificCommands )
-	// 	SetupDevCommand( cmd.label, cmd.command )
+	else
+	{
+		SetupDevCommand( "sv_cheats is false, can't show more dev settings.", "empty" )
+		SetupDevCommand( "sv_cheats is false, can't show more dev settings.", "empty" )
+		SetupDevCommand( "sv_cheats is false, can't show more dev settings.", "empty" )
+	}
 }
 
 
@@ -407,15 +439,23 @@ void function SetDevMenu_Weapons( var _ )
 {
 	thread ChangeToThisMenu( SetupWeapons )
 }
-void function SetDevMenu_TDMWeapons( var _ )
+void function SetDevMenu_TDMPrimaryWeapons( var _ )
 {
-	thread ChangeToThisMenu( SetupTDMweapsons )
+	thread ChangeToThisMenu( SetupTDMPrimaryWeapsons )
+}
+void function SetDevMenu_TDMSecondaryWeapons( var _ )
+{
+	thread ChangeToThisMenu( SetupTDMSecondaryWeapsons )
 }
 void function SetDevMenu_SurvivalCharacter( var _ )
 {
 	thread ChangeToThisMenu( SetupChangeSurvivalCharacterClass )
 }
 
+void function SetDevMenu_Editor( var _ ) 
+{
+	thread ChangeToThisMenu( SetupEditor ) 
+}
 
 void function DEV_InitLoadoutDevSubMenu()
 {
@@ -699,34 +739,83 @@ void function SetupRespawnPlayersDevMenu()
 	//	SetupDevCommand( "Respawn player: " + player.GetPlayerName(), "respawn " + player.GetEntIndex() )
 	//}
 }
-void function SetupTDMweapsons()
+void function SetupTDMPrimaryWeapsons()
 {
-	SetupDevCommand( "2x R99", "tgive p mp_weapon_r97 optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l4_flash_hider bullets_mag_l3" )
-	SetupDevCommand( "3x G7 ", "tgive p mp_weapon_g2 optic_ranged_hcog stock_sniper_l3 barrel_stabilizer_l4_flash_hider bullets_mag_l3 hopup_double_tap" )
-	SetupDevCommand( "2x re45", "tgive p mp_weapon_autopistol optic_cq_hcog_bruiser barrel_stabilizer_l4_flash_hider bullets_mag_l3" )
-	SetupDevCommand( "1x Volt SMG", "tgive p mp_weapon_volt_smg optic_cq_hcog_classic barrel_stabilizer_l4_flash_hider bullets_mag_l3" )
-	SetupDevCommand( "2x r301", "tgive p mp_weapon_rspn101 optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l4_flash_hider bullets_mag_l3" )
-	SetupDevCommand( "1x p2020", "tgive p mp_weapon_semipistol optic_cq_hcog_classic bullets_mag_l3 hopup_unshielded_dmg" )
-	SetupDevCommand( "2x Alternator", "tgive p mp_weapon_alternator_smg optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l4_flash_hider bullets_mag_l3" )
-	SetupDevCommand( "2x hemlok", "tgive p mp_weapon_hemlok optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l4_flash_hider highcal_mag_l3" )
-	SetupDevCommand( "2x flatline", "tgive p mp_weapon_vinson optic_cq_hcog_bruiser stock_tactical_l3 highcal_mag_l3")
-	SetupDevCommand( "2x Spitfire", "tgive p mp_weapon_lmg optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l4_flash_hider highcal_mag_l3" )
-	SetupDevCommand( "1x Prowler", "tgive p mp_weapon_pdw optic_cq_hcog_classic stock_tactical_l3 highcal_mag_l3" )
-	SetupDevCommand( "1x wingman", "tgive p mp_weapon_wingman optic_cq_hcog_classic highcal_mag_l3" )
-	SetupDevCommand( "4-8x longbow", "tgive p mp_weapon_dmr optic_sniper_variable barrel_stabilizer_l4_flash_hider stock_sniper_l3 highcal_mag_l3" )
-	SetupDevCommand( "4-10x Charge Rifle", "tgive p mp_weapon_defender optic_sniper_threat stock_sniper_l3" )
-	SetupDevCommand( "2x Devotion", "tgive p mp_weapon_esaw optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l4_flash_hider energy_mag_l3 hopup_turbocharger" )
-	SetupDevCommand( "2x Havoc", "tgive p mp_weapon_energy_ar optic_cq_hcog_bruiser stock_tactical_l3 energy_mag_l3 hopup_turbocharger" )
-	SetupDevCommand( "1x EVA8", "tgive s mp_weapon_shotgun shotgun_bolt_l3 optic_cq_hcog_classic hopup_double_tap" )
-	SetupDevCommand( "1x Mozambique", "tgive s mp_weapon_shotgun_pistol shotgun_bolt_l3 optic_cq_hcog_classic hopup_unshielded_dmg" )
-	SetupDevCommand( "1x Peacekeeper", "tgive s mp_weapon_energy_shotgun shotgun_bolt_l3 optic_cq_hcog_classic hopup_energy_choke" )
-	SetupDevCommand( "3x Triple Take", "tgive p mp_weapon_doubletake energy_mag_l3 optic_ranged_hcog stock_sniper_l3 hopup_energy_choke" )
-	SetupDevCommand( "Kraber", "tgive p mp_weapon_sniper" )
-	SetupDevCommand( "Lstar", "tgive p mp_weapon_lstar" )
-	SetupDevCommand( "Mastiff","tgive s mp_weapon_mastiff")
+	//Assault Rifles
+	SetupDevCommand( "R-301", "tgive p mp_weapon_rspn101 optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l3 bullets_mag_l3" )
+	SetupDevCommand( "Flatline", "tgive p mp_weapon_vinson optic_cq_hcog_bruiser stock_tactical_l3 highcal_mag_l3")
+	SetupDevCommand( "Hemlok", "tgive p mp_weapon_hemlok optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l3 highcal_mag_l3" )
+	SetupDevCommand( "Havoc", "tgive p mp_weapon_energy_ar optic_cq_hcog_bruiser stock_tactical_l3 energy_mag_l1 hopup_turbocharger" )
+	//LMGs
+	SetupDevCommand( "Spitfire", "tgive p mp_weapon_lmg optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l3 highcal_mag_l2" )
+	SetupDevCommand( "Devotion", "tgive p mp_weapon_esaw optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l3 energy_mag_l1 hopup_turbocharger" )
+	SetupDevCommand( "L-STAR EMG", "tgive p mp_weapon_lstar energy_mag_l3 optic_cq_hcog_bruiser" )
+	//SMGs
+	SetupDevCommand( "R-99 SMG", "tgive p mp_weapon_r97 optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l3 bullets_mag_l3" )
+	SetupDevCommand( "Alternator SMG", "tgive p mp_weapon_alternator_smg optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l3 bullets_mag_l3" )
+	SetupDevCommand( "Prowler Burst SMG", "tgive p mp_weapon_pdw optic_cq_hcog_classic stock_tactical_l3 highcal_mag_l3" )
+	SetupDevCommand( "Volt SMG", "tgive p mp_weapon_volt_smg optic_cq_hcog_classic barrel_stabilizer_l3 stock_tactical_l3 energy_mag_l3" )
+	SetupDevCommand( "CAR SMG", "tgive p mp_weapon_car optic_cq_hcog_classic barrel_stabilizer_l3 stock_tactical_l3 bullets_mag_l3" )
+	//Marksman Weapons
+	SetupDevCommand( "G7 Scout", "tgive p mp_weapon_g2 optic_ranged_hcog stock_sniper_l3 barrel_stabilizer_l3 bullets_mag_l3 hopup_double_tap" )
+	SetupDevCommand( "Triple Take", "tgive p mp_weapon_doubletake energy_mag_l3 optic_ranged_hcog stock_sniper_l3 hopup_energy_choke" )
+	//Pistols
+	SetupDevCommand( "RE-45", "tgive p mp_weapon_autopistol optic_cq_hcog_classic barrel_stabilizer_l3 bullets_mag_l3" )
+	SetupDevCommand( "P2020", "tgive p mp_weapon_semipistol optic_cq_hcog_classic bullets_mag_l3 hopup_unshielded_dmg" )
+	SetupDevCommand( "Winman", "tgive p mp_weapon_wingman optic_cq_hcog_classic highcal_mag_l3" )
+	//Shotguns
+	SetupDevCommand( "EVA-8", "tgive p mp_weapon_shotgun shotgun_bolt_l3 optic_cq_threat hopup_double_tap" )
+	SetupDevCommand( "Mozambique", "tgive p mp_weapon_shotgun_pistol shotgun_bolt_l3 optic_cq_threat hopup_unshielded_dmg" )
+	SetupDevCommand( "Peacekeeper", "tgive p mp_weapon_energy_shotgun shotgun_bolt_l3 optic_cq_threat hopup_energy_choke" )
+	//SetupDevCommand( "Mastiff","tgive p mp_weapon_mastiff shotgun_bolt_l3")
+	//Sniper Rifles
+	SetupDevCommand( "Longbow", "tgive p mp_weapon_dmr optic_sniper_variable barrel_stabilizer_l3 stock_sniper_l3 highcal_mag_l3" )
+	SetupDevCommand( "Charge Rifle", "tgive p mp_weapon_defender optic_sniper_threat stock_sniper_l3" )
+	//SetupDevCommand( "Kraber", "tgive p mp_weapon_sniper" )
+	
 
+	//foreach ( player in GetPlayerArray() )
+	//{
+	//	SetupDevCommand( "Respawn player: " + player.GetPlayerName(), "respawn " + player.GetEntIndex() )
+	//}
+}
 
+void function SetupTDMSecondaryWeapsons()
+{
+	//Assault Rifles
+	SetupDevCommand( "R-301", "tgive s mp_weapon_rspn101 optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l3 bullets_mag_l3" )
+	SetupDevCommand( "Flatline", "tgive s mp_weapon_vinson optic_cq_hcog_bruiser stock_tactical_l3 highcal_mag_l3")
+	SetupDevCommand( "Hemlok", "tgive s mp_weapon_hemlok optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l3 highcal_mag_l3" )
+	SetupDevCommand( "Havoc", "tgive s mp_weapon_energy_ar optic_cq_hcog_bruiser stock_tactical_l3 energy_mag_l1 hopup_turbocharger" )
+	//LMGs
+	SetupDevCommand( "Spitfire", "tgive s mp_weapon_lmg optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l3 highcal_mag_l2" )
+	SetupDevCommand( "Devotion", "tgive s mp_weapon_esaw optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l3 energy_mag_l1 hopup_turbocharger" )
+	SetupDevCommand( "L-STAR EMG", "tgive s mp_weapon_lstar energy_mag_l3 optic_cq_hcog_bruiser" )
+	//SMGs
+	SetupDevCommand( "R-99 SMG", "tgive s mp_weapon_r97 optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l3 bullets_mag_l3" )
+	SetupDevCommand( "Alternator SMG", "tgive s mp_weapon_alternator_smg optic_cq_hcog_bruiser stock_tactical_l3 barrel_stabilizer_l3 bullets_mag_l3" )
+	SetupDevCommand( "Prowler Burst SMG", "tgive s mp_weapon_pdw optic_cq_hcog_classic stock_tactical_l3 highcal_mag_l3" )
+	SetupDevCommand( "Volt SMG", "tgive s mp_weapon_volt_smg optic_cq_hcog_classic barrel_stabilizer_l3 stock_tactical_l3 energy_mag_l3" )
+	SetupDevCommand( "CAR SMG", "tgive s mp_weapon_car optic_cq_hcog_classic barrel_stabilizer_l3 stock_tactical_l3 bullets_mag_l3" )
+	//Marksman Weapons
+	SetupDevCommand( "G7 Scout", "tgive s mp_weapon_g2 optic_ranged_hcog stock_sniper_l3 barrel_stabilizer_l3 bullets_mag_l3 hopup_double_tap" )
+	SetupDevCommand( "Triple Take", "tgive s mp_weapon_doubletake energy_mag_l3 optic_ranged_hcog stock_sniper_l3 hopup_energy_choke" )
+	//Pistols
+	SetupDevCommand( "RE-45", "tgive s mp_weapon_autopistol optic_cq_hcog_classic barrel_stabilizer_l3 bullets_mag_l3" )
+	SetupDevCommand( "P2020", "tgive s mp_weapon_semipistol optic_cq_hcog_classic bullets_mag_l3 hopup_unshielded_dmg" )
+	SetupDevCommand( "Winman", "tgive s mp_weapon_wingman optic_cq_hcog_classic highcal_mag_l3" )
+	//Shotguns
+	SetupDevCommand( "EVA-8", "tgive s mp_weapon_shotgun shotgun_bolt_l3 optic_cq_threat hopup_double_tap" )
+	SetupDevCommand( "Mozambique", "tgive s mp_weapon_shotgun_pistol shotgun_bolt_l3 optic_cq_threat hopup_unshielded_dmg" )
+	SetupDevCommand( "Peacekeeper", "tgive s mp_weapon_energy_shotgun shotgun_bolt_l3 optic_cq_threat hopup_energy_choke" )
+	//SetupDevCommand( "Mastiff","tgive s mp_weapon_mastiff shotgun_bolt_l3")
+	//Sniper Rifles
+	SetupDevCommand( "Longbow", "tgive s mp_weapon_dmr optic_sniper_variable barrel_stabilizer_l3 stock_sniper_l3 highcal_mag_l3" )
+	SetupDevCommand( "Charge Rifle", "tgive s mp_weapon_defender optic_sniper_threat stock_sniper_l3" )
+	//SetupDevCommand( "Kraber", "tgive s mp_weapon_sniper" )
+	
 
+	//foreach ( player in GetPlayerArray() )
 	//foreach ( player in GetPlayerArray() )
 	//{
 	//	SetupDevCommand( "Respawn player: " + player.GetPlayerName(), "respawn " + player.GetEntIndex() )
@@ -1047,4 +1136,3 @@ void function DEV_ExecBoundDevMenuCommand()
 
 	RunDevCommand( file.boundCmd, true )
 }
-#endif

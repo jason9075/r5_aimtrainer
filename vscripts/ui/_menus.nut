@@ -148,9 +148,9 @@ global function OpenXboxPartyApp
 global function OpenXboxHelp
 #endif //DURANGO_PROG
 
-#if R5DEV
 global function OpenDevMenu
-#endif // R5DEV
+
+global function OpenModelMenu
 
 struct
 {
@@ -438,7 +438,7 @@ bool function UICodeCallback_LevelLoadingStarted( string levelname )
 // Return true to show load screen, false to not show load screen.
 bool function UICodeCallback_UpdateLoadingLevelName( string levelname )
 {
-	printt( "UICodeCallback_UpdateLoadingLevelName: " + levelname )
+	//printt( "UICodeCallback_UpdateLoadingLevelName: " + levelname )
 
 	#if CONSOLE_PROG
 		if ( !Console_IsSignedIn() )
@@ -451,7 +451,7 @@ bool function UICodeCallback_UpdateLoadingLevelName( string levelname )
 
 void function UICodeCallback_LevelLoadingFinished( bool error )
 {
-	printt( "UICodeCallback_LevelLoadingFinished: " + uiGlobal.loadingLevel + " (" + error + ")" )
+	//printt( "UICodeCallback_LevelLoadingFinished: " + uiGlobal.loadingLevel + " (" + error + ")" )
 
 	UIMusicUpdate()
 
@@ -472,7 +472,7 @@ void function UICodeCallback_LevelLoadingFinished( bool error )
 
 void function UICodeCallback_LevelInit( string levelname )
 {
-	printt( "UICodeCallback_LevelInit: " + levelname + ", IsConnected(): ", IsConnected() )
+	//printt( "UICodeCallback_LevelInit: " + levelname + ", IsConnected(): ", IsConnected() )
 }
 
 
@@ -484,7 +484,7 @@ void function UICodeCallback_FullyConnected( string levelname )
 
 	uiGlobal.loadedLevel = levelname
 
-	printt( "UICodeCallback_FullyConnected: " + uiGlobal.loadedLevel + ", IsFullyConnected(): ", IsFullyConnected() )
+	//printt( "UICodeCallback_FullyConnected: " + uiGlobal.loadedLevel + ", IsFullyConnected(): ", IsFullyConnected() )
 
 	//if ( !uiGlobal.loadoutsInitialized )
 	//{
@@ -497,7 +497,7 @@ void function UICodeCallback_FullyConnected( string levelname )
 
 	InitXPData()
 
-	#if R5DEV
+	#if DEVELOPER
 		ShDevUtility_Init()
 	#endif
 
@@ -509,6 +509,7 @@ void function UICodeCallback_FullyConnected( string levelname )
 	ShGRX_LevelInit()
 	Entitlements_LevelInit()
 	CustomizeCommon_Init()
+	CustomizeModel_Init()
 	ShLoadouts_LevelInit_Begin()
 	ShCharacters_LevelInit()
 	ShPassives_Init()
@@ -550,7 +551,7 @@ void function UICodeCallback_FullyConnected( string levelname )
 	//ShWeaponXP_Init()
 	//ShFactionXP_Init()
 
-	#if R5DEV
+	#if DEVELOPER
 		UpdatePrecachedSPWeapons()
 	#endif
 
@@ -1155,6 +1156,9 @@ bool function TryDialogFlowPersistenceQuery( string persistenceVar )
 
 void function DialogFlow()
 {
+	if ( !IsPlayPanelCurrentlyTopLevel() )
+		return
+
 	bool persistenceAvailable   = IsPersistenceAvailable()
 	string earliestRankedPeriod = Ranked_EarliestRankedPeriodWithRewardsNotAcknowledged()
 
@@ -1518,13 +1522,17 @@ void function InitMenus()
 
 	var r5rlobbymenu = AddMenu( "R5RLobbyMenu", $"scripts/resource/ui/menus/R5R/lobbymenu.res", InitR5RLobbyMenu )
 	AddPanel( r5rlobbymenu, "R5RHomePanel", InitR5RHomePanel )
+	AddPanel( r5rlobbymenu, "R5RServerBrowserPanel", InitR5RServerBrowserPanel )
 	AddPanel( r5rlobbymenu, "R5RNamePanel", InitR5RNamePanel )
 	AddPanel( r5rlobbymenu, "R5RDescPanel", InitR5RDescPanel )
-	var createserverpanel = AddPanel( r5rlobbymenu, "R5RCreateServerPanel", InitR5RCreateServerPanel )
-	AddPanel( r5rlobbymenu, "R5RServerBrowserPanel", InitR5RServerBrowserPanel )
-	AddPanel( createserverpanel, "R5RPlaylistPanel", InitR5RPlaylistPanel )
-	AddPanel( createserverpanel, "R5RMapPanel", InitR5RMapPanel )
-	AddPanel( createserverpanel, "R5RVisPanel", InitR5RVisPanel )
+	AddPanel( r5rlobbymenu, "R5RKickPanel", InitR5RKickPanel )
+	AddPanel( r5rlobbymenu, "R5RStartingPanel", InitR5RStartingPanel )
+	AddPanel( r5rlobbymenu, "R5RConnectingPanel", InitR5RConnectingPanel )
+
+	var privatematchmenu = AddPanel( r5rlobbymenu, "R5RPrivateMatchPanel", InitR5RPrivateMatchMenu )
+	AddPanel( privatematchmenu, "R5RPlaylistPanel", InitR5RPlaylistPanel )
+	AddPanel( privatematchmenu, "R5RMapPanel", InitR5RMapPanel )
+	AddPanel( privatematchmenu, "R5RVisPanel", InitR5RVisPanel )
 	////////
 
 	//CTF UI
@@ -1603,6 +1611,13 @@ void function InitMenus()
 	AddPanel( quipsPanel, "QuipsPanel", InitQuipsPanel )
 
 	AddPanel( customizeCharacterMenu, "CharacterExecutionsPanel", InitCharacterExecutionsPanel )
+
+	var customizeModelMenu = AddMenu( "CustomizeModelMenu", $"resource/ui/menus/customize_weapon.menu", InitCustomizeModelMenu )
+	AddPanel( customizeModelMenu, "WeaponSkinsPanel0", InitModelsPanel )
+	AddPanel( customizeModelMenu, "WeaponSkinsPanel1", InitModelsPanel )
+	AddPanel( customizeModelMenu, "WeaponSkinsPanel2", InitModelsPanel )
+	AddPanel( customizeModelMenu, "WeaponSkinsPanel3", InitModelsPanel )
+	AddPanel( customizeModelMenu, "WeaponSkinsPanel4", InitModelsPanel )
 
 	var customizeWeaponMenu = AddMenu( "CustomizeWeaponMenu", $"resource/ui/menus/customize_weapon.menu", InitCustomizeWeaponMenu )
 	AddPanel( customizeWeaponMenu, "WeaponSkinsPanel0", InitWeaponSkinsPanel )
@@ -2519,12 +2534,17 @@ void function OpenXboxHelp( var button )
 }
 #endif // DURANGO_PROG
 
-#if R5DEV
 void function OpenDevMenu( var button )
 {
 	AdvanceMenu( GetMenu( "DevMenu" ) )
 }
-#endif //R5DEV
+
+void function OpenModelMenu (string equipped) {
+	
+	SetTopLevelCustomizeContext(GetAllWeaponCategories()[0])
+	CustomizeModelMenus_Equip(equipped)
+	AdvanceMenu( GetMenu( "CustomizeModelMenu" ) )
+}
 
 void function SetDialog( var menu, bool val )
 {

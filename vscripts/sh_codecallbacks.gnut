@@ -100,6 +100,7 @@ void function CodeCallbacksShared_Init()
 	#if CLIENT
 		RegisterConCommandTriggeredCallback( "-useAndReload", CancelDisembark )
 		RegisterConCommandTriggeredCallback( "-use", CancelDisembark )
+	if(GameRules_GetGameMode() == SURVIVAL)
 		RegisterConCommandTriggeredCallback( "+offhand4", CheckForAccelerants )
 	#endif
 
@@ -317,7 +318,7 @@ void function CodeCallback_PlayerClassChanged( entity player, bool actualSetting
 	#else
 		if(IsValid( player ) ){
 		player.kv.renderColor = "255 255 255 255"
-
+		TakeAllPassives( player )
 		InitDamageStates( player )
 		if ( GameRules_GetGameMode() == "survival" )// Survey Beacon Minimap Icon
 			thread SetSurveyBaconMinimapVisibility( player )}
@@ -661,7 +662,7 @@ void function ServerCallback_PlayerChangedTeams( entity player, int oldTeam, int
 	foreach( void functionref(entity, int, int) callbackFunc in s_callbacksOnPlayerChangedTeam )
 		callbackFunc( player, oldTeam, newTeam )
 
-	#if R5DEV
+	#if DEVELOPER
 		if ( oldTeam == TEAM_INVALID || newTeam == TEAM_INVALID )
 			return
 

@@ -135,7 +135,7 @@ const string SIGNAL_WAYPOINT_TIMEOUT_BEGIN = "WaypointTimeoutThreadBegin"
 void function PlayerWaypoints_Init()
 {
 	RegisterSignal( SIGNAL_WAYPOINT_TIMEOUT_BEGIN )
-	printt("PlayerWaypoints_Init")
+	//printt("PlayerWaypoints_Init")
 	#if CLIENT
 		AddCreateCallback( PLAYER_WAYPOINT_CLASSNAME, PlayerWaypoint_CreateCallback )
 		AddDestroyCallback( PLAYER_WAYPOINT_CLASSNAME, PlayerWaypoint_DestroyCallback )
@@ -1200,7 +1200,7 @@ void function InstanceLocationPing( entity wp )
 	entity wpParent = wp.GetParent()
 	if ( viewPlayer == wpParent && pingType == ePingType.BLEEDOUT )
 	{
-		printf( "Ping: Skipping drawing bleedout ping %s for parent entity %s", string( wp ), string( wpParent ) )
+		//printf( "Ping: Skipping drawing bleedout ping %s for parent entity %s", string( wp ), string( wpParent ) )
 		return
 	}
 
@@ -2164,6 +2164,9 @@ void function Waypoint_ClearPlayerSimilarPingsForReply( entity player, entity wp
 	{
 		if ( wp == wpEnt )
 			continue
+			
+		if ( !IsValid( wp ) )
+			return
 
 		int wpPingType = Waypoint_GetPingTypeForWaypoint( wp )
 		if ( (wpPingType == pingType) )

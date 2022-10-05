@@ -1,5 +1,11 @@
 Selector Common
 
+	SelectSchedule_FallToGround
+
+	SelectSchedule_SyncedMeleeAttack
+	SelectSchedule_MeleeAttack
+	SelectSchedule_ChaseEnemy
+
 	SelectSchedule_LayeredBehavior
 
 Selector_End
@@ -14,12 +20,13 @@ Selector_End
 
 Selector Alert
 
-	SelectSchedule_Alert
+	SelectSchedule_CombatFace
 
 Selector_End
 
 
 Selector Combat
 
+	SelectSchedule_CombatFace
 
 Selector_End

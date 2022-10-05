@@ -121,13 +121,16 @@ void function ClientCodeCallback_MapSpawn()
 
 	PrecacheResFiles()
 
-	#if R5DEV
+	#if DEVELOPER
 		ClModelViewInit()
 	#endif
 
 	CreateHUDRuiTopologies()
 
 	SV_CL_Shared_Init()
+	
+	//for custom ui/textures
+	PakHandle AimTrainerRpak = RequestPakFile( "aimtrainer" )
 }
 
 

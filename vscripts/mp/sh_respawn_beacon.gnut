@@ -8,7 +8,7 @@ global function GetRespawnStyle
 global function RespawnBeacons_OnSquadEliminated
 global function RespawnBeacon_PutPlayerInDropship
 global function AddCallback_OnDNAPickupDestroyed
-#if R5DEV
+#if DEVELOPER
 global function RespawnPlayersInDropship
 global function RespawnPlayersInDropshipAtPoint
 global function RespawnPlayersInDropshipAtPoint2
@@ -186,6 +186,8 @@ void function Sh_RespawnBeacon_Init()
 			AddCallback_OnGetBestObserverTarget( GetBestObserverTarget )
 		}
 	#endif
+	
+	ShRespawnBeacon_RegisterAinAnalysisFuncs()
 }
 
 void function RespawnBeacons_RegisterNetworking()
@@ -231,7 +233,7 @@ void function RespawnStatusChanged( entity player, int old, int new, bool actual
 	if ( !IsValid( viewPlayer ) )
 		return
 
-	bool waitingToBeRespawned = TeammatesWaitingToBeRespawned( viewPlayer.GetTeam() )
+	bool waitingToBeRespawned = HasTeammatesToRespawn( viewPlayer.GetTeam() )
 
 	foreach ( rui in file.respawnChamberRuis )
 	{
@@ -240,7 +242,9 @@ void function RespawnStatusChanged( entity player, int old, int new, bool actual
 
 	ArrayRemoveInvalid( file.allStations )
 
-	int fxId = GetParticleSystemIndex( RESPAWN_BEACON_BEAM_FX )
+	if ( GetRespawnStyle() != eRespawnStyle.NONE )
+	{
+		int fxId = GetParticleSystemIndex( RESPAWN_BEACON_BEAM_FX )
 
 	foreach ( ent in file.allStations )
 	{
@@ -258,11 +262,12 @@ void function RespawnStatusChanged( entity player, int old, int new, bool actual
 				EffectStop( file.chamberToBeamFX[ ent ], true, true )
 			}
 
-			file.chamberToBeamFX[ ent ] = -1
+				file.chamberToBeamFX[ ent ] = -1
+			}
 		}
 	}
 
-	//
+	                                                                                                          
 	DeathScreen_RespawnStatusChanged( player, old, new, actuallyChanged )
 }
 
@@ -386,11 +391,7 @@ void function RespawnPlayersInDropship( array<entity> players, entity beacon )
 	}
 	else if ( beacon.GetLinkEntArray().len() == 0 )
 	{
-		// no navmesh so can't use
-		// p = GetClosestRespawnDropoff( beacon.GetOrigin() )
-
-		p.origin = beacon.GetOrigin() + <0, 0, 500>
-		p.angles = beacon.GetAngles()
+		p = GetClosestRespawnDropoff( beacon.GetOrigin() )
 	}
 	else
 	{
@@ -403,39 +404,51 @@ void function RespawnPlayersInDropship( array<entity> players, entity beacon )
 
 void function RespawnPlayersInDropshipAtPoint( array<entity> players, vector origin, vector angles )
 {
-	entity dropship = CreateEntity( "npc_dropship" )
-	SetSpawnOption_AISettings( dropship, "npc_dropship_respawn" )
-	SetTargetName( dropship, RESPAWN_DROPSHIP_TARGETNAME )
-	DispatchSpawn( dropship )
-	dropship.SetInvulnerable()
-	dropship.DisableHibernation()
-	EmitSoundOnEntity( dropship, "goblin_imc_evac_hover" )
-	thread JetwashFX( dropship )
+    entity dropship = CreateEntity( "npc_dropship" )
+    SetSpawnOption_AISettings( dropship, "npc_dropship_respawn" )
+    SetTargetName( dropship, RESPAWN_DROPSHIP_TARGETNAME )
+    DispatchSpawn( dropship )
+    dropship.SetInvulnerable()
+    dropship.DisableHibernation()
+    thread JetwashFX( dropship )
 
-	dropship.DisableGrappleAttachment()
+    dropship.DisableGrappleAttachment()
 
-	dropship.SetOrigin( origin )
-	dropship.SetAngles( angles )
-	Attachment attachResult = dropship.Anim_GetAttachmentAtTime( "dropship_classic_mp_flyin", "ORIGIN", 0.0 )
+    dropship.SetOrigin( origin )
+    dropship.SetAngles( angles )
+    Attachment attachResult = dropship.Anim_GetAttachmentAtTime( "dropship_classic_mp_flyin", "ORIGIN", 0.0 )
 
-	int i=0
-	foreach ( player in players )
-	{
-		if ( IsValid( player ) )
-		{
-			thread RespawnBeacon_PutPlayerInDropship( player, dropship, i, attachResult.position )
-		}
-		i++
-	}
+    int i = 0
+    foreach ( player in players )
+    {
+        if ( IsValid( player ) )
+        {
+            thread RespawnBeacon_PutPlayerInDropship( player, dropship, i, attachResult.position )
+        }
+        i++
+    }
 
-	EndSignal( dropship, "OnDestroy" )
+    EmitSoundOnEntity( dropship, "goblin_imc_evac_hover" )
+    EndSignal( dropship, "OnDestroy" )
 
-	thread PlayAnim( dropship, "dropship_classic_mp_flyin_idle", origin, angles )
-	dropship.MakeInvisible()
-	waitthread __WarpInEffectShared( attachResult.position, attachResult.angle, "dropship_warpin", 0.0 )
-	dropship.MakeVisible()
-	waitthread PlayAnim( dropship, "dropship_classic_mp_flyin", origin, angles )
-	dropship.Destroy()
+    // Fix anim bug with this of it getting weirdly teleported.
+    thread PlayAnim( dropship, "dropship_classic_mp_flyin_idle", origin, angles )
+
+    // Warp in now.
+    dropship.MakeInvisible()
+    waitthread __WarpInEffectShared( attachResult.position, attachResult.angle, "dropship_warpin", 0.0 )
+    dropship.MakeVisible()
+
+    thread PlayAnim( dropship, "dropship_classic_mp_flyin", origin, angles )
+
+    // Wait for correct time to warp out
+    wait dropship.GetSequenceDuration( "dropship_classic_mp_flyin" ) - 5
+
+    // Hide dropShip now and warpout.
+    dropship.Hide()
+    __WarpOutEffectShared( dropship )
+
+    dropship.Destroy()
 }
 
 void function RespawnPlayersInDropshipAtPointTDM( array<entity> players, vector origin, vector angles )
@@ -561,7 +574,7 @@ void function ManageRespawnChamberData( entity ent, var rui )
 	file.respawnChamberRuis.append( rui )
 	ent.EndSignal( "OnDestroy" )
 
-	UpdateRespawnChamberRuis( rui, TeammatesWaitingToBeRespawned( GetLocalViewPlayer().GetTeam() ) )
+	UpdateRespawnChamberRuis( rui, HasTeammatesToRespawn( GetLocalViewPlayer().GetTeam() ) )
 
 	OnThreadEnd(
 		function() : ( ent, rui )
@@ -651,7 +664,7 @@ string function RespawnChamber_TextOverride( entity ent )
 	entity player = GetLocalViewPlayer()
 	int team = player.GetTeam()
 	if ( GetPlayerArrayOfTeam( team ).len() == GetPlayerArrayOfTeam_Alive( team ).len() ||
-			!TeammatesWaitingToBeRespawned( team ) )
+			!HasTeammatesToRespawn( team ) )
 	{
 		//return "Respawn Teammates Here"
 		//if ( !TeammatesWaitingToBeRespawned( team ) )
@@ -672,23 +685,6 @@ string function RespawnDNA_TextOverride( entity ent )
 
 float function GetRespawnStationUseTime( entity ent )
 {
-	switch( ent.GetTargetName() )
-	{
-#if(false)
-
-
-#endif //
-
-#if(false)
-
-
-
-#endif //
-
-		default:
-			return RESPAWN_BEACON_RESPAWN_TIME
-	}
-
 	return RESPAWN_BEACON_RESPAWN_TIME
 }
 
@@ -697,8 +693,11 @@ void function RespawnChamberOnUse( entity pickup, entity player, int pickupFlags
 {
 	if ( !(pickupFlags & USE_INPUT_LONG ) )
 		return
-
-	if ( !TeammatesWaitingToBeRespawned( player.GetTeam() ) )
+                   
+                                                                                                                                                                
+        
+     
+	if ( !HasTeammatesToRespawn( player.GetTeam() ) )
 		return
 
 	#if CLIENT
@@ -748,7 +747,7 @@ void function DisplayRuiForRespawnChamber_Internal( var rui, asset icon, float s
 #if SERVER
 void function RespawnUserTeam( entity ent, entity playerUser, ExtendedUseSettings settings )
 {
-	if ( !TeammatesWaitingToBeRespawned( playerUser.GetTeam() ) )
+	if ( !HasTeammatesToRespawn( playerUser.GetTeam() ) )
 		return
 
 	int fxId = GetParticleSystemIndex( RESPAWN_BEACON_SCAN_FX )
@@ -787,18 +786,23 @@ void function RespawnTeamPlayers( entity ent, int team, entity respawnCaller )
 ----- UTILITY -----
 */
 
-bool function TeammatesWaitingToBeRespawned( int team )
+int function CountTeammatesWaitingToBeRespawned( int team )
 {
+	int count = 0
 	foreach ( player in GetPlayerArrayOfTeam( team ) )
 	{
 		if ( !IsAlive( player ) )
 		{
 			if ( player.GetPlayerNetInt( "respawnStatus" ) == eRespawnStatus.WAITING_FOR_DELIVERY )
-				return true
+				count++
 		}
 	}
+	return count
+}
 
-	return false
+bool function HasTeammatesToRespawn( int team )
+{
+	return CountTeammatesWaitingToBeRespawned( team ) > 0
 }
 
 #if CLIENT
@@ -818,6 +822,7 @@ string function RespawnBeacon_TextOverride( entity ent )
 
 	return Localize( "%use% Destroy Respawn Beacon" )
 }
+#endif
 
 int function GetRespawnStatus( entity player )
 {
@@ -826,7 +831,7 @@ int function GetRespawnStatus( entity player )
 
 	return player.GetPlayerNetInt( "respawnStatus" )
 }
-#endif
+
 
 int function GetRespawnStyle()
 {
@@ -886,7 +891,6 @@ void function DisplayWaitingForRespawnThread( entity ent, float startTime, float
 	OnThreadEnd(
 		function() : ()
 		{
-			DeathScreen_UpdateRespawnTime( RUI_BADGAMETIME, RUI_BADGAMETIME )
 		}
 	)
 
@@ -941,7 +945,7 @@ void function ReviveRuiThread( float endTime )
 	OnThreadEnd(
 		function() : ()
 		{
-			DeathScreen_UpdateRespawnTime( RUI_BADGAMETIME, RUI_BADGAMETIME )
+			Chroma_RespawnComplete()
 		}
 	)
 
@@ -966,8 +970,7 @@ void function RespawnBeacons_OnSquadEliminated( int team )
 		if ( IsValid( player.p.respawnBeacon ) )
 			player.p.respawnBeacon.Destroy()
 
-		if ( GetRespawnStyle() == eRespawnStyle.RESPAWN_CHAMBERS )
-			player.SetPlayerNetInt( "respawnStatus", eRespawnStatus.SQUAD_ELIMINATED )
+		player.SetPlayerNetInt( "respawnStatus", eRespawnStatus.SQUAD_ELIMINATED )
 	}
 }
 
@@ -1114,8 +1117,9 @@ void function RespawnBeacon_PutPlayerInDropship( entity player, entity ship, int
 	dummyEnt.Destroy()
 
 	player.p.respawnPod = ship
-	player.StartObserverMode( OBS_MODE_MENU )
+	player.StartObserverMode( OBS_MODE_CHASE )
 	player.SetObserverTarget( ship )
+	player.SetPlayerCanToggleObserverMode(false)
 
 	ScreenFadeFromBlack( player, 1.0, 1.0 )
 
@@ -1135,28 +1139,30 @@ void function RespawnBeacon_PutPlayerInDropship( entity player, entity ship, int
 					RemoveCinematicFlag( player, CE_FLAG_EMBARK )
 
 				if ( e[ "didHolsterAndDisableWeapons" ] )
+				{
 					DeployAndEnableWeapons( player )
 					EnableOffhandWeapons( player )
+				}
 					
 				player.SetPlayerNetInt( "respawnStatus", 0 )
 				player.p.respawnPod = null
 				player.p.respawnPodLanded = false
 				player.ClearParent()
-				ClearPlayerAnimViewEntity( player )
-				player.ClearInvulnerable()
+				ClearPlayerAnimViewEntity( player )				
 			}
 		}
 	)
 
-	//waitthread FirstPersonSequence( idleAnimSequence, player, ship )
 	wait idleTime
-
+	
+	if(!IsValid(player)) return
+	
 	player.StopObserverMode()
 	ClearPlayerEliminated( player )
 	player.p.respawnPodLanded = true
+	
+	DecideRespawnPlayer( player )
 	ResetPlayerInventory( player )
-	if ( !IsAlive( player ) )
-		DecideRespawnPlayer( player )
 	player.SetOrigin( ship.GetOrigin() )
 
 	thread FadePlayerView( player, 0.1, e )
@@ -1165,9 +1171,15 @@ void function RespawnBeacon_PutPlayerInDropship( entity player, entity ship, int
 	player.SetInvulnerable()
 	EmitSoundOnEntityOnlyToPlayer( player, player, animData.firstPersonJumpOutSound )
 	waitthread FirstPersonSequence( jumpAnimSequence, player, ship )
-	FallTempAirControl( player )
 
+	//return controls
+	player.SetAngles( player.GetAngles() ) // this works don't change it
+	player.ClearInvulnerable()
+	player.UnfreezeControlsOnServer()
+
+	FallTempAirControl( player )
 	PlayBattleChatterLineToSpeakerAndTeam( player, "bc_returnFromRespawn" )
+	DecideRespawnPlayer( player )
 }
 
 void function RespawnBeacon_PutPlayerInDropship2( entity player, entity ship, int pos, vector teleportOrigin )
@@ -1375,8 +1387,7 @@ void function TryPingRespawnItem( entity player )
 
 	entity viewPlayer = GetLocalViewPlayer()
 
-	if ( player.GetPlayerNetInt( "respawnStatus" ) == eRespawnStatus.WAITING_FOR_PICKUP ||
-		player.GetPlayerNetInt( "respawnStatus" ) == eRespawnStatus.WAITING_FOR_DELIVERY )
+	if ( PlayerIsMarkedAsCanBeRespawned( player ) )
 	{
 		vector org = viewPlayer.GetOrigin()
 		player.ClientCommand( "PingNearestRespawn " + org.x + " " + org.y + " " + org.z )

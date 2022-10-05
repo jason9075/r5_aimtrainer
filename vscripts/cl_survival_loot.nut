@@ -1510,7 +1510,7 @@ entity function GetEntityPlayerIsLookingAt( entity player, array<entity> ents, f
 		lootItem.playerViewDot = dot
 		finalLootEnts.append( lootItem )
 
-#if R5DEV
+#if DEVELOPER
 		//DebugDrawMark( ent.GetWorldSpaceCenter(), 10, [255, 128, 0], true, 10.0 )
 		//DebugDrawText( ent.GetWorldSpaceCenter() + <0,0,16>, format( "%f\n", dot ), false, 0.1 )
 #endif
@@ -1588,6 +1588,12 @@ void function SetupSurvivalLoot( var categories )
 {
 	string cats              = expect string( categories )
 	array<string> stringCats = split( cats, " " )
+
+	if (stringCats.contains("attachment_custom"))
+	{
+		SetupCustomLoot( "attachment" )
+		return	
+	}
 
 	// turn menu strings into real category enums
 	array<int> catTypes
@@ -1759,7 +1765,7 @@ void function ExtendedTryOpenGroundList( entity ent, entity player, ExtendedUseS
 EHI ornull function GetEHIForDeathBox( entity box )
 {
 	EHI eHandle = box.GetNetInt( "ownerEHI" )
-
+	
 	if ( eHandle == -1  )
 		return null
 
@@ -1827,17 +1833,17 @@ void function ExtendedTryHolster( entity ent, entity player, ExtendedUseSettings
 
 void function OnPlayerSwitchesToWeapon00( entity player )
 {
-	player.ClientCommand( CMDNAME_PLAYER_SWITCHED_WEAPONS + " " + "0" )
+	//player.ClientCommand( CMDNAME_PLAYER_SWITCHED_WEAPONS + " " + "0" )
 }
 
 void function OnPlayerSwitchesToWeapon01( entity player )
 {
-	player.ClientCommand( CMDNAME_PLAYER_SWITCHED_WEAPONS + " " + "1" )
+	//player.ClientCommand( CMDNAME_PLAYER_SWITCHED_WEAPONS + " " + "1" )
 }
 
 void function OnPlayerSwitchesWeapons( entity player )
 {
-	player.ClientCommand( CMDNAME_PLAYER_SWITCHED_WEAPONS + " " + "-1" )
+	//player.ClientCommand( CMDNAME_PLAYER_SWITCHED_WEAPONS + " " + "-1" )
 }
 
 

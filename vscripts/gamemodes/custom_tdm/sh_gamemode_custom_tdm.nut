@@ -100,56 +100,70 @@ void function Sh_CustomTDM_Init()
                 <0, 0, 1000>
             )
         )
-		
-		RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Ash's Redemption",
-                [
-                    NewLocPair(<-22104, 6009, -26929>, <0, 90, 0>),
-					NewLocPair(<-21372, 3709, -26955>, <0, 90, 0>),
-                    NewLocPair(<-19356, 6397, -26861>, <0, 90, 0>),
-					NewLocPair(<-20713, 7409, -26742>, <0, 90, 0>)
-                ],
-                <0, 0, 1000>
-            )
-        )
+
         break
     case "mp_rr_arena_composite":
         Shared_RegisterLocation(
             NewLocationSettings(
                 "Drop-Off",
                 [
-					NewLocPair(<-3592, 1081, 258>, <0, 37, 0>),
-					NewLocPair(<3592, 1081, 258>, <0, 142, 0>),
-					NewLocPair(<-1315, 4113, 71>, <0, -43, 0>),
-					NewLocPair(<1315, 4113, 71>, <0, -136, 0>),
-					NewLocPair(<-1374, 1, 259>, <0, 35, 0>),
-					NewLocPair(<1374, 1, 259>, <0, 140, 0>),
-					NewLocPair(<-1383.81238, 2653.86523, -50>,<0, -102.007385, 0>),
-					NewLocPair(<-12.9539881, 3344.23584, -34>,<0, -92.351532, 0>),
-					NewLocPair(<1705.29504, 3284.08252, 210>,<0, -142.564148, 0>),
-					NewLocPair(<1402.96716, 2709.0498, -50>,<0, -126.903221, 0>),
-					NewLocPair(<1402.96716, 2709.0498, -50>,<0, -126.903221, 0>),
-					NewLocPair(<692.371887, 1771.11829, -50>,<0, 51.6300087, 0>),
-					NewLocPair(<-358.171814, 1723.92322, -50>,<0, 45.0872917, 0>),
-					NewLocPair(<-912.219482, 2789.4751, 10>,<0, -53.7381134, 0>)
+                    NewLocPair(<-3592, 1081, 258>, <0, 37, 0>),
+                    NewLocPair(<3592, 1081, 258>, <0, 142, 0>),
+                    NewLocPair(<-1315, 4113, 71>, <0, -43, 0>),
+                    NewLocPair(<1315, 4113, 71>, <0, -136, 0>),
+                    NewLocPair(<-1374, 1, 259>, <0, 35, 0>),
+                    NewLocPair(<1374, 1, 259>, <0, 140, 0>),
+                    NewLocPair(<-12.9539881, 3344.23584, -34>,<0, -92.351532, 0>),
+                    NewLocPair(<1705.29504, 3284.08252, 210>,<0, -142.564148, 0>),
+                    NewLocPair(<692.371887, 1771.11829, -50>,<0, 51.6300087, 0>),
+                    NewLocPair(<-358.171814, 1723.92322, -50>,<0, 45.0872917, 0>),
+                    NewLocPair(<-912.219482, 2789.4751, 10>,<0, -53.7381134, 0>),
+                    NewLocPair(<3556, 916, 258>, <8, 76, 0>),
+                    NewLocPair(<3765, 1115, 258>, <8, 171, 0>),
+                    NewLocPair(<-2388, 2758, 259>,<0, -102.007385, 0>),
+                    NewLocPair(<-1282, 1750, 259>,<16, 50, 0>)
                 ],
                 <0, 0, 1000>
             )
         )
         break
+		
+	case "mp_rr_party_crasher":
+	Shared_RegisterLocation(
+		NewLocationSettings(
+				"Party Crasher",
+				[
+					NewLocPair(<1729.17407, -3585.65137, 601.736206>, <0, 103.168709, 0>),
+					NewLocPair(<345.111481, -3769.65674, 583.285156>, <0, 78.5349045, 0>),
+					NewLocPair(<-1315.06567, -2856.39771, 999.132568>,<0, 39.8982162, 0>),
+					NewLocPair(<-2242.99829, -1911.60974, 1231.47437>, <0, 35.2527733, 0>),
+					NewLocPair(<-2805.87012, -650.600647, 1272.09473>, <0, 32.1970596, 0>),
+					NewLocPair(<262.267334, 2781.46118, 710.572449>, <0, -139.138306, 0>),
+					NewLocPair(<-3970.97266, 2639.4585, 583.285156>, <0, -35.2144508, 0>),
+					NewLocPair(<-2711.53491, 4067.46069, 601.736206>, <0, -46.8964882, 0>),
+					NewLocPair(<-934.579468, 4998.19189, 583.281555>, <0, -90.8201675, 0>),
+					NewLocPair(<1259.38, 3572.83008, 633.238098>, <0, -112.696632, 0>),
+					NewLocPair(<2623.1499, 2661.17822, 940.03125>, <0, -99.6138458, 0>),
+					NewLocPair(<1981.64294, 2721.13745, 723.03125>, <0, -146.273544, 0>),
+					NewLocPair(<3116.81201, 1577.45361, 940.03125>, <0, 169.12117, 0>),
+					NewLocPair(<3843.68774, -595.504456, 583.002197>, <0, 172.503952, 0>),
+					NewLocPair(<1670.724, -768.35498, 720.573608>, <0, 107.206459, 0>)
+				],
+				<0, 0, 1000>
+			)
+		)
+		break
+		
 	case "mp_rr_canyonlands_mu1_night":		
 	case "mp_rr_canyonlands_mu1":
 		Shared_RegisterLocation(
             NewLocationSettings(
                 "Hillside Outspot",
                 [
-                    NewLocPair(<-20579, 6322, 2912>, <0, -100, 0>),
-                    NewLocPair(<-17075, 7502, 3206>, <0, -90, 0>),
-                    NewLocPair(<-14421, -405, 3315>, <0, 62, 0>),
-                    NewLocPair(<-18633, -1146, 3320>, <0, 114, 0>),
-					NewLocPair(<-22921, 3307, 3144>, <0, 6, 0>),
-					NewLocPair(<-16154, 3072, 3898>, <0, 86, 0>),
+                    NewLocPair(<-19300, 4678, 3230>, <0, -100, 0>),
+                    NewLocPair(<-16763, 4465, 3020>, <1, 18, 0>),
+                    NewLocPair(<-20153, 1127, 3060>, <11, 170, 0>),
+					NewLocPair(<-16787, 3540, 3075>, <0, 86, 0>),
 					NewLocPair(<-19026, 3749, 4460>, <0, 2, 0>)
                 ],
                 <0, 0, 3000>
@@ -179,7 +193,7 @@ void function Sh_CustomTDM_Init()
                 <0, 0, 3000>
             )
         )
-				Shared_RegisterLocation(
+		Shared_RegisterLocation(
             NewLocationSettings(
                 "Gaunlet",
                 [
@@ -192,7 +206,7 @@ void function Sh_CustomTDM_Init()
                 <0, 0, 4000>
             )
         )
-		 Shared_RegisterLocation(
+		Shared_RegisterLocation(
             NewLocationSettings(
                 "Market",
                 [
@@ -256,7 +270,7 @@ void function Sh_CustomTDM_Init()
                     NewLocPair(<29457, -2989, 2895>, <0, -17, 0>),
                     NewLocPair(<34582, 2300, 2998>, <0, -92, 0>),
 					NewLocPair(<35757, 3256, 3290>, <0, -90, 0>),
-                    NewLocPair(<36422, 3109, 3294>, <0, -165, 0>),
+                    NewLocPair(<36422, 3109, 3500>, <0, -165, 0>),
                     NewLocPair(<34965, 1718, 3529>, <0, 45, 0>),
                     NewLocPair(<32654, -1552, 3228>, <0, -90, 0>)
 
@@ -264,329 +278,8 @@ void function Sh_CustomTDM_Init()
                 <0, 0, 3000>
             )
         )
-		
-		RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Hillside Outspot",
-                [
-                    NewLocPair(<-16896,3904,3200>, <0, -100, 0>),
-                    NewLocPair(<-15232,3200,3264>, <0, -90, 0>),
-                    NewLocPair(<-14848,2112,3328>, <0, 62, 0>),
-                    NewLocPair(<-18112,3584,3264>, <0, 114, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-		RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Skull Town",
-                [
-                    NewLocPair(<-9320, -13528, 3167>, <0, -100, 0>),
-                    NewLocPair(<-7544, -13240, 3161>, <0, -115, 0>),
-                    NewLocPair(<-10250, -18320, 3323>, <0, 100, 0>),
-                    NewLocPair(<-13261, -18100, 3337>, <0, 20, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-		RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Containment",
-                [
-                    NewLocPair(<-7291, 19547, 2978>, <0, -65, 0>),
-                    NewLocPair(<-3906, 19557, 2733>, <0, -123, 0>),
-                    NewLocPair(<-3084, 16315, 2566>, <0, 144, 0>),
-                    NewLocPair(<-6517, 15833, 2911>, <0, 51, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-				RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Gaunlet",
-                [
-                    NewLocPair(<-21271, -15275, 2781>, <0, 90, 0>),
-                    NewLocPair(<-22952, -13304, 2718>, <0, 5, 0>),
-                    NewLocPair(<-22467, -9567, 2949>, <0, -85, 0>),
-                    NewLocPair(<-18494, -10427, 2825>, <0, -155, 0>)
-				],
-                <0, 0, 4000>
-            )
-        )
-		 RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Market",
-                [
-                    NewLocPair(<-110, -9977, 2987>, <0, 0, 0>),
-                    NewLocPair(<-1605, -10300, 3053>, <0, -100, 0>),
-                    NewLocPair(<4600, -11450, 2950>, <0, 180, 0>),
-                    NewLocPair(<3150, -11153, 3053>, <0, 100, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-		RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Labs",
-                [
-                    NewLocPair(<27576, 8062, 2910>, <0, -115, 0>),
-					NewLocPair(<24545, 2387, 4100>, <0, -7, 0>),
-                    NewLocPair(<25924, 2161, 3848>, <0, -9, 0>),
-                    NewLocPair(<28818, 2590, 3798>, <0, 117, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-		RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Repulsor",
-                [
-                    NewLocPair(<28095, -16983, 4786>, <0, 140, 0>),
-                    NewLocPair(<29475, -12237, 5769>, <0, -157, 0>),
-                    NewLocPair(<20567, -13551, 4821>, <0, -39, 0>),
-                    NewLocPair(<22026, -17661, 5789>, <0, 21, 0>)
-				],
-                <0, 0, 3000>
-            )
-        )
 
-		RegisterLocationPROPHUNT(
-			NewLocationSettings(
-                "Cage",
-                [
-                    NewLocPair(<15604, -1068, 5833>, <0, -126, 0>),
-                    NewLocPair(<18826, -4314, 5032>, <0, 173, 0>),
-                    NewLocPair(<19946, 32, 4960>, <0, -168, 0>),
-                    NewLocPair(<12335, -1446, 3984>, <0, 2, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-
-		RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Swamps",
-                [
-                    NewLocPair(<32704,-8576,3520>, <0, 167, 0>),
-                    NewLocPair(<34496,-5888,3008>, <0, 51, 0>),
-                    NewLocPair(<33280,-4544,3072>, <0, -17, 0>),
-                    NewLocPair(<30720,-6080,2944>, <0, -92, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-
-		// Shared_RegisterLocation(
-            // NewLocationSettings(
-                // "Interstellar Relay",
-                // [
-                    // NewLocPair(<26420, 31700, 4790>, <0, -90, 0>),
-                    // NewLocPair(<29260, 26245, 4210>, <0, 45, 0>),
-                    // NewLocPair(<29255, 24360, 4210>, <0, 0, 0>),
-                    // NewLocPair(<24445, 28970, 4340>, <0, -90, 0>),
-                    // NewLocPair(<27735, 27880, 4370>, <0, 180, 0>),
-                    // NewLocPair(<25325, 25725, 4270>, <0, 0, 0>),
-                    // NewLocPair(<27675, 25745, 4370>, <0, 0, 0>),
-                    // NewLocPair(<24375, 27050, 4325>, <0, 180, 0>),
-                    // NewLocPair(<24000, 23650, 4050>, <0, 135, 0>),
-                    // NewLocPair(<23935, 22080, 4200>, <0, 15, 0>)
-                // ],
-                // <0, 0, 3000>
-            // )
-        // )
-        // Shared_RegisterLocation(
-            // NewLocationSettings(
-                // "Slum Lakes",
-                // [
-                    // NewLocPair(<-20060, 23800, 2655>, <0, 110, 0>),
-                    // NewLocPair(<-20245, 24475, 2810>, <0, -160, 0>),
-                    // NewLocPair(<-25650, 22025, 2270>, <0, 20, 0>),
-                    // NewLocPair(<-25550, 21635, 2590>, <0, 20, 0>),
-                    // NewLocPair(<-25030, 24670, 2410>, <0, -75, 0>),
-                    // NewLocPair(<-23125, 25320, 2410>, <0, -20, 0>),
-                    // NewLocPair(<-21925, 21120, 2390>, <0, 180, 0>)
-                // ],
-                // <0, 0, 3000>
-            // )
-        // )
-        // Shared_RegisterLocation(
-            // NewLocationSettings(
-                // "Little Town",
-                // [
-                    // NewLocPair(<-30190, 12473, 3186>, <0, -90, 0>),
-                    // NewLocPair(<-28773, 11228, 3210>, <0, 180, 0>),
-                    // NewLocPair(<-29802, 9886, 3217>, <0, 90, 0>),
-                    // NewLocPair(<-30895, 10733, 3202>, <0, 0, 0>)
-                // ],
-                // <0, 0, 3000>
-            // )
-        // )
-
-
-        // Shared_RegisterLocation(
-            // NewLocationSettings(
-                // "Runoff",
-                // [
-                    // NewLocPair(<-23380, 9634, 3371>, <0, 90, 0>),
-                    // NewLocPair(<-24917, 11273, 3085>, <0, 0, 0>),
-                    // NewLocPair(<-23614, 13605, 3347>, <0, -90, 0>),
-                    // NewLocPair(<-24697, 12631, 3085>, <0, 0, 0>)
-                // ],
-                // <0, 0, 3000>
-            // )
-        // )
-		// Shared_RegisterLocation(
-            // NewLocationSettings(
-                // "Where there is always teamfight",
-                // [
-                    // NewLocPair(<11242, 8591, 4630>, <0, 0, 0>),
-                    // NewLocPair(<6657, 12189, 5066>, <0, -90, 0>),
-                    // NewLocPair(<7540, 8620, 5374>, <0, 89, 0>),
-                    // NewLocPair(<13599, 7838, 4944>, <0, 150, 0>)
-                // ],
-                // <0, 0, 3000>
-            // )
-        // )
-        // Shared_RegisterLocation(
-            // NewLocationSettings(
-                // "Thunderdome",
-                // [
-                    // NewLocPair(<-20216, -21612, 3191>, <0, -67, 0>),
-                    // NewLocPair(<-16035, -20591, 3232>, <0, -133, 0>),
-                    // NewLocPair(<-16584, -24859, 2642>, <0, 165, 0>),
-                    // NewLocPair(<-19019, -26209, 2640>, <0, 65, 0>)
-                // ],
-                // <0, 0, 2000>
-            // )
-        // )
-        // Shared_RegisterLocation(
-            // NewLocationSettings(
-                // "Water Treatment",
-                // [
-                    // NewLocPair(<5583, -30000, 3070>, <0, 0, 0>),
-                    // NewLocPair(<7544, -29035, 3061>, <0, 130, 0>),
-                    // NewLocPair(<10091, -30000, 3070>, <0, 180, 0>),
-                    // NewLocPair(<8487, -28838, 3061>, <0, -45, 0>)
-                // ],
-                // <0, 0, 3000>
-            // )
-        // )
-        // Shared_RegisterLocation(
-            // NewLocationSettings(
-                // "The Pit",
-                // [
-                    // NewLocPair(<-18558, 13823, 3605>, <0, 20, 0>),
-                    // NewLocPair(<-16514, 16184, 3772>, <0, -77, 0>),
-                    // NewLocPair(<-13826, 15325, 3749>, <0, 160, 0>),
-                    // NewLocPair(<-16160, 14273, 3770>, <0, 101, 0>)
-                // ],
-                // <0, 0, 7000>
-            // )
-        // )
-        // Shared_RegisterLocation(
-            // NewLocationSettings(
-                // "Airbase",
-                // [
-                    // NewLocPair(<-24140, -4510, 2583>, <0, 90, 0>),
-                    // NewLocPair(<-28675, 612, 2600>, <0, 18, 0>),
-                    // NewLocPair(<-24688, 1316, 2583>, <0, 180, 0>),
-                    // NewLocPair(<-26492, -5197, 2574>, <0, 50, 0>)
-                // ],
-                // <0, 0, 3000>
-            // )
-        // )
-break
-case "mp_rr_canyonlands_64k_x_64k":
-    
-	if(FlowState_EnableCustomMapByBiscutz()){
-	Shared_RegisterLocation(
-            NewLocationSettings(
-                "Custom map by Biscutz",
-                [
-                    NewLocPair(<-2768,15163,6469>, <0, -180, 0>),
-                    NewLocPair(<-5800,16008,6706>, <0, -48, 0>),
-					NewLocPair(<-5297,13404,6040>, <0, 0, 0>),
-                    NewLocPair(<-2348,11823,6194>, <0, 0, 0>),
-					NewLocPair(<-5256,14392,5800>, <0, 0, 0>),
-                    NewLocPair(<-3659,13700,6600>, <0, 0, 0>),
-					NewLocPair(<-1514,11165,7730>, <0, 0, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-	}	
-		
-	if(FlowState_EnableWhiteForestByZero()){
-	Shared_RegisterLocation(
-        NewLocationSettings(
-            "White Forest By Zer0Bytes",
-            [
-                //Side A
-                NewLocPair( <-33024,17408,3328>, <0,90,0>),
-                NewLocPair( <-33024,16960,3328>, <0,90,0>),
-                NewLocPair( <-33280,16128,3264>, <0,90,0>),
-                NewLocPair( <-32448,16256,3328>, <0,90,0>),
-                NewLocPair( <-32192,16960,3328>, <0,90,0>),
-                NewLocPair( <-32256,16256,3328>, <0,90,0>),
-                NewLocPair( <-32128,17536,3328>, <0,90,0>),
-                NewLocPair( <-32512,17536,3328>, <0,90,0>),
-                NewLocPair( <-32960,17600,3328>, <0,90,0>),
-                NewLocPair( <-33536,17600,3328>, <0,90,0>),
-                NewLocPair( <-33728,17088,3328>, <0,90,0>),
-                NewLocPair( <-33856,16896,3200>, <0,90,0>),
-                NewLocPair( <-33920,17600,3200>, <0,90,0>),
-                NewLocPair( <-34368,18048,3072>, <0,0,0>),
-                NewLocPair( <-34352,18038,3151>, <0,0,0>),
-                NewLocPair( <-36696,19010,3021>, <0,0,0>),
-                NewLocPair( <-37079,19432,3120>, <0,90,0>),
-                NewLocPair( <-37335,19812,3053>, <0,0,0>),
-                NewLocPair( <-37371,19308,3033>, <0,0,0>),
-                NewLocPair( <-37106,19616,3152>, <0,0,0>),
-
-
-                // side B
-                NewLocPair( <-35442,24433,4112>, <0,-90,0>),
-                NewLocPair( <-35467,24668,4112>, <0,-90,0>),
-                NewLocPair( <-35454,24954,4135>, <0,-90,0>),
-                NewLocPair( <-34738,24934,4145>, <0,-90,0>),
-                NewLocPair( <-33453,24955,4152>, <0,-90,0>),
-                NewLocPair( <-33380,24704,4173>, <0,-90,0>),
-                NewLocPair( <-33498,24455,4148>, <0,-90,0>),
-                NewLocPair( <-34195,24456,4128>, <0,-90,0>),
-                NewLocPair( <-33745,24188,4093>, <0,-90,0>),
-                NewLocPair( <-33319,24002,3955>, <0,-90,0>),
-                NewLocPair( <-32764,23897,3382>, <0,-90,0>),
-                NewLocPair( <-32317,23278,2779>, <0,-90,0>),
-                NewLocPair( <-32100,22750,2647>, <0,180,0>),
-                NewLocPair( <-35148,24427,4147>, <0,-90,0>),
-
-                //forest
-                NewLocPair( <-33511,22657,2239>, <0,-90,0>),
-                NewLocPair( <-33813,21797,2178>, <0,-90,0>),
-                NewLocPair( <-34937,22312,2195>, <0,-90,0>),
-                NewLocPair( <-35843,23339,2172>, <0,0,0> ),
-                NewLocPair( <-36700,23252,2237>, <0,0,0> ),
-                NewLocPair( <-36374,21910,2204>, <0,0,0> ),
-                NewLocPair( <-35239,22024,2154>, <0,180,0>),
-                NewLocPair( <-34463,20783,2182>, <0,90,0>),
-                NewLocPair( <-32753,20853,2085>, <0,90,0>),
-                NewLocPair( <-31809,21230,2015>, <0,-90,0>),
-                NewLocPair( <-33549,18878,2129>, <0,90,0>),
-                NewLocPair( <-34726,19371,2106>, <0,90,0>),
-                NewLocPair( <-34295,20018,2134>, <0,90,0>),
-                NewLocPair( <-31263,21107,2019>, <0,180,0>),
-                NewLocPair( <-36806,22295,2261>, <0,0,0> ),
-                NewLocPair( <-36226,20102,2105>, <0,0,0>),
-                NewLocPair( <-32764,19415,2048>, <0,180,0>),
-                NewLocPair( <-32402,22605,2328>, <0,-90,0>),
-                NewLocPair( <-33082,23773,2363>, <0,-90,0>)
-
-            ],
-            <0, 0, 3000>
-        )
-    )  
-	}	
-	   Shared_RegisterLocation(
+		Shared_RegisterLocation(
             NewLocationSettings(
                 "Interstellar Relay",
                 [
@@ -604,6 +297,7 @@ case "mp_rr_canyonlands_64k_x_64k":
                 <0, 0, 3000>
             )
         )
+		
         Shared_RegisterLocation(
             NewLocationSettings(
                 "Slum Lakes",
@@ -619,6 +313,7 @@ case "mp_rr_canyonlands_64k_x_64k":
                 <0, 0, 3000>
             )
         )
+		
         Shared_RegisterLocation(
             NewLocationSettings(
                 "Little Town",
@@ -631,6 +326,7 @@ case "mp_rr_canyonlands_64k_x_64k":
                 <0, 0, 3000>
             )
         )
+
         Shared_RegisterLocation(
             NewLocationSettings(
                 "Runoff",
@@ -643,6 +339,20 @@ case "mp_rr_canyonlands_64k_x_64k":
                 <0, 0, 3000>
             )
         )
+		
+		Shared_RegisterLocation(
+            NewLocationSettings(
+                "Big fights happened here",
+                [
+                    NewLocPair(<11242, 8591, 4630>, <0, 0, 0>),
+                    NewLocPair(<6657, 12189, 5066>, <0, -90, 0>),
+                    NewLocPair(<7540, 8620, 5374>, <0, 89, 0>),
+                    NewLocPair(<13599, 7838, 4944>, <0, 150, 0>)
+                ],
+                <0, 0, 3000>
+            )
+        )
+		
         Shared_RegisterLocation(
             NewLocationSettings(
                 "Thunderdome",
@@ -667,6 +377,7 @@ case "mp_rr_canyonlands_64k_x_64k":
                 <0, 0, 3000>
             )
         )
+		
         Shared_RegisterLocation(
             NewLocationSettings(
                 "The Pit",
@@ -679,6 +390,7 @@ case "mp_rr_canyonlands_64k_x_64k":
                 <0, 0, 7000>
             )
         )
+		
         Shared_RegisterLocation(
             NewLocationSettings(
                 "Airbase",
@@ -690,241 +402,583 @@ case "mp_rr_canyonlands_64k_x_64k":
                 ],
                 <0, 0, 3000>
             )
-        )
-
-		Shared_RegisterLocation(
-            NewLocationSettings(
-                "Repulsor",
-                [
-                    NewLocPair(<28095, -16983, 4786>, <0, 140, 0>),
-                    NewLocPair(<29475, -12237, 5769>, <0, -157, 0>),
-                    NewLocPair(<20567, -13551, 4821>, <0, -39, 0>),
-                    NewLocPair(<22026, -17661, 5789>, <0, 21, 0>),
-					NewLocPair(<26036, -17590, 5694>, <0, 90, 0>),
-                      NewLocPair(<26670, -16729, 4926>, <0, -180, 0>),
-                      NewLocPair(<27784, -16166, 5046>, <0, -180, 0>),
-                      NewLocPair(<27133, -16074, 5414>, <0, -90, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-
-		Shared_RegisterLocation(
-            NewLocationSettings(
-                "Swamps",
-                [
-                    NewLocPair(<37886, -4012, 3300>, <0, 167, 0>),
-                    NewLocPair(<34392, -5974, 3017>, <0, 51, 0>),
-                    NewLocPair(<29457, -2989, 2895>, <0, -17, 0>),
-                    NewLocPair(<34582, 2300, 2998>, <0, -92, 0>),
-					NewLocPair(<35757, 3256, 3290>, <0, -90, 0>),
-                    NewLocPair(<36422, 3109, 3294>, <0, -165, 0>),
-                    NewLocPair(<34965, 1718, 3529>, <0, 45, 0>),
-                    NewLocPair(<32654, -1552, 3228>, <0, -90, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-		Shared_RegisterLocation(
-            NewLocationSettings(
-                "Skull Town",
-                [
-                    NewLocPair(<-9320, -13528, 3167>, <0, -100, 0>),
-                    NewLocPair(<-7544, -13240, 3161>, <0, -115, 0>),
-                    NewLocPair(<-10250, -18320, 3323>, <0, 100, 0>),
-                    NewLocPair(<-13261, -18100, 3337>, <0, 20, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-        Shared_RegisterLocation(
-            NewLocationSettings(
-                "Market",
-                [
-                    NewLocPair(<-110, -9977, 2987>, <0, 0, 0>),
-                    NewLocPair(<-1605, -10300, 3053>, <0, -100, 0>),
-                    NewLocPair(<4600, -11450, 2950>, <0, 180, 0>),
-                    NewLocPair(<3150, -11153, 3053>, <0, 100, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-
-
-
-        RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Interstellar Relay",
-                [
-                    NewLocPair(<26420, 31700, 4790>, <0, -90, 0>),
-                    NewLocPair(<29260, 26245, 4210>, <0, 45, 0>),
-                    NewLocPair(<29255, 24360, 4210>, <0, 0, 0>),
-                    NewLocPair(<24445, 28970, 4340>, <0, -90, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-        RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Slum Lakes",
-                [
-                    NewLocPair(<-20060, 23800, 2655>, <0, 110, 0>),
-                    NewLocPair(<-20245, 24475, 2810>, <0, -160, 0>),
-                    NewLocPair(<-25650, 22025, 2270>, <0, 20, 0>),
-                    NewLocPair(<-25550, 21635, 2590>, <0, 20, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-        RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Little Town",
-                [
-                    NewLocPair(<-30190, 12473, 3186>, <0, -90, 0>),
-                    NewLocPair(<-28773, 11228, 3210>, <0, 180, 0>),
-                    NewLocPair(<-29802, 9886, 3217>, <0, 90, 0>),
-                    NewLocPair(<-30895, 10733, 3202>, <0, 0, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-
-        RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Water Treatment",
-                [
-                    NewLocPair(<5583, -30000, 3070>, <0, 0, 0>),
-                    NewLocPair(<7544, -29035, 3061>, <0, 130, 0>),
-                    NewLocPair(<10091, -30000, 3070>, <0, 180, 0>),
-                    NewLocPair(<8487, -28838, 3061>, <0, -45, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-
-        RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Airbase",
-                [
-                    NewLocPair(<-24140, -4510, 2583>, <0, 90, 0>),
-                    NewLocPair(<-28675, 612, 2600>, <0, 18, 0>),
-                    NewLocPair(<-24688, 1316, 2583>, <0, 180, 0>),
-                    NewLocPair(<-26492, -5197, 2574>, <0, 50, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-
+        )		
+		///////////////////////////////////
+		//PROPHUNT LOCATIONS///////////////
 		RegisterLocationPROPHUNT(
             NewLocationSettings(
-                "Swamps",
+                "Hillside Outspot",
                 [
-                    NewLocPair(<32704,-8576,3520>, <0, 167, 0>),
-                    NewLocPair(<34496,-5888,3008>, <0, 51, 0>),
-                    NewLocPair(<33280,-4544,3072>, <0, -17, 0>),
-                    NewLocPair(<30720,-6080,2944>, <0, -92, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-		RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Skull Town",
-                [
-                    NewLocPair(<-9320, -13528, 3167>, <0, -100, 0>),
-                    NewLocPair(<-7544, -13240, 3161>, <0, -115, 0>),
-                    NewLocPair(<-10250, -18320, 3323>, <0, 100, 0>),
-                    NewLocPair(<-13261, -18100, 3337>, <0, 20, 0>)
-                ],
-                <0, 0, 3000>
-            )
-        )
-        RegisterLocationPROPHUNT(
-            NewLocationSettings(
-                "Market",
-                [
-                    NewLocPair(<-110, -9977, 2987>, <0, 0, 0>),
-                    NewLocPair(<-1605, -10300, 3053>, <0, -100, 0>),
-                    NewLocPair(<4600, -11450, 2950>, <0, 180, 0>),
-                    NewLocPair(<3150, -11153, 3053>, <0, 100, 0>)
+                    NewLocPair(<-19300, 4678, 3230>, <0, -100, 0>),
+                    NewLocPair(<-16763, 4465, 3020>, <1, 18, 0>),
+                    NewLocPair(<-20153, 1127, 3060>, <11, 170, 0>),
+					NewLocPair(<-16787, 3540, 3075>, <0, 86, 0>),
+					NewLocPair(<-19026, 3749, 4460>, <0, 2, 0>)
                 ],
                 <0, 0, 3000>
             )
         )
 		
-        break
+		RegisterLocationPROPHUNT(
+            NewLocationSettings(
+                "Skull Town",
+                [
+                    NewLocPair(<-9320, -13528, 3167>, <0, -100, 0>),
+                    NewLocPair(<-7544, -13240, 3161>, <0, -115, 0>),
+                    NewLocPair(<-10250, -18320, 3323>, <0, 100, 0>),
+                    NewLocPair(<-13261, -18100, 3337>, <0, 20, 0>)
+                ],
+                <0, 0, 3000>
+            )
+        )
+		
+		RegisterLocationPROPHUNT(
+            NewLocationSettings(
+                "Containment",
+                [
+                    NewLocPair(<-7291, 19547, 2978>, <0, -65, 0>),
+                    NewLocPair(<-3906, 19557, 2733>, <0, -123, 0>),
+                    NewLocPair(<-3084, 16315, 2566>, <0, 144, 0>),
+                    NewLocPair(<-6517, 15833, 2911>, <0, 51, 0>)
+                ],
+                <0, 0, 3000>
+            )
+        )
+		
+		RegisterLocationPROPHUNT(
+            NewLocationSettings(
+                "Gaunlet",
+                [
+                    NewLocPair(<-21271, -15275, 2781>, <0, 90, 0>),
+                    NewLocPair(<-22952, -13304, 2718>, <0, 5, 0>),
+                    NewLocPair(<-22467, -9567, 2949>, <0, -85, 0>),
+                    NewLocPair(<-18494, -10427, 2825>, <0, -155, 0>)
+				],
+                <0, 0, 4000>
+            )
+        )
+		
+		RegisterLocationPROPHUNT(
+            NewLocationSettings(
+                "Market",
+                [
+                    NewLocPair(<-110, -9977, 2987>, <0, 0, 0>),
+                    NewLocPair(<-1605, -10300, 3053>, <0, -100, 0>),
+                    NewLocPair(<4600, -11450, 2950>, <0, 180, 0>),
+                    NewLocPair(<3150, -11153, 3053>, <0, 100, 0>)
+                ],
+                <0, 0, 3000>
+            )
+        )
+
+	break
+	case "mp_rr_canyonlands_64k_x_64k":
+		
+		Shared_RegisterLocation(
+				NewLocationSettings(
+					"Interstellar Relay",
+					[
+						NewLocPair(<26420, 31700, 4790>, <0, -90, 0>),
+						NewLocPair(<29260, 26245, 4210>, <0, 45, 0>),
+						NewLocPair(<29255, 24360, 4210>, <0, 0, 0>),
+						NewLocPair(<24445, 28970, 4340>, <0, -90, 0>),
+						NewLocPair(<27735, 27880, 4370>, <0, 180, 0>),
+						NewLocPair(<25325, 25725, 4270>, <0, 0, 0>),
+						NewLocPair(<27675, 25745, 4370>, <0, 0, 0>),
+						NewLocPair(<24375, 27050, 4325>, <0, 180, 0>),
+						NewLocPair(<24000, 23650, 4050>, <0, 135, 0>),
+						NewLocPair(<23935, 22080, 4200>, <0, 15, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		Shared_RegisterLocation(
+				NewLocationSettings(
+					"Slum Lakes",
+					[
+						NewLocPair(<-20060, 23800, 2655>, <0, 110, 0>),
+						NewLocPair(<-20245, 24475, 2810>, <0, -160, 0>),
+						NewLocPair(<-25650, 22025, 2270>, <0, 20, 0>),
+						NewLocPair(<-25550, 21635, 2590>, <0, 20, 0>),
+						NewLocPair(<-25030, 24670, 2410>, <0, -75, 0>),
+						NewLocPair(<-23125, 25320, 2410>, <0, -20, 0>),
+						NewLocPair(<-21925, 21120, 2390>, <0, 180, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		Shared_RegisterLocation(
+				NewLocationSettings(
+					"Little Town",
+					[
+						NewLocPair(<-30190, 12473, 3186>, <0, -90, 0>),
+						NewLocPair(<-28773, 11228, 3210>, <0, 180, 0>),
+						NewLocPair(<-29802, 9886, 3217>, <0, 90, 0>),
+						NewLocPair(<-30895, 10733, 3202>, <0, 0, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		Shared_RegisterLocation(
+				NewLocationSettings(
+					"Runoff",
+					[
+						NewLocPair(<-23380, 9634, 3371>, <0, 90, 0>),
+						NewLocPair(<-24917, 11273, 3085>, <0, 0, 0>),
+						NewLocPair(<-23614, 13605, 3347>, <0, -90, 0>),
+						NewLocPair(<-24697, 12631, 3085>, <0, 0, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		Shared_RegisterLocation(
+				NewLocationSettings(
+					"Thunderdome",
+					[
+						NewLocPair(<-20216, -21612, 3191>, <0, -67, 0>),
+						NewLocPair(<-16035, -20591, 3232>, <0, -133, 0>),
+						NewLocPair(<-16584, -24859, 2642>, <0, 165, 0>),
+						NewLocPair(<-19019, -26209, 2640>, <0, 65, 0>)
+					],
+					<0, 0, 2000>
+				)
+			)
+		Shared_RegisterLocation(
+				NewLocationSettings(
+					"Water Treatment",
+					[
+						NewLocPair(<5583, -30000, 3070>, <0, 0, 0>),
+						NewLocPair(<7544, -29035, 3061>, <0, 130, 0>),
+						NewLocPair(<10091, -30000, 3070>, <0, 180, 0>),
+						NewLocPair(<8487, -28838, 3061>, <0, -45, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		Shared_RegisterLocation(
+				NewLocationSettings(
+					"The Pit",
+					[
+						NewLocPair(<-18558, 13823, 3605>, <0, 20, 0>),
+						NewLocPair(<-16514, 16184, 3772>, <0, -77, 0>),
+						NewLocPair(<-13826, 15325, 3749>, <0, 160, 0>),
+						NewLocPair(<-16160, 14273, 3770>, <0, 101, 0>)
+					],
+					<0, 0, 7000>
+				)
+			)
+		Shared_RegisterLocation(
+				NewLocationSettings(
+					"Airbase",
+					[
+						NewLocPair(<-24140, -4510, 2583>, <0, 90, 0>),
+						NewLocPair(<-28675, 612, 2600>, <0, 18, 0>),
+						NewLocPair(<-24688, 1316, 2583>, <0, 180, 0>),
+						NewLocPair(<-26492, -5197, 2574>, <0, 50, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+
+		Shared_RegisterLocation(
+				NewLocationSettings(
+					"Repulsor",
+					[
+						NewLocPair(<28095, -16983, 4786>, <0, 140, 0>),
+						NewLocPair(<29475, -12237, 5769>, <0, -157, 0>),
+						NewLocPair(<20567, -13551, 4821>, <0, -39, 0>),
+						NewLocPair(<22026, -17661, 5789>, <0, 21, 0>),
+						NewLocPair(<26036, -17590, 5694>, <0, 90, 0>),
+						  NewLocPair(<26670, -16729, 4926>, <0, -180, 0>),
+						  NewLocPair(<27784, -16166, 5046>, <0, -180, 0>),
+						  NewLocPair(<27133, -16074, 5414>, <0, -90, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+
+		Shared_RegisterLocation(
+				NewLocationSettings(
+					"Swamps",
+					[
+						NewLocPair(<37886, -4012, 3300>, <0, 167, 0>),
+						NewLocPair(<34392, -5974, 3017>, <0, 51, 0>),
+						NewLocPair(<29457, -2989, 2895>, <0, -17, 0>),
+						NewLocPair(<34582, 2300, 2998>, <0, -92, 0>),
+						NewLocPair(<35757, 3256, 3290>, <0, -90, 0>),
+						NewLocPair(<36422, 3109, 3500>, <0, -165, 0>),
+						NewLocPair(<34965, 1718, 3529>, <0, 45, 0>),
+						NewLocPair(<32654, -1552, 3228>, <0, -90, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		Shared_RegisterLocation(
+				NewLocationSettings(
+					"Skull Town",
+					[
+						NewLocPair(<-9320, -13528, 3167>, <0, -100, 0>),
+						NewLocPair(<-7544, -13240, 3161>, <0, -115, 0>),
+						NewLocPair(<-10250, -18320, 3323>, <0, 100, 0>),
+						NewLocPair(<-13261, -18100, 3337>, <0, 20, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		Shared_RegisterLocation(
+				NewLocationSettings(
+					"Market",
+					[
+						NewLocPair(<-110, -9977, 2987>, <0, 0, 0>),
+						NewLocPair(<-1605, -10300, 3053>, <0, -100, 0>),
+						NewLocPair(<4600, -11450, 2950>, <0, 180, 0>),
+						NewLocPair(<3150, -11153, 3053>, <0, 100, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		if(FlowState_EnableCustomMapByBiscutz()){
+		Shared_RegisterLocation(
+				NewLocationSettings(
+					"Custom map by Biscutz",
+					[
+						NewLocPair(<-2768,15163,6469>, <0, -180, 0>),
+						NewLocPair(<-5800,16008,6706>, <0, -48, 0>),
+						NewLocPair(<-5297,13404,6040>, <0, 0, 0>),
+						NewLocPair(<-2348,11823,6194>, <0, 0, 0>),
+						NewLocPair(<-5256,14392,5800>, <0, 0, 0>),
+						NewLocPair(<-3659,13700,6600>, <0, 0, 0>),
+						NewLocPair(<-1514,11165,7730>, <0, 0, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		}	
+			
+		if(FlowState_EnableWhiteForestByZero()){
+		Shared_RegisterLocation(
+			NewLocationSettings(
+				"White Forest By Zer0Bytes",
+				[
+					//Side A
+					NewLocPair( <-33024,17408,3328>, <0,90,0>),
+					NewLocPair( <-33024,16960,3328>, <0,90,0>),
+					NewLocPair( <-33280,16128,3264>, <0,90,0>),
+					NewLocPair( <-32448,16256,3328>, <0,90,0>),
+					NewLocPair( <-32192,16960,3328>, <0,90,0>),
+					NewLocPair( <-32256,16256,3328>, <0,90,0>),
+					NewLocPair( <-32128,17536,3328>, <0,90,0>),
+					NewLocPair( <-32512,17536,3328>, <0,90,0>),
+					NewLocPair( <-32960,17600,3328>, <0,90,0>),
+					NewLocPair( <-33536,17600,3328>, <0,90,0>),
+					NewLocPair( <-33728,17088,3328>, <0,90,0>),
+					NewLocPair( <-33856,16896,3200>, <0,90,0>),
+					NewLocPair( <-33920,17600,3200>, <0,90,0>),
+					NewLocPair( <-34368,18048,3072>, <0,0,0>),
+					NewLocPair( <-34352,18038,3151>, <0,0,0>),
+					NewLocPair( <-36696,19010,3021>, <0,0,0>),
+					NewLocPair( <-37079,19432,3120>, <0,90,0>),
+					NewLocPair( <-37335,19812,3053>, <0,0,0>),
+					NewLocPair( <-37371,19308,3033>, <0,0,0>),
+					NewLocPair( <-37106,19616,3152>, <0,0,0>),
+
+
+					// side B
+					NewLocPair( <-35442,24433,4112>, <0,-90,0>),
+					NewLocPair( <-35467,24668,4112>, <0,-90,0>),
+					NewLocPair( <-35454,24954,4135>, <0,-90,0>),
+					NewLocPair( <-34738,24934,4145>, <0,-90,0>),
+					NewLocPair( <-33453,24955,4152>, <0,-90,0>),
+					NewLocPair( <-33380,24704,4173>, <0,-90,0>),
+					NewLocPair( <-33498,24455,4148>, <0,-90,0>),
+					NewLocPair( <-34195,24456,4128>, <0,-90,0>),
+					NewLocPair( <-33745,24188,4093>, <0,-90,0>),
+					NewLocPair( <-33319,24002,3955>, <0,-90,0>),
+					NewLocPair( <-32764,23897,3382>, <0,-90,0>),
+					NewLocPair( <-32317,23278,2779>, <0,-90,0>),
+					NewLocPair( <-32100,22750,2647>, <0,180,0>),
+					NewLocPair( <-35148,24427,4147>, <0,-90,0>),
+
+					//forest
+					NewLocPair( <-33511,22657,2239>, <0,-90,0>),
+					NewLocPair( <-33813,21797,2178>, <0,-90,0>),
+					NewLocPair( <-34937,22312,2195>, <0,-90,0>),
+					NewLocPair( <-35843,23339,2172>, <0,0,0> ),
+					NewLocPair( <-36700,23252,2237>, <0,0,0> ),
+					NewLocPair( <-36374,21910,2204>, <0,0,0> ),
+					NewLocPair( <-35239,22024,2154>, <0,180,0>),
+					NewLocPair( <-34463,20783,2182>, <0,90,0>),
+					NewLocPair( <-32753,20853,2085>, <0,90,0>),
+					NewLocPair( <-31809,21230,2015>, <0,-90,0>),
+					NewLocPair( <-33549,18878,2129>, <0,90,0>),
+					NewLocPair( <-34726,19371,2106>, <0,90,0>),
+					NewLocPair( <-34295,20018,2134>, <0,90,0>),
+					NewLocPair( <-31263,21107,2019>, <0,180,0>),
+					NewLocPair( <-36806,22295,2261>, <0,0,0> ),
+					NewLocPair( <-36226,20102,2105>, <0,0,0>),
+					NewLocPair( <-32764,19415,2048>, <0,180,0>),
+					NewLocPair( <-32402,22605,2328>, <0,-90,0>),
+					NewLocPair( <-33082,23773,2363>, <0,-90,0>)
+
+				],
+				<0, 0, 3000>
+			)
+		)  
+		}	
+		///////////////////////////////////
+		//PROPHUNT LOCATIONS///////////////
+		
+		RegisterLocationPROPHUNT(
+				NewLocationSettings(
+					"Interstellar Relay",
+					[
+						NewLocPair(<26420, 31700, 4790>, <0, -90, 0>),
+						NewLocPair(<29260, 26245, 4210>, <0, 45, 0>),
+						NewLocPair(<29255, 24360, 4210>, <0, 0, 0>),
+						NewLocPair(<24445, 28970, 4340>, <0, -90, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		RegisterLocationPROPHUNT(
+				NewLocationSettings(
+					"Slum Lakes",
+					[
+						NewLocPair(<-20060, 23800, 2655>, <0, 110, 0>),
+						NewLocPair(<-20245, 24475, 2810>, <0, -160, 0>),
+						NewLocPair(<-25650, 22025, 2270>, <0, 20, 0>),
+						NewLocPair(<-25550, 21635, 2590>, <0, 20, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		RegisterLocationPROPHUNT(
+				NewLocationSettings(
+					"Little Town",
+					[
+						NewLocPair(<-30190, 12473, 3186>, <0, -90, 0>),
+						NewLocPair(<-28773, 11228, 3210>, <0, 180, 0>),
+						NewLocPair(<-29802, 9886, 3217>, <0, 90, 0>),
+						NewLocPair(<-30895, 10733, 3202>, <0, 0, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+
+		RegisterLocationPROPHUNT(
+				NewLocationSettings(
+					"Water Treatment",
+					[
+						NewLocPair(<5583, -30000, 3070>, <0, 0, 0>),
+						NewLocPair(<7544, -29035, 3061>, <0, 130, 0>),
+						NewLocPair(<10091, -30000, 3070>, <0, 180, 0>),
+						NewLocPair(<8487, -28838, 3061>, <0, -45, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+
+		RegisterLocationPROPHUNT(
+				NewLocationSettings(
+					"Airbase",
+					[
+						NewLocPair(<-24140, -4510, 2583>, <0, 90, 0>),
+						NewLocPair(<-28675, 612, 2600>, <0, 18, 0>),
+						NewLocPair(<-24688, 1316, 2583>, <0, 180, 0>),
+						NewLocPair(<-26492, -5197, 2574>, <0, 50, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+
+		RegisterLocationPROPHUNT(
+				NewLocationSettings(
+					"Swamps",
+					[
+						NewLocPair(<32704,-8576,3520>, <0, 167, 0>),
+						NewLocPair(<34496,-5888,3008>, <0, 51, 0>),
+						NewLocPair(<33280,-4544,3072>, <0, -17, 0>),
+						NewLocPair(<30720,-6080,2944>, <0, -92, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		RegisterLocationPROPHUNT(
+				NewLocationSettings(
+					"Skull Town",
+					[
+						NewLocPair(<-9320, -13528, 3167>, <0, -100, 0>),
+						NewLocPair(<-7544, -13240, 3161>, <0, -115, 0>),
+						NewLocPair(<-10250, -18320, 3323>, <0, 100, 0>),
+						NewLocPair(<-13261, -18100, 3337>, <0, 20, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		RegisterLocationPROPHUNT(
+				NewLocationSettings(
+					"Market",
+					[
+						NewLocPair(<-110, -9977, 2987>, <0, 0, 0>),
+						NewLocPair(<-1605, -10300, 3053>, <0, -100, 0>),
+						NewLocPair(<4600, -11450, 2950>, <0, 180, 0>),
+						NewLocPair(<3150, -11153, 3053>, <0, 100, 0>)
+					],
+					<0, 0, 3000>
+				)
+			)
+		break
+	///////////////////////////////////
+	//END PROPHUNT LOCATIONS///////////////		
+	
+	
+		case "mp_rr_desertlands_64k_x_64k_tt":
+        Shared_RegisterLocation(
+            NewLocationSettings(
+                "Mirage Voyage",
+                [
+					NewLocPair(<-25930, -3790, -2442>, <0, -37, 0>),
+                    NewLocPair(<-22928, -5785, -2396>, <0, 147, 0>),
+                    NewLocPair(<-27364, -4969, -2681>, <0, -32, 0>),
+                    NewLocPair(<-23150, -6776, -2879>, <0, 122, 0>),
+					NewLocPair(<-26373, -3504, -2560>, <0, -36, 0>),
+					NewLocPair(<-24183, -3713, -3445>, <0, -126, 0>),
+					NewLocPair(<-28862, -3875, -2918>, <0, -19.91, 0>),
+					NewLocPair(<-28047, -5494, -2806>, <0, 19.97, 0>),
+					NewLocPair(<-26716, -8446, -2733>, <0, 87, 0>),
+					NewLocPair(<-22701, -7660, -2898>, <0, 105, 0>)
+                ],
+                <0, 0, 3000>
+            )
+        )
+        //break
         case "mp_rr_desertlands_64k_x_64k":
         case "mp_rr_desertlands_64k_x_64k_nx":
+		if(!GetCurrentPlaylistVarBool("flowstateCapitolCityReplacesTTVLocation", false ))
+		{
 		Shared_RegisterLocation(
-                NewLocationSettings(
-                    "TTV Building",
-                    [
-                        NewLocPair(<11393, 5477, -4289>, <0, 90, 0>),
-                        NewLocPair(<12027, 7121, -4290>, <0, -120, 0>),
-                        NewLocPair(<8105, 6156, -4300>, <0, -45, 0>),
-                        //NewLocPair(<7965.0, 5976.0, -4266.0>, <0, -135, 0>),
-                        NewLocPair(<9420, 5528, -4236>, <0, 90, 0>),
-                        //NewLocPair(<9862, 5561, -3832>, <0, 180, 0>),
-                        //NewLocPair(<9800, 5347, -3507>, <0, 134, 0>),
-                        NewLocPair(<8277, 6304, -3940>, <0, 0, 0>),
-                        NewLocPair(<8186, 5513, -3828>, <0, 0, 0>),
-                        NewLocPair(<8243, 4537, -4235>, <-13, 32, 0>),
-                        //NewLocPair(<10176, 4245, -4300>, <0, 100, 0>),
-                        NewLocPair(<11700, 6207, -4435>, <-10, 90, 0>),
-                        NewLocPair(<11181, 5862, -3900>, <0, -180, 0>),
-                        //NewLocPair(<10058, 2071, -3827>, <0, -90, 0>),
-                        //NewLocPair(<7299, 7471, -4222>, <0, -90, 0>),
-                        //NewLocPair(<9976, 8539, -4207>, <0, -90, 0>),
-                        NewLocPair(<9043, 5866, -4171>, <0, 90, 0>),
-                        //NewLocPair(<10107, 3843, -4000>, <0, 90, 0>),
-                        NewLocPair(<11210, 4164, -4235>, <0, 90, 0>),
-                        NewLocPair(<12775, 4446, -4235>, <0, 150, 0>),
-                        NewLocPair(<9012, 5386, -4242>, <0, 90, 0>),
-                        //NewLocPair(<7372, 3885, -4219>, <0, 55, 0>)
-                    ],
-                    <0, 0, 3000>
-                )
-            )
-			Shared_RegisterLocation(
+			NewLocationSettings(
+				"TTV Building",
+				[
+					      NewLocPair(<11360, 6151, -4079>, <0, 102, 0>),
+					      NewLocPair(<11407, 6778, -4295>, <0, 88, 0>),
+					      NewLocPair(<11973, 4158, -4220>, <0, 82, 0>),
+					      NewLocPair(<9956, 3435, -4239>, <0, 0, 0>),
+					      NewLocPair(<9038, 3800, -4120>, <0, -88, 0>),
+					      NewLocPair(<7933, 6692, -4250>, <0, 76, 0>),
+					      NewLocPair(<8990, 5380, -4250>, <0, 145, 0>),
+					      NewLocPair(<8200, 5463, -3815>, <0, 0, 0>),
+					      NewLocPair(<9789, 5363, -3480>, <0, 174, 0>),
+					      NewLocPair(<9448, 5804, -4000>, <0, 0, 0>),
+					      NewLocPair(<8135, 4087, -4233>, <0, 90, 0>),
+					      NewLocPair(<9761, 5980, -4250>, <0, 135, 0>)
+					NewLocPair(<11393, 5477, -4289>, <0, 90, 0>),
+					NewLocPair(<12027, 7121, -4290>, <0, -120, 0>),
+					NewLocPair(<8105, 6156, -4300>, <0, -45, 0>),
+					NewLocPair(<9420, 5528, -4236>, <0, 90, 0>),
+					NewLocPair(<8277, 6304, -3940>, <0, 0, 0>),
+					NewLocPair(<8186, 5513, -3828>, <0, 0, 0>),
+					NewLocPair(<8243, 4537, -4235>, <-13, 32, 0>),
+					NewLocPair(<11700, 6207, -4435>, <-10, 90, 0>),
+					NewLocPair(<11181, 5862, -3900>, <0, -180, 0>),
+					NewLocPair(<9043, 5866, -4171>, <0, 90, 0>),
+					NewLocPair(<11210, 4164, -4235>, <0, 90, 0>),
+					NewLocPair(<12775, 4446, -4235>, <0, 150, 0>),
+					NewLocPair(<9012, 5386, -4242>, <0, 90, 0>)
+				],
+				<0, 0, 3000>
+			)
+		)
+		}
+		else{
+		Shared_RegisterLocation(
+			NewLocationSettings(
+				"Capitol City",
+				[
+					NewLocPair(<1142, 5067, -3351>, <16, 18, 0>),
+					NewLocPair(<1155, 5460, -3552>, <5, -62, 0>),
+					NewLocPair(<1552, 5547, -3151>, <20, -166, 0>),
+					NewLocPair(<1168, 4657, -4167>, <9, 58, 0>),
+					NewLocPair(<1233, 5027, -3152>, <13, 55, 0>),
+					NewLocPair(<2196, 3038, -4083>, <1, 1, 0>),
+					NewLocPair(<2262, 4710, -3552>, <12, 60, 0>),
+					NewLocPair(<2364, 5634, -3967>, <20, 171, 0>),
+					NewLocPair(<2911, 9488, -3863>, <11, 50, 0>),
+					NewLocPair(<5258, 12129, -4024>, <8, 16, 0>),
+					NewLocPair(<5316, 3324, -3848>, <10, 125, 0>),
+					NewLocPair(<5897, 10028, -4015>, <10, 60, 0>),
+					NewLocPair(<6756, 4952, -3448>, <8, 7, 0>),
+					NewLocPair(<7299, 7471, -4222>, <0, -90, 0>),
+					NewLocPair(<7307, 6964, -4503>, <2, 88, 0>),
+					NewLocPair(<7372, 3885, -4219>, <0, 55, 0>)
+					NewLocPair(<7825, 3225, -4239>, <0, 6, 0>),
+					NewLocPair(<7965, 5976, -4266>, <0, -135, 0>),
+					NewLocPair(<8105, 6156, -4300>, <0, -45, 0>),
+					NewLocPair(<8186, 5513, -3828>, <0, 0, 0>),
+					NewLocPair(<8277, 6304, -3940>, <0, 0, 0>),
+					NewLocPair(<9012, 5386, -4242>, <0, 90, 0>),
+					NewLocPair(<9043, 5866, -4171>, <0, 90, 0>),
+					NewLocPair(<9420, 5528, -4236>, <0, 90, 0>),
+					NewLocPair(<9800, 5347, -3507>, <0, 134, 0>),
+					NewLocPair(<9862, 5561, -3832>, <0, 180, 0>),
+					NewLocPair(<9976, 8539, -4207>, <0, -90, 0>),
+					NewLocPair(<10058, 2071, -3827>, <0, -90, 0>),
+					NewLocPair(<10107, 3843, -4000>, <0, 90, 0>),
+					NewLocPair(<10176, 4245, -4300>, <0, 100, 0>),
+					NewLocPair(<11181, 5862, -3900>, <0, -180, 0>),
+					NewLocPair(<11210, 4164, -4235>, <0, 90, 0>),
+					NewLocPair(<11700, 6207, -4435>, <-10, 90, 0>)
+				],
+				<0, 0, 3000>
+			)
+		)
+		}
+			
+		Shared_RegisterLocation(
                 NewLocationSettings(
                     "Lava Fissure",
                     [
                         NewLocPair(<-26550, 13746, -3048>, <0, -134, 0>),
-						NewLocPair(<-28877, 12943, -3109>, <0, -88.70, 0>),
+                        NewLocPair(<-28877, 12943, -3109>, <0, -88.70, 0>),
                         NewLocPair(<-29881, 9168, -2905>, <-1.87, -2.11, 0>),
-						NewLocPair(<-27590, 9279, -3109>, <0, 90, 0>)
+                        NewLocPair(<-27590, 9279, -3109>, <0, 90, 0>),
+                        NewLocPair(<-27585, 9191, -3080>, <0, 89, 0>),
+                        NewLocPair(<-26469, 9825, -2810>, <0, 87, 0>),
+                        NewLocPair(<-27623, 10210, -3290>, <0, 87, 0>),
+                        NewLocPair(<-25717, 13034, -3047>, <0, -176, 0>),
+                        NewLocPair(<-26433, 13360, -3000>, <0, 68, 0>),
+                        NewLocPair(<-26463, 13766, -3080>, <0, -95, 0>),
+                        NewLocPair(<-28781, 13266, -3080>, <0, 80, 0>),
+                        NewLocPair(<-27535, 10922, -3280>, <0, -94, 0>),
+                        NewLocPair(<-29879, 9151, -2860>, <0, 0, 0>)
                     ],
                     <0, 0, 2500>
                 )
             )
-					Shared_RegisterLocation(
+			
+		Shared_RegisterLocation(
                 NewLocationSettings(
                     "Space Elevator",
                     [
                         NewLocPair(<-12286, 26037, -4012>, <0, -116, 0>),
                         NewLocPair(<-12318, 28447, -3975>, <0, -122, 0>),
                         NewLocPair(<-14373, 27785, -3961>, <0, -25, 0>),
-						NewLocPair(<-13858, 27985, -1958>, <0, -46, 0>),
-						NewLocPair(<-11638, 26123, -3983>, <0, 137, 0>)
+                        NewLocPair(<-11638, 26123, -3983>, <0, 137, 0>),
+						NewLocPair(<-13348, 27630, -3535>, <3.01, 57.17, 0>),
+						NewLocPair(<-13772, 26473, -4000>, <0, 169, 0>),
+                        NewLocPair(<-12366, 26209, -4000>, <0, -90, 0>),
+                        NewLocPair(<-12063, 27640, -4000>, <0, -3, 0>),
+                        NewLocPair(<-13732, 27577, -3500>, <0, -83, 0>),
+                        NewLocPair(<-13732, 27577, -3500>, <0, -83, 0>),
+                        NewLocPair(<-12350, 26227, -3500>, <0, 148, 0>),
+                        NewLocPair(<-13765, 27654, -2850>, <0, -65, 0>),
+                        NewLocPair(<-12121, 26517, -2850>, <0, 124, 0>)
                     ],
                     <0, 0, 2000>
                 )
             )
-			if(FlowState_EnableSkillTrainerByColombia()){
-					Shared_RegisterLocation(
-                NewLocationSettings(
-                   "Skill trainer By Colombia",
-                    [
-                       NewLocPair(<15008, 30040, -680>, <20, 50, 0>),
-                       NewLocPair(<19265, 30022, -680>, <11, 132, 0>),
-                       NewLocPair(<19267, 33522, -680>, <10, -138, 0>),
-                       NewLocPair(<14995, 33566, -680>, <16, -45, 0>)
-                    ],
-                   <0, 0, 3000>
-                )
-            )
-			}
-			Shared_RegisterLocation(
+			
+		Shared_RegisterLocation(
                 NewLocationSettings(
                     "Little Town",
                     [
@@ -935,7 +989,6 @@ case "mp_rr_canyonlands_64k_x_64k":
                     <0, 0, 2000>
                 )
             )
-
 
 		Shared_RegisterLocation(
                 NewLocationSettings(
@@ -949,20 +1002,7 @@ case "mp_rr_canyonlands_64k_x_64k":
                     <0, 0, 2000>
                 )
             )
-		if(FlowState_EnableCaveByBlessedSeal() ){
-			Shared_RegisterLocation(
-                NewLocationSettings(
-                    "Cave By BlessedSeal",
-                    [
-						NewLocPair(<-8742, -11843, -3185>, <0, 40, 0>),
-                        NewLocPair(<-1897, -9707, -3841>, <0, 40, 0>),
-                        NewLocPair(<-5005, -11170, -213>, <0, -40, 0>),
-                        NewLocPair(<-1086, -9685, -3790>, <5, -120, 0>)
-                    ],
-                    <0, 0, 2000>
-                )
-            )
-		}
+
 		Shared_RegisterLocation(
                 NewLocationSettings(
                     "Little Town 2",
@@ -976,91 +1016,6 @@ case "mp_rr_canyonlands_64k_x_64k":
                     <0, 0, 2000>
                 )
             )
-		if(FlowState_EnableBrightWaterByZero()){
-			Shared_RegisterLocation(
-                NewLocationSettings(
-                    "Brightwater By Zer0bytes",
-                    [
-                        // SIde A
-                        NewLocPair(<-34368,35904,-3776>, <0,0,0>),
-                        NewLocPair(<-34496,35648,-3776>, <0,0,0>),
-                        NewLocPair(<-35392,35136,-3776>, <0,90,0>),
-                        NewLocPair(<-35456,35776,-3712>, <0,0,0>),
-                        NewLocPair(<-35456,36160,-3712>, <0,0,0>),
-                        NewLocPair(<-33088,37888,-3776>, <0,0,0>),
-                        NewLocPair(<-32960,37440,-3776>, <0,0,0>),
-                        NewLocPair(<-32576,35136,-3648>, <0,0,0>),
-                        NewLocPair(<-32576,34880,-3648>, <0,0,0>),
-                        NewLocPair(<-31488,34432,-3648>, <0,90,0>),
-                        NewLocPair(<-31296,34496,-3712>, <0,0,0>),
-                        NewLocPair(<-31232,34496,-3648>, <0,0,0>),
-                        NewLocPair(<-30976,34432,-3648>, <0,0,0>),
-                        NewLocPair(<-31232,35200,-3648>, <0,0,0>),
-                        NewLocPair(<-31424,35776,-3648>, <0,0,0>),
-                        NewLocPair(<-32384,37056,-3776>, <0,0,0>),
-                        NewLocPair(<-32000,36672,-3776>, <0,0,0>),
-                        NewLocPair(<-31680,38016,-3776>, <0,0,0>),
-                        NewLocPair(<-31104,37824,-3776>, <0,0,0>),
-                        NewLocPair(<-31680,39296,-3648>, <0,0,0>),
-                        NewLocPair(<-31680,39616,-3648>, <0,0,0>)
-
-                       //Side A
-                       NewLocPair(<-24640,40000,-3648>, <0,180,0>),
-                       NewLocPair(<-24640,39744,-3648>, <0,180,0>),
-                       NewLocPair(<-24941,39665,-3470>, <0,180,0>),
-                       NewLocPair(<-23936,37888,-3712>, <0,180,0>),
-                       NewLocPair(<-25088,37376,-3712>, <0,180,0>),
-                       NewLocPair(<-25600,40832,-3712>, <0,180,0>),
-                       NewLocPair(<-26752,39296,-3712>, <0,180,0>),
-                       NewLocPair(<-26880,37248,-3584>, <0,180,0>),
-                       NewLocPair(<-26880,37888,-3584>, <0,180,0>),
-                       NewLocPair(<-26880,38528,-3584>, <0,180,0>),
-                       NewLocPair(<-26368,35968,-3712>, <0,180,0>),
-                       NewLocPair(<-26496,35584,-3712>, <0,180,0>),
-                       NewLocPair(<-26368,36224,-3712>, <0,180,0>),
-                       NewLocPair(<-26752,35968,-3200>, <0,180,0>),
-                       NewLocPair(<-25728,40448,-3712>, <0,180,0>),
-                       NewLocPair(<-26496,40704,-3712>, <0,-90,0>),
-                       NewLocPair(<-27520,39808,-3840>, <0,180,0>),
-                       NewLocPair(<-24832,36480,-3712>, <0,180,0>),
-                       NewLocPair(<-23808,37504,-3712>, <0,180,0>),
-                       NewLocPair(<-23680,36992,-3584>, <0,180,0>),
-                       NewLocPair(<-25344,40704,-3584>, <0,180,0>),
-                       NewLocPair(<-25344,41344,-3584>, <0,180,0>),
-
-                       //others
-                       NewLocPair(<-27136,41920,1036>, <0,180,0>),
-                       NewLocPair(<-29364,42940,1040>, <0,180,0>),
-                       NewLocPair(<-31304,42044,1036>, <0,0,0>),
-                       NewLocPair(<-33520,42044,1204>, <0,0,0>),
-					   NewLocPair(<-33800,41756,1252>, <0,0,0>),
-                       NewLocPair(<-29268,41712,1084>, <0,0,0>),
-                       NewLocPair(<-25776,42168,1216>, <0,180,0>),
-                       NewLocPair(<-25724,41724,1204>, <0,180,0>),
-                       NewLocPair(<-28196,38564,-676>, <0,-90,0>),
-                       NewLocPair(<-26324,40476,-2756>, <0,180,0>),
-                       NewLocPair(<-31000,39452,-2752>, <0,0,0>), 
-                       NewLocPair(<-27192,35676,-3284>, <0,90,0>),
-                       NewLocPair(<-28108,35740,-3284>, <0,180,0>),
-                       NewLocPair(<-27376,35880,-2732>, <0,90,0>),
-                       NewLocPair(<-27204,35764,-3628>, <0,90,0>),
-                       NewLocPair(<-27908,36328,-3644>, <0,-90,0>),
-                       NewLocPair(<-28332,37500,-3676>, <0,0,0>), 
-                       NewLocPair(<-27828,37996,-3676>, <0,180,0>),
-                       NewLocPair(<-27960,37448,-3400>, <0,90,0>),
-                       NewLocPair(<-28396,38072,-3344>, <0,0,0>), 
-                       NewLocPair(<-27976,37960,2608>, <0,180,0>),
-                       NewLocPair(<-29348,39856,2668>, <0,-90,0>),
-                       NewLocPair(<-28936,39308,1916>, <0,0,0>),
-                       NewLocPair(<-27420,38688,2112>, <0,0,0>),
-                       NewLocPair(<-23648,35384,-3564>, <0,180,0>),
-                       NewLocPair(<-23972,35136,-3748>, <0,90,0>),
-                       NewLocPair(<-26220,35644,-3692>, <0,90,0>),
-                       NewLocPair(<-26320,36392,-3748>, <0,90,0>),
-                    ],
-                    <0, 0, 7450>
-                )
-		)}
 
 	    Shared_RegisterLocation(
                 NewLocationSettings(
@@ -1073,32 +1028,6 @@ case "mp_rr_canyonlands_64k_x_64k":
 						NewLocPair(<15223, -40222, -1998>, <0, 86, 0>)
                     ],
                     <0, 0, 2000>
-                )
-            )
-		Shared_RegisterLocation(
-                NewLocationSettings(
-                    "TTV Building 3",
-                    [
-                        NewLocPair(<6706, 3162, -4114>, <0, 90, 0>),
-                        NewLocPair(<6475, 6338, -4191>, <0, -93, 0>),
-                        NewLocPair(<4626, 5887, -4132>, <0, -28, 0>),
-						NewLocPair(<4962, 3664, -4011>, <0, 29, 0>),
-						NewLocPair(<4213, 4829, -4155>, <0, -4, 0>)
-                    ],
-                    <0, 0, 2000>
-                )
-            )
-
-		Shared_RegisterLocation(
-                NewLocationSettings(
-                    "Capitol Buildings",
-                    [
-                        NewLocPair(<1714, 9650, -4019>, <0, 93, 0>),
-                        NewLocPair(<2850, 13396, -4011>, <0, -98, 0>),
-						NewLocPair(<2239, 12952, -3064>, <0, -92, 0>),
-						NewLocPair(<2508, 10416, -4027>, <0, 178, 0>)
-                    ],
-                    <0, 0, 1000>
                 )
             )
 
@@ -1140,30 +1069,38 @@ case "mp_rr_canyonlands_64k_x_64k":
                     <0, 0, 6500>
                 )
             )
-        Shared_RegisterLocation(
+			
+		Shared_RegisterLocation(
                 NewLocationSettings(
                     "Factory",
                     [
-                        NewLocPair(<9213, -22942, -3571>, <0, -120, 0>),
-                        NewLocPair(<7825, -24577, -3547>, <0, -165, 0>),
-                        NewLocPair(<5846, -25513, -3523>, <0, 180, 0>),
-                        NewLocPair(<4422, -25937, -3571>, <0, 90, 0>),
-                        NewLocPair(<4056, -25017, -3571>, <0, -170, 0>),
-                        NewLocPair(<2050, -25267, -3650>, <-5, 45, 0>),
-                        NewLocPair(<2068, -25171, -3318>, <15, 45, 0>),
-                        NewLocPair(<2197, -22687, -3572>, <-3, -90, 0>),
-                        NewLocPair(<7081, -23051, -3667>, <0, 45, 0>),
-                        NewLocPair(<8922, -22135, -3119>, <0, 180, 0>),
-                        NewLocPair(<5436, -22436, -3188>, <0, 90, 0>),
-                        NewLocPair(<4254, -23031, -3522>, <0, 45, 0>),
-                        NewLocPair(<8211, -21413, -3700>, <0, -140, 0>),
-                        NewLocPair(<4277, -24101, -3571>, <0, -60, 0>)
+                        NewLocPair(<495.42, -26649.92, -3038.36>, <10.60, 44.95, -0>),
+                        NewLocPair(<648.07, -26450.72, -3547.97>, <10.20, 57.48, -0>),
+                        NewLocPair(<1653.03, -22939.29, -3571.97>, <12.00, -1.80, -0>),
+                        NewLocPair(<1722.22, -20823.69, -3719.31>, <7.45, -0.78, -0>),
+                        NewLocPair(<2193.69, -25349.72, -3443.97>, <3.69, 15.20, -0>),
+                        NewLocPair(<2557.95, -25035.46, -2971.97>, <2.00, 31.20, -0>),
+                        NewLocPair(<2608.53, -21670.90, -3707.97>, <11.75, 89.78, -0>),
+                        NewLocPair(<2240.71, -23184.89, -3187.97>, <-5.40, -87.58, -0>),
+                        NewLocPair(<3507.99, -24980.33, -3571.97>, <-6.62, -36.62, -0>),
+                        NewLocPair(<3954.13, -18102.04, -3582.36>, <-8.11, -29.47, 0>),
+                        NewLocPair(<4450.69, -20891.45, -3507.85>, <11.16, -44.58, -0.00>),
+                        NewLocPair(<6090.35, -25075.12, -3563.97>, <2.47, -0.46, -0>),
+                        NewLocPair(<7415.33, -20497.42, -3631.94>, <8.72, 84.13, -0>),
+                        NewLocPair(<7422.97, -17985.25, -3507.97>, <8.41, -45.65, -0>),
+                        NewLocPair(<8240.16, -24245.68, -3547.97>, <8.23, 50.62, -0>),
+                        NewLocPair(<9259.17, -22461.68, -3283.97>, <9.92, -28.07, -0>),
+                        NewLocPair(<9534.27, -19869.87, -3331.97>, <3.73, -91.33, -0>),
+                        NewLocPair(<10111.38, -20003.82, -2752.97>, <18.04, 84.92, -0>),
+                        NewLocPair(<11252.87, -16981.14, -2752.97>, <17.64, -104.16, 0>),
+                        NewLocPair(<11720.60, -19655.80, -3331.97>, <1.44, -116.68, -0>),
+                        NewLocPair(<12233.26, -18075.12, -2581.72>, <4.60, -134.70, 0>),
                     ],
                     <0, 0, 3000>
                 )
             )
 
-            Shared_RegisterLocation(
+        Shared_RegisterLocation(
                 NewLocationSettings(
                     "Lava City",
                     [
@@ -1185,7 +1122,8 @@ case "mp_rr_canyonlands_64k_x_64k":
                     <0, 0, 3000>
                 )
             )
-            Shared_RegisterLocation(
+			
+        Shared_RegisterLocation(
                 NewLocationSettings(
                     "Thermal Station",
                     [
@@ -1207,7 +1145,137 @@ case "mp_rr_canyonlands_64k_x_64k":
                 )
             )
 			
-			
+		Shared_RegisterLocation(
+                NewLocationSettings(
+                    "Epicenter",
+                    [
+                        NewLocPair(<8712, 23164, -3944>, <0, -49, 0>),
+                        NewLocPair(<14000, 21690, -3969>, <0, -130, 0>),
+                        NewLocPair(<10377, 17994, -4236>, <0, -120, 0>),
+						NewLocPair(<13100, 18138, -4856>, <0, 120, 0>)
+
+                    ],
+                    <0, 0, 2000>
+                )
+            )
+					
+		if(FlowState_EnableSkillTrainerByColombia()){
+		Shared_RegisterLocation(
+                NewLocationSettings(
+                   "Skill trainer By Colombia",
+                    [
+                       NewLocPair(<15008, 30040, -680>, <20, 50, 0>),
+                       NewLocPair(<19265, 30022, -680>, <11, 132, 0>),
+                       NewLocPair(<19267, 33522, -680>, <10, -138, 0>),
+                       NewLocPair(<14995, 33566, -680>, <16, -45, 0>)
+                    ],
+                   <0, 0, 3000>
+                )
+            )
+		}
+		
+		if(FlowState_EnableCaveByBlessedSeal() ){
+			Shared_RegisterLocation(
+                NewLocationSettings(
+                    "Cave By BlessedSeal",
+                    [
+						NewLocPair(<-8742, -11843, -3185>, <0, 40, 0>),
+                        NewLocPair(<-1897, -9707, -3841>, <0, 40, 0>),
+                        NewLocPair(<-5005, -11170, -213>, <0, -40, 0>),
+                        NewLocPair(<-1086, -9685, -3790>, <5, -120, 0>)
+                    ],
+                    <0, 0, 2000>
+                )
+            )
+		}
+		
+		if(FlowState_EnableBrightWaterByZero()){
+		Shared_RegisterLocation(
+			NewLocationSettings(
+				"Brightwater By Zer0bytes",
+				[
+					// SIde A
+					NewLocPair(<-34368,35904,-3776>, <0,0,0>),
+					NewLocPair(<-34496,35648,-3776>, <0,0,0>),
+					NewLocPair(<-35392,35136,-3776>, <0,90,0>),
+					NewLocPair(<-35456,35776,-3712>, <0,0,0>),
+					NewLocPair(<-35456,36160,-3712>, <0,0,0>),
+					NewLocPair(<-33088,37888,-3776>, <0,0,0>),
+					NewLocPair(<-32960,37440,-3776>, <0,0,0>),
+					NewLocPair(<-32576,35136,-3648>, <0,0,0>),
+					NewLocPair(<-32576,34880,-3648>, <0,0,0>),
+					NewLocPair(<-31488,34432,-3648>, <0,90,0>),
+					NewLocPair(<-31296,34496,-3712>, <0,0,0>),
+					NewLocPair(<-31232,34496,-3648>, <0,0,0>),
+					NewLocPair(<-30976,34432,-3648>, <0,0,0>),
+					NewLocPair(<-31232,35200,-3648>, <0,0,0>),
+					NewLocPair(<-31424,35776,-3648>, <0,0,0>),
+					NewLocPair(<-32384,37056,-3776>, <0,0,0>),
+					NewLocPair(<-32000,36672,-3776>, <0,0,0>),
+					NewLocPair(<-31680,38016,-3776>, <0,0,0>),
+					NewLocPair(<-31104,37824,-3776>, <0,0,0>),
+					NewLocPair(<-31680,39296,-3648>, <0,0,0>),
+					NewLocPair(<-31680,39616,-3648>, <0,0,0>)
+
+				   //Side A
+				   NewLocPair(<-24640,40000,-3648>, <0,180,0>),
+				   NewLocPair(<-24640,39744,-3648>, <0,180,0>),
+				   NewLocPair(<-24941,39665,-3470>, <0,180,0>),
+				   NewLocPair(<-23936,37888,-3712>, <0,180,0>),
+				   NewLocPair(<-25088,37376,-3712>, <0,180,0>),
+				   NewLocPair(<-25600,40832,-3712>, <0,180,0>),
+				   NewLocPair(<-26752,39296,-3712>, <0,180,0>),
+				   NewLocPair(<-26880,37248,-3584>, <0,180,0>),
+				   NewLocPair(<-26880,37888,-3584>, <0,180,0>),
+				   NewLocPair(<-26880,38528,-3584>, <0,180,0>),
+				   NewLocPair(<-26368,35968,-3712>, <0,180,0>),
+				   NewLocPair(<-26496,35584,-3712>, <0,180,0>),
+				   NewLocPair(<-26368,36224,-3712>, <0,180,0>),
+				   NewLocPair(<-26752,35968,-3200>, <0,180,0>),
+				   NewLocPair(<-25728,40448,-3712>, <0,180,0>),
+				   NewLocPair(<-26496,40704,-3712>, <0,-90,0>),
+				   NewLocPair(<-27520,39808,-3840>, <0,180,0>),
+				   NewLocPair(<-24832,36480,-3712>, <0,180,0>),
+				   NewLocPair(<-23808,37504,-3712>, <0,180,0>),
+				   NewLocPair(<-23680,36992,-3584>, <0,180,0>),
+				   NewLocPair(<-25344,40704,-3584>, <0,180,0>),
+				   NewLocPair(<-25344,41344,-3584>, <0,180,0>),
+
+				   //others
+				   NewLocPair(<-27136,41920,1036>, <0,180,0>),
+				   NewLocPair(<-29364,42940,1040>, <0,180,0>),
+				   NewLocPair(<-31304,42044,1036>, <0,0,0>),
+				   NewLocPair(<-33520,42044,1204>, <0,0,0>),
+				   NewLocPair(<-33800,41756,1252>, <0,0,0>),
+				   NewLocPair(<-29268,41712,1084>, <0,0,0>),
+				   NewLocPair(<-25776,42168,1216>, <0,180,0>),
+				   NewLocPair(<-25724,41724,1204>, <0,180,0>),
+				   NewLocPair(<-28196,38564,-676>, <0,-90,0>),
+				   NewLocPair(<-26324,40476,-2756>, <0,180,0>),
+				   NewLocPair(<-31000,39452,-2752>, <0,0,0>), 
+				   NewLocPair(<-27192,35676,-3284>, <0,90,0>),
+				   NewLocPair(<-28108,35740,-3284>, <0,180,0>),
+				   NewLocPair(<-27376,35880,-2732>, <0,90,0>),
+				   NewLocPair(<-27204,35764,-3628>, <0,90,0>),
+				   NewLocPair(<-27908,36328,-3644>, <0,-90,0>),
+				   NewLocPair(<-28332,37500,-3676>, <0,0,0>), 
+				   NewLocPair(<-27828,37996,-3676>, <0,180,0>),
+				   NewLocPair(<-27960,37448,-3400>, <0,90,0>),
+				   NewLocPair(<-28396,38072,-3344>, <0,0,0>), 
+				   NewLocPair(<-27976,37960,2608>, <0,180,0>),
+				   NewLocPair(<-29348,39856,2668>, <0,-90,0>),
+				   NewLocPair(<-28936,39308,1916>, <0,0,0>),
+				   NewLocPair(<-27420,38688,2112>, <0,0,0>),
+				   NewLocPair(<-23648,35384,-3564>, <0,180,0>),
+				   NewLocPair(<-23972,35136,-3748>, <0,90,0>),
+				   NewLocPair(<-26220,35644,-3692>, <0,90,0>),
+				   NewLocPair(<-26320,36392,-3748>, <0,90,0>),
+				],
+				<0, 0, 7450>
+			)
+		)}
+		///////////////////////////////////
+		//PROPHUNT LOCATIONS///////////////			
 		RegisterLocationPROPHUNT(
                 NewLocationSettings(
                     "TTV Building",
@@ -1270,124 +1338,26 @@ case "mp_rr_canyonlands_64k_x_64k":
                     <0, 0, 2000>
                 )
             )
-				// RegisterLocationPROPHUNT(
-						// NewLocationSettings(
-							// "The Tree",
-							// [
-								// NewLocPair(<-6782, -27753, -3340>, <0, -116, 0>),
-								// NewLocPair(<-8043, -28700, -4232>, <0, -122, 0>),
-								// NewLocPair(<-6439, -30760, -3340>, <0, -25, 0>),
-								// NewLocPair(<-9220, -29618, -3379>, <0, -46, 0>)
-							// ],
-							// <0, 0, 2000>
-						// )
-					// )
 
-		// RegisterLocationPROPHUNT(
-                // NewLocationSettings(
-                    // "Little Town",
-                    // [
-                        // NewLocPair(<-19481, 2840, -3680>, <0, -116, 0>),
-                        // NewLocPair(<21012,1686,-4110>, <0, -122, 0>),
-                        // NewLocPair(<19824, 1490, -4084>, <0, -25, 0>)
-                    // ],
-                    // <0, 0, 2000>
-                // )
-            // )
-		// RegisterLocationPROPHUNT(
-                // NewLocationSettings(
-                    // "Little Town",
-                    // [
-                        // NewLocPair(<22857, 3449, -4050>, <0, -157, 0>),
-                        // NewLocPair(<19559, 232, -4035>, <0, 33, 0>),
-                        // NewLocPair(<19400, 4384, -4027>, <0, -35, 0>)
-                    // ],
-                    // <0, 0, 2000>
-                // )
-            // )
+	  // RegisterLocationPROPHUNT(
+			// NewLocationSettings(
+				// "Thermal Station",
+				// [
+					// NewLocPair(<-20091, -17683, -3984>, <0, -90, 0>),
+					// NewLocPair(<-22919, -20528, -4010>, <0, 0, 0>),
+					// NewLocPair(<-17140, -20710, -3973>, <0, -180, 0>),
+					// NewLocPair(<-21054, -23399, -3850>, <0, 90, 0>)
+				// ],
+				// <0, 0, 11000>
+			// )
+		// )
 
-		// RegisterLocationPROPHUNT(
-                // NewLocationSettings(
-                    // "Refinery",
-                    // [
-                        // NewLocPair(<22970, 27159, -4612>, <0, 135, 0>),
-                        // NewLocPair(<20430, 26481, -4200>, <0, 135, 0>),
-                        // NewLocPair(<19142, 30982, -4612>, <0, -45, 0>),
-                        // NewLocPair(<18285, 28602, -4200>, <0, -45, 0>)
-                    // ],
-                    // <0, 0, 6500>
-                // )
-            // )
-         // RegisterLocationPROPHUNT(
-                // NewLocationSettings(
-                    // "Lava City",
-                    // [
-                        // NewLocPair(<22912,-28992,-3392>, <0, 40, 0>),
-                        // NewLocPair(<24256,-25664,-3520>, <0, 90, 0>),
-                        // NewLocPair(<24256,-28288,-3328>, <0, -90, 0>),
-                        // NewLocPair(<22656,-27584,-2688>, <0, 90, 0>)
-                    // ],
-                    // <0, 0, 3000>
-                // )
-            // )
-          // RegisterLocationPROPHUNT(
-                // NewLocationSettings(
-                    // "Thermal Station",
-                    // [
-                        // NewLocPair(<-20091, -17683, -3984>, <0, -90, 0>),
-						// NewLocPair(<-22919, -20528, -4010>, <0, 0, 0>),
-						// NewLocPair(<-17140, -20710, -3973>, <0, -180, 0>),
-                        // NewLocPair(<-21054, -23399, -3850>, <0, 90, 0>)
-                    // ],
-                    // <0, 0, 11000>
-                // )
-            // )
-						// Shared_RegisterLocation(
-                // NewLocationSettings(
-                    // "Capitol City",
-                    // [
-                        // NewLocPair(<8660, 5910, -4168>, <-13, 50, 0>),
-                        // NewLocPair(<2300, 6571, -4490>, <1.2, -96, 0>),
-                        // NewLocPair(<1200, 4471, -4150>, <-1.4, 50, 0>),
-                        // NewLocPair(<12106, 1769, -3453>, <-1.4, 126, 0>),
-                        // NewLocPair(<14047, 5915, -3903>, <-1.4, 174, 0>),
-                        // NewLocPair(<11117, 10604, -4211>, <-1.4, -112, 0>),
-                        // NewLocPair(<6630, 13856, -3935>, <-1.4, -90, 0>),
-                        // NewLocPair(<1986, 12817, -3227>, <-1.4, -91, 0>),
-						// NewLocPair(<5028, 10272, -3981>, <-1.4, -87, 0>),
-						// NewLocPair(<5412, 5449, -4145>, <-1.4, -59, 0>),
-						// NewLocPair(<11010, 3297, -4165>, <-1.4, 90, 0>),
-                    // ],
-                    // <0, 0, 3000>
-                // )
-            // )
-
-			// Shared_RegisterLocation(
-                // NewLocationSettings(
-                    // "Epicenter",
-                    // [
-                        // NewLocPair(<8712, 23164, -3944>, <0, -49, 0>),
-                        // NewLocPair(<14000, 21690, -3969>, <0, -130, 0>),
-                        // NewLocPair(<10377, 17994, -4236>, <0, -120, 0>),
-						// NewLocPair(<13100, 18138, -4856>, <0, 120, 0>)
-
-                    // ],
-                    // <0, 0, 2000>
-                // )
-            // )
-
-			// Shared_RegisterLocation(
-                // NewLocationSettings(
-	                   // "ESPACIO ABIERTO",
-                    // [
-                        // NewLocPair(<-334, 34239, -2854>, <0, -46, 0>),
-                        // NewLocPair(<3470, 28739, -4242>, <0, 42, 0>),
-                        // NewLocPair(<9818, 26807, -3605>, <0, 135, 0>),
-						// NewLocPair(<12661, 36004, -4055>, <0, -129, 0>),
-                    // ],
-                    // <0, 0, 2000>
-                // )
-            // )
+	///////////////////////////////////
+	//END PROPHUNT LOCATIONS///////////////	
+	
+	///////////////////////////////////////////////////
+	//EXCLUSIVE SURF LOCATIONS FOR WORLD'S EDGE////////	
+	
 		RegisterLocationSURF(
                 NewLocationSettings(
                     "surf_purgatory",
@@ -1422,7 +1392,6 @@ case "mp_rr_canyonlands_64k_x_64k":
 
     //Client Signals
     RegisterSignal( "CloseScoreRUI" )
-
 }
 
 LocPair function NewLocPair(vector origin, vector angles)
@@ -1477,7 +1446,7 @@ float function Deathmatch_GetIntroCutsceneNumSpawns()                { return Ge
 float function Deathmatch_GetIntroCutsceneSpawnDuration()            { return GetCurrentPlaylistVarFloat("intro_cutscene_spawn_duration", 5)}
 float function Deathmatch_GetIntroSpawnSpeed()                       { return GetCurrentPlaylistVarFloat("intro_cutscene_spawn_speed", 40)}
 bool function Spectator_GetReplayIsEnabled()                         { return GetCurrentPlaylistVarBool("replay_enabled", true ) } 
-float function Spectator_GetReplayDelay()                            { return GetCurrentPlaylistVarFloat("replay_delay", 2 ) } 
+float function Spectator_GetReplayDelay()                            { return GetCurrentPlaylistVarFloat("replay_delay", 5 ) } 
 float function Deathmatch_GetRespawnDelay()                          { return GetCurrentPlaylistVarFloat("respawn_delay", 5) }
 float function Equipment_GetDefaultShieldHP()                        { return GetCurrentPlaylistVarFloat("default_shield_hp", 100) }
 float function Deathmatch_GetOOBDamagePercent()                      { return GetCurrentPlaylistVarFloat("oob_damage_percent", 10) }
@@ -1495,9 +1464,7 @@ bool function FlowState_ResetKillsEachRound()                         { return G
 bool function FlowState_Timer()                         { return GetCurrentPlaylistVarBool("flowstateTimer", true ) } 
 bool function FlowState_LockPOI()                         { return GetCurrentPlaylistVarBool("flowstateLockPOI", false ) } 
 int function FlowState_LockedPOI() { return GetCurrentPlaylistVarInt("flowstateLockeedPOI", 0) }
-bool function FlowState_AdminTgive()                         { return GetCurrentPlaylistVarBool("flowstateAdminTgive", true ) } 
-bool function FlowState_AllChat()                         { return GetCurrentPlaylistVarBool("flowstateAllChat", true ) } 
-float function FlowState_ChatCooldown()                          { return GetCurrentPlaylistVarFloat("flowstateChatCd", 5) }
+bool function FlowState_AdminTgive()                         { return GetCurrentPlaylistVarBool("flowstateAdminTgive", true ) }
 bool function FlowState_ForceCharacter()                         { return GetCurrentPlaylistVarBool("flowstateForceCharacter", true ) } 
 int function FlowState_ChosenCharacter() { return GetCurrentPlaylistVarInt("flowstateChosenCharacter", 8) }
 bool function FlowState_ForceAdminCharacter()                         { return GetCurrentPlaylistVarBool("flowstateForceAdminCharacter", true ) } 
@@ -1524,7 +1491,7 @@ int function FlowState_SURFRoundTime() { return GetCurrentPlaylistVarInt("flowst
 bool function FlowState_SURFLockPOI()                         { return GetCurrentPlaylistVarBool("flowstateSURFLockPOI", false ) } 
 int function FlowState_SURFLockedPOI() { return GetCurrentPlaylistVarInt("flowstateSURFLockeedPOI", 0) }
 bool function FlowState_PROPHUNT()                         { return GetCurrentPlaylistVarBool("flowstatePROPHUNT", false ) }
-bool function Flowstate_EnableAutoChangeLevel() { return GetCurrentPlaylistVarBool("flowstateAutoChangeLevelEnable", true ) }
+bool function Flowstate_EnableAutoChangeLevel() { return GetCurrentPlaylistVarBool("flowstateAutoChangeLevelEnable", false ) }
 int function Flowstate_AutoChangeLevelRounds() { return GetCurrentPlaylistVarInt("flowstateRoundsBeforeChangeLevel", 2 ) }
 bool function FlowState_EnableSkillTrainerByColombia()                         { return GetCurrentPlaylistVarBool("flowstate_Enable_SKILLTRAINER_By_Colombia", true ) }
 bool function FlowState_EnableCustomMapByBiscutz()                         { return GetCurrentPlaylistVarBool("flowstate_Enable_CUSTOMMAP_By_Biscutz", false ) }

@@ -30,80 +30,96 @@ void function InitLootDrones()
 	RegisterSignal( SIGNAL_LOOT_DRONE_FALL_START )
 	RegisterSignal( SIGNAL_LOOT_DRONE_STOP_PANIC )
 	FlagInit( "DronePathsInitialized", false )
-
-	if(GetCurrentPlaylistVarBool( "flowstateFlyersEasterEgg", false )) AddClientCommandCallback("clearparent", ClientCommand_ClearFlyerParent)	
 }
 
 void function InitLootDronePaths()
-///////////////////////////////////////////////////////
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-///////////////////////////////////////////////////////
 {
 	file.ItemsTier1 = SURVIVAL_Loot_GetByTier(1)
 	file.ItemsTier2 = SURVIVAL_Loot_GetByTier(2)
 	file.ItemsTier3 = SURVIVAL_Loot_GetByTier(3)
 	file.ItemsTier4 = SURVIVAL_Loot_GetByTier(4)
 
-	// Get all drone path nodes (mixed)
-	array<entity> dronePathNodes = GetEntArrayByScriptName( LOOT_DRONE_PATH_NODE_ENTNAME )
-
 	// No nodes on this map?
-	if ( dronePathNodes.len() == 0 || GetMapName() == "mp_rr_canyonlands_staging")
-	{
+	if ( GetMapName() == "mp_rr_canyonlands_staging")
 		return
-	}
 
-	// Separate nodes into groups
-	while ( dronePathNodes.len() > 0 )
-	{
-		// Get a random node
-		entity node = dronePathNodes.getrandom()
-
-		// Get all nodes associated with it
-		array<entity> groupNodes = GetEntityLinkLoop( node )
-
-		// Remove this group's nodes from the list
-		foreach ( entity groupNode in groupNodes )
-			dronePathNodes.fastremovebyvalue( groupNode )
-
-		// Add the group to the path list
-		file.dronePaths.append( groupNodes )
-	}
 
 	if(GetMapName() == "mp_rr_desertlands_64k_x_64k" && !GetCurrentPlaylistVarBool("flowstateFlyersOverride", false ) || GetMapName() == "mp_rr_desertlands_64k_x_64k_nx" && !GetCurrentPlaylistVarBool("flowstateFlyersOverride", false ))
 	{
-		printf( "DronePaths: found %i paths", file.dronePaths.len() ) 
-	} else if (GetMapName() == "mp_rr_canyonlands_mu1" || GetMapName() == "mp_rr_canyonlands_mu1_night" || GetMapName() == "mp_rr_canyonlands_64k_x_64k" || GetCurrentPlaylistVarBool("flowstateFlyersOverride", false )){
-		printf( "FlyersPaths: found %i paths", file.dronePaths.len() ) 
-	}
+		// Get all drone path nodes (mixed)
+		array<entity> dronePathNodes = GetEntArrayByScriptName( LOOT_DRONE_PATH_NODE_ENTNAME )
 
-	//DEBUG
-	// PrintEntArray( file.dronePaths[0] )
-	// int i = 0
-	// foreach(entPath in file.dronePaths[0])
-	// {
-		// printt("GetLinkEnt " + i + " " + entPath.GetLinkEnt())
-		// i++
-	// }
-	// PrintEntArray( file.dronePaths[1] )
-	// PrintEntArray( file.dronePaths[2] )
-	// PrintEntArray( file.dronePaths[3] )
-	// PrintEntArray( file.dronePaths[4] )
-	// PrintEntArray( file.dronePaths[5] )
-	// PrintEntArray( file.dronePaths[6] )
-	// PrintEntArray( file.dronePaths[7] )
-	// PrintEntArray( file.dronePaths[8] )
-	// PrintEntArray( file.dronePaths[9] )
-	// PrintEntArray( file.dronePaths[10] )
-	// PrintEntArray( file.dronePaths[11] )
-	// PrintEntArray( file.dronePaths[12] )
-	// PrintEntArray( file.dronePaths[13] )
-	// PrintEntArray( file.dronePaths[14] )
-	
-	// Mark drone paths as initialized
-	FlagSet( "DronePathsInitialized" )
+		// No nodes on this map?
+		if ( dronePathNodes.len() == 0 || GetMapName() == "mp_rr_canyonlands_staging")
+		{
+			return
+		}
+
+		// Separate nodes into groups
+		while ( dronePathNodes.len() > 0 )
+		{
+			// Get a random node
+			entity node = dronePathNodes.getrandom()
+
+			// Get all nodes associated with it
+			array<entity> groupNodes = GetEntityLinkLoop( node )
+
+			// Remove this group's nodes from the list
+			foreach ( entity groupNode in groupNodes )
+				dronePathNodes.fastremovebyvalue( groupNode )
+
+			// Add the group to the path list
+			file.dronePaths.append( groupNodes )
+		}
+		printf( "DronePaths: found %i paths", file.dronePaths.len() ) 
+		FlagSet( "DronePathsInitialized" )
+	} 
+	else if (GetMapName() == "mp_rr_canyonlands_mu1" || GetMapName() == "mp_rr_canyonlands_mu1_night" || GetMapName() == "mp_rr_canyonlands_64k_x_64k" )
+	{
+		thread GeneratePathAndSpawnFlyers()
+	}
 }
 
+void function GeneratePathAndSpawnFlyers()
+{
+	array<vector> startPoints
+	startPoints.append(<-18973.3047, 8534.12109, 4280.16602>)
+	startPoints.append(<-18127.4082, -5528.96191, 2728.19434>)
+	startPoints.append(<-4743.55029, -13367.792, 3561.34766>)
+	startPoints.append(<11613.6396, -23869.5371, 2633.93628>)
+	startPoints.append(<20152.5898, -17941.3672, 5617.63379>)
+	startPoints.append(<30054.6602, -631.220337, 4734.79053>)
+	startPoints.append(<26079.166, 20301.3418, 5569.29688>)
+	startPoints.append(<6126.94336, 24811.9395, 5894.36377>)
+	
+	foreach(startPoint in startPoints)
+	{
+		array<entity> Amogus
+		for(int i = 0; i < 50; i++)
+		{
+			float r = float(i) / float(50) * 2 * PI
+			vector org = startPoint + 6000 * <sin( r ), cos( r ), 0.0>
+				
+			entity amogus = CreateEntity( "script_mover_train_node" )
+			amogus.kv.solid = 0
+			amogus.kv.fadedist = -1
+			amogus.SetValueForModelKey( $"mdl/dev/empty_model.rmdl" )
+			amogus.kv.SpawnAsPhysicsMover = 1
+			amogus.SetOrigin( org + Vector(0,0,3000))
+			amogus.SetAngles( Vector(0,0,0) )
+			DispatchSpawn( amogus )
+			
+			Amogus.append( amogus )
+		}
+		
+		file.dronePaths.append( Amogus )
+	}
+	
+	FlagSet( "DronePathsInitialized" )
+	
+	SpawnFlyers(10)
+	printt( "FlyersPaths: generated paths ", file.dronePaths.len() )
+}
 
 //////////////////////////
 //////////////////////////
@@ -114,41 +130,114 @@ array<LootDroneData> function SpawnLootDrones( int numToSpawn )
 {
 	array<LootDroneData> drones
 
-	for ( int i = 0; i < numToSpawn; ++i ){
-	drones.append( LootDrones_SpawnLootDroneAtRandomPath() )
-	drones[i].id++}
+	for ( int i = 0; i < numToSpawn; ++i )
+	{
+		drones.append( LootDrones_SpawnLootDroneAtRandomPath() )
+		drones[i].id++
+		WaitFrame()	
+	}
 	
 	file.spawnedDronesorFlyers = drones
 	return drones
 }
 
+array<LootDroneData> function SpawnFlyers( int numToSpawn )
+{
+	array<LootDroneData> drones
+
+	for ( int i = 0; i < numToSpawn; ++i )
+	{		
+		drones.append( Flyers_SpawnFlyerAtRandomPath() )
+		drones[i].id++		
+		WaitFrame()		
+	}
+	
+	file.spawnedDronesorFlyers = drones
+	return drones
+}
 //////////////////////////
 //////////////////////////
 /// Internal functions ///
 //////////////////////////
 //////////////////////////
 void function FlyerAnimation(entity flyer)
-///////////////////////////////////////////////////////
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-///////////////////////////////////////////////////////
 {
 	if(IsValid(flyer))
 		flyer.Anim_Play( "fl_flap_cycle" )
 }
 
-array<entity> function LootDrones_GetRandomPath()
+array<entity> function FlyersOrLootDrones_GetRandomPath()
 {
 	Assert( !Flag( "DronePathsInitialized" ), "Trying to get a random path while having uninitialized paths!" )
+	
 	return file.dronePaths.getrandom()
 }
 
-LootDroneData function LootDrones_SpawnLootDroneAtRandomPath()
-///////////////////////////////////////////////////////
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-///////////////////////////////////////////////////////
+LootDroneData function Flyers_SpawnFlyerAtRandomPath()
 {
 	LootDroneData data
-	array<entity> path = LootDrones_GetRandomPath()
+	array<entity> path = FlyersOrLootDrones_GetRandomPath()
+	
+	//find a starting point in the path and sort the array of locations
+	int startpoint = Flyers_GetBestStartNodeFromPath( path )
+
+	array<entity> newArray = path.slice(startpoint, path.len())
+	newArray.extend(path.slice(0, startpoint))
+	path = newArray
+
+	entity startNode = path[0]
+
+	// Set path from this start node.
+	data.path = path
+	foreach ( entity pathNode in data.path )
+		data.pathVec.append( pathNode.GetOrigin() )
+
+	//Getting rid of SetParent so we can have proper animation while moving. hack #2! //By Colombia
+	entity model = CreateEntity( "script_mover" )
+	model.kv.targetname = LOOT_DRONE_MOVER_SCRIPTNAME
+	
+	if (GetMapName() == "mp_rr_canyonlands_mu1" || GetMapName() == "mp_rr_canyonlands_mu1_night" || GetMapName() == "mp_rr_canyonlands_64k_x_64k")
+	{
+		model.SetValueForModelKey( FLYER_MODEL.tolower() ) 	
+		model.SetMaxHealth( 100 )
+		model.SetHealth( 100 )
+		model.kv.modelscale = RandomFloatRange( 0.9, 1.1 )
+		model.SetSkin(RandomInt(3))
+	} else if ( GetMapName() == "mp_rr_canyonlands_mu1_night")
+	{
+		model.SetSkin(3)
+		StartParticleEffectOnEntityWithPos_ReturnEntity( model, GetParticleSystemIndex( FX_FLYER_GLOW2 ), FX_PATTACH_ABSORIGIN_FOLLOW, model.LookupAttachment( "CHESTFOCUS" ), <0,0,0>, VectorToAngles( <0,0,-1> ) )
+	}
+	
+	model.kv.SpawnAsPhysicsMover = 0
+	model.SetOrigin( startNode.GetOrigin() )
+	model.SetAngles( startNode.GetAngles() )
+	model.kv.fadedist = 50000
+	model.kv.rendercolor = "255 255 255"
+	model.kv.solid = 6
+	model.SetDamageNotifications( true )
+	model.SetTakeDamageType( DAMAGE_YES )
+	DispatchSpawn( model )
+
+	// Set model entity in the struct.
+	data.model = model
+	data.mover = model
+
+	if(!GetCurrentPlaylistVarBool("flowstatePROPHUNT", false )) data.roller = SpawnDeathbox_Parented(data.model)
+	thread FlyerMove( data )
+
+	file.droneData[ model ] <- data
+
+	AddEntityCallback_OnDamaged( data.model, Flyers_OnDamaged) 	
+	thread FlyerAnimation(data.model)
+		
+	return data
+}
+
+LootDroneData function LootDrones_SpawnLootDroneAtRandomPath()
+{
+	LootDroneData data
+	array<entity> path = FlyersOrLootDrones_GetRandomPath()
 	if ( path.len() == 0 )
 	{
 		Assert( 0, "Got a random path with no nodes!" )
@@ -166,43 +255,18 @@ LootDroneData function LootDrones_SpawnLootDroneAtRandomPath()
 	expect entity( startNode )
 
 	// Set path from this start node.
-	data.path = GetEntityLinkLoop( startNode )
+	data.path = path
 	foreach ( entity pathNode in data.path )
-	data.pathVec.append( pathNode.GetOrigin() )
+		data.pathVec.append( pathNode.GetOrigin() )
 
 	//Getting rid of SetParent so we can have proper animation while moving. hack #2! //By Colombia
 	entity model = CreateEntity( "script_mover" )
 	model.kv.targetname = LOOT_DRONE_MOVER_SCRIPTNAME
 	
-	if(GetMapName() == "mp_rr_desertlands_64k_x_64k" && !GetCurrentPlaylistVarBool("flowstateFlyersOverride", false ) || GetMapName() == "mp_rr_desertlands_64k_x_64k_nx" && !GetCurrentPlaylistVarBool("flowstateFlyersOverride", false ))
-	{
-		model.SetValueForModelKey( LOOT_DRONE_MODEL ) 
-		model.SetMaxHealth( 10 )
-		model.SetHealth( 10 )
-		model.kv.modelscale = 1
-	} else if (GetMapName() == "mp_rr_canyonlands_mu1" || GetMapName() == "mp_rr_canyonlands_mu1_night" || GetMapName() == "mp_rr_canyonlands_64k_x_64k" || GetCurrentPlaylistVarBool("flowstateFlyersOverride", false )){
-		model.SetValueForModelKey( FLYER_MODEL.tolower() ) 	
-		model.SetMaxHealth( 100 )
-		model.SetHealth( 100 )
-		model.kv.modelscale = RandomFloatRange( 0.9, 1.1 )
-		if(GetMapName() == "mp_rr_desertlands_64k_x_64k_nx" ){
-		model.SetSkin(2) 
-		} else if ( GetMapName() == "mp_rr_canyonlands_mu1_night"){
-		model.SetSkin(3)
-		StartParticleEffectOnEntityWithPos_ReturnEntity( model, GetParticleSystemIndex( FX_FLYER_GLOW2 ), FX_PATTACH_ABSORIGIN_FOLLOW, model.LookupAttachment( "CHESTFOCUS" ), <0,0,0>, VectorToAngles( <0,0,-1> ) )
-		} else if ( GetMapName() == "mp_rr_desertlands_64k_x_64k"){
-			switch(RandomIntRangeInclusive(0,1)){
-				case 0:
-					model.SetSkin(1)
-					break
-				case 1:
-					model.SetSkin(2)
-					break
-			}
-		} else {
-		model.SetSkin(0)		
-		}
-	}
+	model.SetValueForModelKey( LOOT_DRONE_MODEL ) 
+	model.SetMaxHealth( 10 )
+	model.SetHealth( 10 )
+	model.kv.modelscale = 1
 	
 	model.kv.SpawnAsPhysicsMover = 0
 	model.SetOrigin( startNode.GetOrigin() )
@@ -215,40 +279,22 @@ LootDroneData function LootDrones_SpawnLootDroneAtRandomPath()
 	model.SetTakeDamageType( DAMAGE_YES )
 	//model.AllowMantle()
 	DispatchSpawn( model )
-	
-	if(GetMapName() == "mp_rr_desertlands_64k_x_64k" && !GetCurrentPlaylistVarBool("flowstateFlyersOverride", false ) || GetMapName() == "mp_rr_desertlands_64k_x_64k_nx" && !GetCurrentPlaylistVarBool("flowstateFlyersOverride", false ))
-	{
-		AddEntityCallback_OnDamaged( model, LootDrones_OnDamaged) 
-	} 
 
 	// Set model entity in the struct.
 	data.model = model
 	data.mover = model
 	
-	// Create and attach loot roller or deathbox if KC
-	if(GetMapName() == "mp_rr_desertlands_64k_x_64k" && !GetCurrentPlaylistVarBool("flowstateFlyersOverride", false ) || GetMapName() == "mp_rr_desertlands_64k_x_64k_nx" && !GetCurrentPlaylistVarBool("flowstateFlyersOverride", false ))
-	{
-		data.roller = SpawnLootRoller_Parented(data.model)
-		data.roller.SetOrigin( data.model.GetOrigin() + LOOT_DRONE_ROTATOR_OFFSET )
-		thread LootDroneSound(data.model)
-		thread LootDroneState( data )
-		thread LootDroneMove( data )
-	} else if (GetMapName() == "mp_rr_canyonlands_mu1" || GetMapName() == "mp_rr_canyonlands_mu1_night" || GetMapName() == "mp_rr_canyonlands_64k_x_64k" || GetCurrentPlaylistVarBool("flowstateFlyersOverride", false )){
-		if(!GetCurrentPlaylistVarBool("flowstatePROPHUNT", false )) data.roller = SpawnDeathbox_Parented(data.model)
-		thread FlyerMove( data )
-	}
+	data.roller = SpawnLootRoller_Parented(data.model)
+	data.roller.SetOrigin( data.model.GetOrigin() + LOOT_DRONE_ROTATOR_OFFSET )
+	thread LootDroneSound(data.model)
+	thread LootDroneState( data )
+	thread LootDroneMove( data )
+
 	file.droneData[ model ] <- data
-	if (GetMapName() == "mp_rr_canyonlands_mu1" || GetMapName() == "mp_rr_canyonlands_mu1_night" || GetMapName() == "mp_rr_canyonlands_64k_x_64k" || GetCurrentPlaylistVarBool("flowstateFlyersOverride", false )){
-		AddEntityCallback_OnDamaged( data.model, Flyers_OnDamaged) 	
-		thread FlyerAnimation(data.model)
-		}
 	return data
 }
 
 void function serversideColorTiers(LootDroneData data)
-///////////////////////////////////////////////////////
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-///////////////////////////////////////////////////////
 {
 	while (true)
 	{
@@ -280,30 +326,27 @@ void function serversideColorTiers(LootDroneData data)
 }
 
 string function returnRgbColorInOrder(LootDroneData data)
-///////////////////////////////////////////////////////
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-///////////////////////////////////////////////////////
 {
-int index = data.rgbInt
-if (index == 0 && !data.stoploottier) {
-	data.rgbId = "255, 255, 255"
-	index++
-	data.rgbInt = index
-	if(IsValid(data.roller)) Highlight_SetFlyerDeathboxHighlight( data.roller, "survival_item_common_cargobot" )
-return data.rgbId}
-if (index == 1 && !data.stoploottier) {
-	data.rgbId = "0, 0, 255"
-	index++
-	data.rgbInt = index
-	if(IsValid(data.roller)) Highlight_SetFlyerDeathboxHighlight( data.roller, "survival_item_rare_cargobot" )
-return data.rgbId}
-if (index == 2 && !data.stoploottier) {
-	data.rgbId = "200, 0, 255"
-	index = 0
-	data.rgbInt = index
-	if(IsValid(data.roller)) Highlight_SetFlyerDeathboxHighlight( data.roller, "survival_item_epic_cargobot" )
-return data.rgbId}
-return data.rgbId
+	int index = data.rgbInt
+	if (index == 0 && !data.stoploottier) {
+		data.rgbId = "255, 255, 255"
+		index++
+		data.rgbInt = index
+		if(IsValid(data.roller)) Highlight_SetFlyerDeathboxHighlight( data.roller, "survival_item_common_cargobot" )
+	return data.rgbId}
+	if (index == 1 && !data.stoploottier) {
+		data.rgbId = "0, 0, 255"
+		index++
+		data.rgbInt = index
+		if(IsValid(data.roller)) Highlight_SetFlyerDeathboxHighlight( data.roller, "survival_item_rare_cargobot" )
+	return data.rgbId}
+	if (index == 2 && !data.stoploottier) {
+		data.rgbId = "200, 0, 255"
+		index = 0
+		data.rgbInt = index
+		if(IsValid(data.roller)) Highlight_SetFlyerDeathboxHighlight( data.roller, "survival_item_epic_cargobot" )
+	return data.rgbId}
+	return data.rgbId
 }
 
 entity ornull function LootDrones_GetAvailableStartNodeFromPath( array<entity> path )
@@ -328,10 +371,43 @@ entity ornull function LootDrones_GetAvailableStartNodeFromPath( array<entity> p
 	return null
 }
 
+int function Flyers_GetBestStartNodeFromPath( array<entity> path )
+{
+	table<entity, float> SpawnsAndNearestFlyer = {}
+
+	foreach ( entity pathNode in path )
+    {
+		array<float> Distances
+		foreach ( entity model, LootDroneData data in file.droneData )
+			Distances.append(Distance(model.GetOrigin(), pathNode.GetOrigin()))
+			
+		if(Distances.len() == 0) return RandomInt(path.len())
+			
+		Distances.sort()
+		SpawnsAndNearestFlyer[pathNode] <- Distances[0]
+	}
+	
+	entity finalLoc
+	float compareDis = -1
+	foreach(loc, dis in SpawnsAndNearestFlyer)
+	{
+		if(dis > compareDis)
+		{
+			finalLoc = loc
+			compareDis = dis
+		}
+	}
+	
+	for(int i = 0; i < path.len(); i++)
+	{
+		if(path[i] == finalLoc)
+			return i
+	}
+	
+    unreachable
+}
+
 void function CreateFlowStateDeathBoxForPlayer2( entity victim, vector origin, vector angles, string lootTier)
-///////////////////////////////////////////////////////
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-///////////////////////////////////////////////////////
 {
 		entity deathBox = FlowState_CreateDeathBox2( victim, true , origin, angles)
 		StartParticleEffectOnEntityWithPos_ReturnEntity( deathBox, GetParticleSystemIndex( DEATHBOX_DROP_FX ), FX_PATTACH_ABSORIGIN_FOLLOW, deathBox.LookupAttachment( "CHESTFOCUS" ), <0,0,0>, VectorToAngles( <0,0,-1> ) )
@@ -410,9 +486,6 @@ void function CreateFlowStateDeathBoxForPlayer2( entity victim, vector origin, v
 }
 
 entity function FlowState_CreateDeathBox2( entity player, bool hasCard, vector origin, vector angles)
-///////////////////////////////////////////////////////
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-///////////////////////////////////////////////////////
 {
 	entity box = CreatePropDeathBox_NoDispatchSpawn( DEATH_BOX, origin, angles, 6 )
 	
@@ -420,7 +493,7 @@ entity function FlowState_CreateDeathBox2( entity player, bool hasCard, vector o
 		SetTargetName( box, DEATH_BOX_TARGETNAME )
 
 	DispatchSpawn( box )
-	box.kv.fadedist = 10000
+	box.kv.fadedist = 50000
 	box.RemoveFromAllRealms()
 	box.AddToOtherEntitysRealms( player )
 	box.Solid()
@@ -432,7 +505,7 @@ entity function FlowState_CreateDeathBox2( entity player, bool hasCard, vector o
 	if ( hasCard )
 	{
 		box.SetNetBool( "overrideRUI", false )
-		box.SetCustomOwnerName( "Apex Flowstate" )
+		box.SetCustomOwnerName( player.GetPlayerName() )
 		EHI playerEHI = ToEHI( player )
 		LoadoutEntry characterLoadoutEntry = Loadout_CharacterClass()
 		ItemFlavor character = LoadoutSlot_GetItemFlavor( playerEHI, characterLoadoutEntry )
@@ -444,12 +517,11 @@ entity function FlowState_CreateDeathBox2( entity player, bool hasCard, vector o
 }
 
 void function updateDeathbox(LootDroneData data)
-///////////////////////////////////////////////////////
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-///////////////////////////////////////////////////////
 {
 	entity player = file.lastattacker 
-	if(IsValid(player)){
+	
+	if(!IsValid(player)) return
+	
 	printt("Flyers DEBUG - Last attacker: ", player)
 	int highestTier = 0
 	foreach ( item in data.roller.GetLinkEntArray() )
@@ -464,15 +536,11 @@ void function updateDeathbox(LootDroneData data)
 	vector lastpos = data.roller.GetOrigin()
 	vector lastang = data.roller.GetAngles()
 	string tierloot = data.roller.e.enemyHighlight
-	CreateFlowStateDeathBoxForPlayer2(player,lastpos,lastang, tierloot)
+	CreateFlowStateDeathBoxForPlayer2(player, lastpos, lastang, tierloot)
 	data.roller.Destroy()
-	}
 }
 
 void function FlyerMove( LootDroneData data )
-///////////////////////////////////////////////////////
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-///////////////////////////////////////////////////////
 {
 	Assert( IsNewThread(), "Must be threaded off" )
 	Assert( data.path.len() > 0, "Path must have at least one node" )
@@ -488,15 +556,23 @@ void function FlyerMove( LootDroneData data )
 			}
 		}
 	)
-	data.mover.Train_MoveToTrainNodeEx( data.path[0], 0, LOOT_DRONE_FLIGHT_SPEED_MAX, LOOT_DRONE_FLIGHT_SPEED_MAX, LOOT_DRONE_FLIGHT_ACCEL ) //change to flyers exclusive
-	data.mover.Train_AutoRoll( 5.0, 45.0, 1024.0 )
-	WaitForever()
+	array< entity > path = data.path
+	
+	while(true)
+	{
+		
+		foreach(node in path)
+		{
+			data.mover.NonPhysicsMoveTo( node.GetOrigin(), 3.5, 0, 0 )
+			data.mover.NonPhysicsRotateTo( VectorToAngles(  node.GetOrigin() -  data.mover.GetOrigin() ), 1.2, 0, 0 )
+
+			wait 3.5
+		}
+		path.reverse()
+	}
 }
 
 void function PlayDyingFlyerAnimAndReleaseDeathbox(entity flyer)
-///////////////////////////////////////////////////////
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-///////////////////////////////////////////////////////
 {
 	if(IsValid(flyer)){
 		flyer.Anim_Play( "fl_fly_death" )
@@ -509,66 +585,49 @@ void function PlayDyingFlyerAnimAndReleaseDeathbox(entity flyer)
 		flyer.Destroy()
 		}
 }
+
 void function Flyers_OnDamaged(entity ent, var damageInfo)
-///////////////////////////////////////////////////////
-//By Retículo Endoplasmático#5955 (CaféDeColombiaFPS)//
-///////////////////////////////////////////////////////
 {
 	entity attacker = DamageInfo_GetAttacker(damageInfo)
 	if(!attacker.IsPlayer()) return
-	if(GetCurrentPlaylistVarBool( "flowstateFlyersEasterEgg", false ) && attacker.p.isParentedToFlyer == false){
-		//doing the funny things?
-		attacker.SetParent(ent)
-		attacker.SetOrigin(ent.GetOrigin() + < 0, 0, 80>)
-		attacker.SetAngles(ent.GetAngles())
-		attacker.p.isParentedToFlyer = true
-		attacker.p.ParentedFlyer = ent
-		ent.e.ParentedPlayerToFlyer = attacker} 
 		
-	if(ent != attacker.p.ParentedFlyer){
+	if(ent != attacker.p.ParentedFlyer)
+	{
+		float damage = DamageInfo_GetDamage( damageInfo )
+		attacker.NotifyDidDamage
+		(
+			ent,
+			DamageInfo_GetHitBox( damageInfo ),
+			DamageInfo_GetDamagePosition( damageInfo ), 
+			DamageInfo_GetCustomDamageType( damageInfo ),
+			DamageInfo_GetDamage( damageInfo ),
+			DamageInfo_GetDamageFlags( damageInfo ), 
+			DamageInfo_GetHitGroup( damageInfo ),
+			DamageInfo_GetWeapon( damageInfo ), 
+			DamageInfo_GetDistFromAttackOrigin( damageInfo )
+		)
 		
-			float damage = DamageInfo_GetDamage( damageInfo )
-			attacker.NotifyDidDamage
-			(
-				ent,
-				DamageInfo_GetHitBox( damageInfo ),
-				DamageInfo_GetDamagePosition( damageInfo ), 
-				DamageInfo_GetCustomDamageType( damageInfo ),
-				DamageInfo_GetDamage( damageInfo ),
-				DamageInfo_GetDamageFlags( damageInfo ), 
-				DamageInfo_GetHitGroup( damageInfo ),
-				DamageInfo_GetWeapon( damageInfo ), 
-				DamageInfo_GetDistFromAttackOrigin( damageInfo )
-			)
-			float flyerNextHealth = ent.GetHealth() - DamageInfo_GetDamage( damageInfo )
-			if (flyerNextHealth > 0 && IsValid(ent)){
-				ent.SetHealth(flyerNextHealth)
-				
-				if(IsValid(attacker) && IsAlive(attacker)){
-					file.lastattacker = attacker
-				}
-				if(flyerNextHealth < 80){
-					ent.Signal(SIGNAL_LOOT_DRONE_FALL_START)	
-				}
-			} else if (IsValid(ent)){
-			if(GetCurrentPlaylistVarBool( "flowstateFlyersEasterEgg", false )){
-			try{
-				entity releaseplayer = ent.e.ParentedPlayerToFlyer
-				releaseplayer.ClearParent()
-				releaseplayer.p.isParentedToFlyer = false
-				}catch(e420){}
-			}
-			thread PlayDyingFlyerAnimAndReleaseDeathbox(ent)
+		float flyerNextHealth = ent.GetHealth() - DamageInfo_GetDamage( damageInfo )
+		if (flyerNextHealth > 0 && IsValid(ent)){
+			ent.SetHealth(flyerNextHealth)
 			
-			ent.SetTakeDamageType( DAMAGE_NO )
-			ent.kv.solid = 0
-			ent.SetOwner( attacker )
-			ent.kv.teamnumber = attacker.GetTeam()
+			if(IsValid(attacker) && IsAlive(attacker)){
+				file.lastattacker = attacker
 			}
-	
-		}	
-}
+			if(flyerNextHealth < 80){
+				ent.Signal(SIGNAL_LOOT_DRONE_FALL_START)	
+			}
+		} else if (IsValid(ent)){
 
+		thread PlayDyingFlyerAnimAndReleaseDeathbox(ent)
+		
+		ent.SetTakeDamageType( DAMAGE_NO )
+		ent.kv.solid = 0
+		ent.SetOwner( attacker )
+		ent.kv.teamnumber = attacker.GetTeam()
+		}
+	}	
+}
 
 void function LootDroneState( LootDroneData data )
 {
@@ -685,11 +744,10 @@ void function LootDroneMove( LootDroneData data )
 		}
 	)
 
-	// Start the movement using the shared constants
-	data.mover.Train_MoveToTrainNodeEx( data.path[0], 0, LOOT_DRONE_FLIGHT_SPEED_MAX, LOOT_DRONE_FLIGHT_SPEED_MAX, LOOT_DRONE_FLIGHT_ACCEL )
-
 	// Make the drone roll on turns
 	// (rollStrengh, rollMax, lookAheadDist) ? nothing in shared consts, values seem fine just like this.
+	// Start the movement using the shared constants
+	data.mover.Train_MoveToTrainNodeEx( data.path[0], 0, LOOT_DRONE_FLIGHT_SPEED_MAX, LOOT_DRONE_FLIGHT_SPEED_MAX, LOOT_DRONE_FLIGHT_ACCEL )
 	data.mover.Train_AutoRoll( 5.0, 45.0, 1024.0 )
 	
 	WaitForever()
@@ -754,10 +812,4 @@ void function LootDrones_OnDamaged(entity ent, var damageInfo)
 	EntFireByHandle( effect, "Kill", "", 2, null, null )
 
 	ent.Signal("OnDeath")
-}
-
-bool function ClientCommand_ClearFlyerParent(entity player, array<string> args){
-//TODO: Finish this.
-player.ClearParent()
-return true
 }

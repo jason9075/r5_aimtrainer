@@ -7,7 +7,7 @@ global function SvApexScreens_HighlightPlayerForImpressiveKill
 global function SvApexScreens_HighlightPlayerForKillSpree
 #endif
 
-#if SERVER && R5DEV
+#if SERVER && DEVELOPER
 global function DEV_ApexScreens_SetMode
 global function DEV_ApexScreens_TogglePreviewMode
 global function DEV_ApexScreens_GladCardPreviewMode
@@ -25,7 +25,7 @@ global function ServerToClient_ApexScreenRefreshAll
 global function ClApexScreens_OnStaticPropRuiVisibilityChange
 #endif
 
-#if CLIENT && R5DEV
+#if CLIENT && DEVELOPER
 global function DEV_CreatePerfectApexScreen
 global function DEV_ToggleActiveApexScreenDebug
 global function DEV_ToggleFloatyBitsPrototype
@@ -34,6 +34,10 @@ global function DEV_ToggleFloatyBitsPrototype
 #if CLIENT
 const bool HAS_FLOATING_BITS_PROTOTYPE = false
 #endif // CLIENT
+
+#if CLIENT || SERVER
+global function CastStringToAsset
+#endif
 
 const float APEX_SCREEN_TRANSITION_IN_DURATION = 0.7 // must stay in sync with apex_screens.rui
 
@@ -187,7 +191,7 @@ struct ApexScreenJob
 
 
 struct {
-	#if SERVER && R5DEV
+	#if SERVER && DEVELOPER
 		bool DEV_inDebugPreviewMode = false
 	#endif
 
@@ -284,12 +288,14 @@ void function ShApexScreens_Init()
 #endif
 
 
-#if CLIENT
+#if CLIENT || SERVER
 asset function CastStringToAsset( string val )
 {
 	return GetKeyValueAsAsset( { kn = val }, "kn" )
 }
+#endif
 
+#if CLIENT
 asset function GetCurrentPlaylistVarAsset( string varName, asset defaultAsset = $"" )
 {
 	string assetRaw = GetCurrentPlaylistVarString( varName, "" )
@@ -379,7 +385,7 @@ void function SetupScreenOverrides()
 #if SERVER
 void function SvApexScreens_ForceShowSquad( EncodedEHandle ply0, EncodedEHandle ply1, EncodedEHandle ply2 )
 {
-	#if R5DEV
+	#if DEVELOPER
 		if ( file.DEV_inDebugPreviewMode )
 			return
 	#endif
@@ -395,7 +401,7 @@ void function SvApexScreens_ForceShowSquad( EncodedEHandle ply0, EncodedEHandle 
 #if SERVER
 void function SvApexScreens_ShowCircleState()
 {
-	#if R5DEV
+	#if DEVELOPER
 		if ( file.DEV_inDebugPreviewMode )
 			return
 	#endif
@@ -411,7 +417,7 @@ void function SvApexScreens_ShowCircleState()
 #if SERVER
 void function SvApexScreens_HighlightPlayerForImpressiveKill( entity player, int damageSourceID, float distanceBetweenPlayers, int killedPlayerGrade, entity killedPlayer )
 {
-	#if R5DEV
+	#if DEVELOPER
 		if ( file.DEV_inDebugPreviewMode )
 			return
 	#endif
@@ -430,7 +436,7 @@ void function SvApexScreens_HighlightPlayerForImpressiveKill( entity player, int
 #if SERVER
 void function SvApexScreens_HighlightPlayerForKillSpree()
 {
-	#if R5DEV
+	#if DEVELOPER
 		if ( file.DEV_inDebugPreviewMode )
 			return
 	#endif
@@ -502,7 +508,7 @@ void function ApexScreenMasterThink()
 	if ( !GetCurrentPlaylistVarBool( "enable_apex_screens", true ) )
 		return
 
-	#if R5DEV
+	#if DEVELOPER
 		if ( file.DEV_inDebugPreviewMode )
 			return
 	#endif
@@ -632,7 +638,7 @@ void function ApexScreenMasterThink()
 #endif
 
 
-#if SERVER && R5DEV
+#if SERVER && DEVELOPER
 void function DEV_ApexScreens_TogglePreviewMode()
 {
 	file.DEV_inDebugPreviewMode = !file.DEV_inDebugPreviewMode
@@ -641,7 +647,7 @@ void function DEV_ApexScreens_TogglePreviewMode()
 #endif
 
 
-#if SERVER && R5DEV
+#if SERVER && DEVELOPER
 void function DEV_ApexScreens_GladCardPreviewMode()
 {
 	file.DEV_inDebugPreviewMode = true
@@ -661,7 +667,7 @@ void function DEV_ApexScreens_GladCardPreviewMode()
 #endif
 
 
-#if SERVER && R5DEV
+#if SERVER && DEVELOPER
 void function DEV_ApexScreens_SetMode( var opt = "random" )
 {
 	int currentMode = GetGlobalNetInt( "ApexScreensMasterState_Pos1_ModeIndex" ) // just use center screen
@@ -777,7 +783,7 @@ void function UpdateAllScreensContentThread()
 //
 void function OnUpdateApexScreensEventTime( float newTime )
 {
-	printf( "%s() - New time: %.2f", FUNC_NAME(), newTime )
+	//printf( "%s() - New time: %.2f", FUNC_NAME(), newTime )
 
 	if ( newTime < 0 )
 	{
@@ -886,7 +892,7 @@ void function ClApexScreens_OnStaticPropRuiVisibilityChange( array<int> newlyVis
 #endif
 
 
-#if CLIENT && R5DEV
+#if CLIENT && DEVELOPER
 void function DEV_ToggleActiveApexScreenDebug()
 {
 	file.DEV_activeScreenDebug = !file.DEV_activeScreenDebug
@@ -925,7 +931,7 @@ void function DEV_ActiveApexScreenDebugThread()
 #endif
 
 
-#if CLIENT && R5DEV
+#if CLIENT && DEVELOPER
 void function DEV_ToggleFloatyBitsPrototype()
 {
 	file.DEV_isFloatyBitsPrototypeEnabled = !file.DEV_isFloatyBitsPrototypeEnabled
@@ -1293,7 +1299,7 @@ var function CreateApexScreenRUIElement( ApexScreenState screen )
 	var rui
 	if ( screen.magicId == -1 )
 	{
-		#if R5DEV
+		#if DEVELOPER
 			float aspectRatio = 1.0//0.38
 			float height      = screen.diagonalSize / sqrt( 1.0 + pow( aspectRatio, 2.0 ) )
 			float width       = aspectRatio * height
@@ -1373,7 +1379,7 @@ var function CreateApexScreenRUIElement( ApexScreenState screen )
 #endif
 
 
-#if CLIENT && R5DEV
+#if CLIENT && DEVELOPER
 void function DEV_CreatePerfectApexScreen( vector origin, float diagonalSize, int screenPosition )
 {
 	ApexScreenState apexScreen

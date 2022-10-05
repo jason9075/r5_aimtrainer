@@ -347,7 +347,7 @@ entity function CreateCustomLight( vector origin, vector angles, string lightcol
 	return env_sprite
 }
 
-entity function CreateEditorProp(asset a, vector pos, vector ang, bool mantle = false, float fade = 2000)
+entity function CreateEditorProp(asset a, vector pos, vector ang, bool mantle = false, float fade = 2000, float idk = -1)
 {
 	entity e = CreatePropDynamic(a,pos,ang,SOLID_VPHYSICS,fade)
 	e.kv.fadedist = fade
@@ -355,6 +355,7 @@ entity function CreateEditorProp(asset a, vector pos, vector ang, bool mantle = 
 	e.kv.rendermode = 3
 	e.kv.rendercolor = "255 255 255 255"
 	if(mantle) e.AllowMantle()
+	e.SetScriptName("editor_placed_prop")
     surf.playerSpawnedProps.append(e)
 	return e
 }

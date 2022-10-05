@@ -126,7 +126,7 @@ void function OnItemFlavorRegistered_Character( ItemFlavor characterClass )
 	entry.networkTo = eLoadoutNetworking.PLAYER_EXCLUSIVE
 	fileLevel.characterMeleeSkinLoadoutEntryMap[characterClass] <- entry
 
-	#if SERVER && R5DEV
+	#if SERVER && DEVELOPER
 		AddCallback_ItemFlavorLoadoutSlotDidChange_AnyPlayer( entry, void function( EHI playerEHI, ItemFlavor meleeSkin ) {
 			DEV_UpdatePlayerMeleeWeaponCosmetics( FromEHI( playerEHI ), meleeSkin )
 		} )
@@ -288,7 +288,7 @@ bool function IsValidMeleeAttackTarget( entity attacker, entity inputWeaponOrNul
 		return false
 
 	if ( IsFriendlyTeam( attacker.GetTeam(), target.GetTeam() ) )
-		return false
+		return true
 
 	if ( !attacker.DoesShareRealms( target ) )
 		return false
@@ -386,13 +386,37 @@ bool function CodeCallback_IsValidMeleeAttackTarget( entity attacker, entity tar
 #if SERVER || CLIENT
 void function CodeCallback_OnMeleePressed( entity attacker, entity meleeInputWeapon )
 {
+
 	attacker.p.TEMP_lastMeleeInputWeapon = meleeInputWeapon
 
 	entity meleeAttackWeapon = GetPlayerMeleeAttackWeapon( attacker )
 
 	if ( !AttackerCanStartMelee( attacker, meleeInputWeapon, meleeAttackWeapon ) )
 		return
-
+	
+	#if SERVER
+	if(GetCurrentPlaylistVarBool( "firingrange_aimtrainerbycolombia", false ))
+	{
+		entity player = attacker
+		int basedamage = 30 //!FIXME
+		int ornull projectilespershot = 1 //!FIXME
+		int pellets = 1
+		if(projectilespershot != null)
+		{
+			pellets = expect int(projectilespershot)
+			player.p.totalPossibleDamage += (basedamage * pellets)
+		}
+		else 
+			player.p.totalPossibleDamage += basedamage
+		
+		//add 1 hit to total hits
+		player.p.straferTotalShots += (1*pellets)
+		
+		Remote_CallFunction_NonReplay(player, "ServerCallback_LiveStatsUIDamageViaWeaponAttack", basedamage, basedamage * pellets)
+		Remote_CallFunction_NonReplay(player, "ServerCallback_LiveStatsUIAccuracyViaTotalShots", pellets)
+	}
+	#endif
+	
 	attacker.PlayerMelee_StartAttack( PLAYER_MELEE_STATE_HUMAN_KICK_ATTACK )
 
 	// DOOR BUSTING PROTOTYPE
@@ -657,7 +681,7 @@ bool function ClientCodeCallback_ShowMeleePrompt( entity player )
 //// Dev functions ////
 ///////////////////////
 ///////////////////////
-#if SERVER && R5DEV
+#if SERVER && DEVELOPER
 void function DEV_UpdatePlayerMeleeWeaponCosmetics( entity player, ItemFlavor unused )
 {
 	// TEMP COMMENT
